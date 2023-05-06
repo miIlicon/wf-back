@@ -23,15 +23,15 @@ public class FestivalPubService {
 
         Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminException("관리자를 찾을 수 없습니다."));
 
-        PubImage pubImage = PubImage.of(pubRequest);
-
-        Diary diary = new Diary(diaryRequest.getTitle(), diaryRequest.getContent(), user, diaryContent);
-        user.diariesAdd(diary);
-
-        diaryContentRepository.save(diaryContent);
-        diaryRepository.save(diary);
-
-        return DiaryWithFileResponse.of(diary, diary.getDiaryContent().getFilePath());
+//        PubImage pubImage = PubImage.of(pubRequest);
+//
+//        Diary diary = new Diary(diaryRequest.getTitle(), diaryRequest.getContent(), user, diaryContent);
+//        user.diariesAdd(diary);
+//
+//        diaryContentRepository.save(diaryContent);
+//        diaryRepository.save(diary);
+//
+//        return DiaryWithFileResponse.of(diary, diary.getDiaryContent().getFilePath());
     }
 
 
