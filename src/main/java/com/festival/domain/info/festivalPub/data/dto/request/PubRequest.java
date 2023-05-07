@@ -1,7 +1,6 @@
 package com.festival.domain.info.festivalPub.data.dto.request;
 
 import com.festival.domain.info.festivalPub.data.entity.pub.PubState;
-import com.festival.global.customAnnotation.customEnum.Enum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -35,10 +34,10 @@ public class PubRequest {
     @NotNull(message = "위치를 입력해주세요.")
     private int longitude;
 
-    @Enum(message = "상태를 입력해주세요.", enumClass = PubState.class, ignoreCase = true)
-    private String pubState;
+    @NotNull(message = "상태를 입력해주세요.")
+    private Boolean pubState;
 
-    public PubRequest(String title, String subTitle, String content, int latitude, int longitude, String pubState) {
+    public PubRequest(String title, String subTitle, String content, int latitude, int longitude, Boolean pubState) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
@@ -47,7 +46,7 @@ public class PubRequest {
         this.pubState = pubState;
     }
 
-    public PubRequest(String title, String subTitle, String content, MultipartFile mainFile, List<MultipartFile> subFiles, int latitude, int longitude, String pubState) {
+    public PubRequest(String title, String subTitle, String content, MultipartFile mainFile, List<MultipartFile> subFiles, int latitude, int longitude, Boolean pubState) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
