@@ -76,7 +76,7 @@ public class FoodTruckController {
     /*
      * FoodTruck 삭제
      */
-    @PutMapping("/{foodTruckId}")
+    @DeleteMapping("/{foodTruckId}")
     public FoodTruckResponse deleteFoodTruck(@PathVariable String foodTruckId) {
         log.debug("Start : FoodTruckController : deleteFoodTruck");
         //TODO: 입력값 검증
