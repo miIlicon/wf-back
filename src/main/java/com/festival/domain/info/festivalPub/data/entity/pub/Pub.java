@@ -1,5 +1,7 @@
 package com.festival.domain.info.festivalPub.data.entity.pub;
 
+import com.festival.domain.admin.data.entity.Admin;
+import com.festival.domain.info.festivalPub.data.dto.request.PubRequest;
 import com.festival.domain.info.festivalPub.data.entity.file.PubImage;
 import com.festival.global.base.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -10,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class FestivalPub extends BaseTimeEntity {
+public class Pub extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,22 +31,40 @@ public class FestivalPub extends BaseTimeEntity {
     @JoinColumn(name = "pub_file_id")
     private PubImage pubImage;
 
-    @Column(name = "latitude", nullable = false)
+    @Column(name = "latitude", nullable = false) // 위도
     private int latitude;
 
-    @Column(name = "longitude", nullable = false)
+    @Column(name = "longitude", nullable = false) // 경도
     private int longitude;
 
     @Column(name = "pub_state", nullable = false)
-    private PubState pubState;
+    private String pubState;
 
-    public FestivalPub(String title, String subTitle, String content, PubImage pubImage, int latitude, int longitude, PubState pubState) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "admin_id", nullable = false)
+    private Admin admin;
+
+    public Pub(String title, String subTitle, String content, int latitude, int longitude, String pubState, Admin admin) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
-        this.pubImage = pubImage;
         this.latitude = latitude;
         this.longitude = longitude;
         this.pubState = pubState;
+        this.admin = admin;
+    }
+
+    public Pub(PubRequest pubRequest, Admin admin) {
+        this.title = pubRequest.getTitle();
+        this.subTitle = pubRequest.getSubTitle();
+        this.content = pubRequest.getContent();
+        this.latitude = pubRequest.getLatitude();
+        this.longitude = pubRequest.getLongitude();
+        this.pubState = pubRequest.getPubState();
+        this.admin = admin;
+    }
+
+    public void setPubImage(PubImage pubImage) {
+        this.pubImage = pubImage;
     }
 }

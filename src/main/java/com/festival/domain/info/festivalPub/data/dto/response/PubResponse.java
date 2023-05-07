@@ -1,7 +1,7 @@
 package com.festival.domain.info.festivalPub.data.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.festival.domain.info.festivalPub.data.entity.pub.FestivalPub;
+import com.festival.domain.info.festivalPub.data.entity.file.SubFilePath;
+import com.festival.domain.info.festivalPub.data.entity.pub.Pub;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -39,15 +40,30 @@ public class PubResponse {
         this.subFilePath = subFilePath;
     }
 
-    public static PubResponse of(final FestivalPub pub, List<String> subFilePath) {
-        return PubResponse.builder()
-                .pubId(pub.getId())
-                .title(pub.getTitle())
-                .content(pub.getContent())
-                .createdDate(pub.getCreatedDate())
-                .modifiedDate(pub.getModifiedDate())
-                .filePath(pub.getPubImage().getMainFilePath())
-                .subFilePath(pub.getPubImage().getSubFilePaths() != null ? subFilePath : null)
-                .build();
+    public static PubResponse of(final Pub pub, String filePath) {
+        if (!pub.getPubImage().getSubFilePaths().isEmpty()) {
+            List<String > list = new ArrayList<>();
+            for (SubFilePath subFilePath: pub.getPubImage().getSubFilePaths()) {
+                list.add(filePath + subFilePath.getFilePath());
+            }
+            return PubResponse.builder()
+                    .pubId(pub.getId())
+                    .title(pub.getTitle())
+                    .content(pub.getContent())
+                    .createdDate(pub.getCreatedDate())
+                    .modifiedDate(pub.getModifiedDate())
+                    .filePath(pub.getPubImage().getMainFilePath())
+                    .subFilePath(list)
+                    .build();
+        } else {
+            return PubResponse.builder()
+                    .pubId(pub.getId())
+                    .title(pub.getTitle())
+                    .content(pub.getContent())
+                    .createdDate(pub.getCreatedDate())
+                    .modifiedDate(pub.getModifiedDate())
+                    .filePath(pub.getPubImage().getMainFilePath())
+                    .build();
+        }
     }
 }

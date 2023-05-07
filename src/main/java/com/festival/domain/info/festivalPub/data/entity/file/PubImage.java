@@ -1,12 +1,12 @@
 package com.festival.domain.info.festivalPub.data.entity.file;
 
-import com.festival.domain.info.festivalPub.data.dto.reqest.PubRequest;
-import com.festival.domain.info.festivalPub.data.entity.pub.FestivalPub;
+import com.festival.domain.info.festivalPub.data.dto.request.PubRequest;
+import com.festival.domain.info.festivalPub.data.entity.pub.Pub;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,37 +31,20 @@ public class PubImage {
     @Column(name = "main_file_path", nullable = false)
     private String mainFilePath;
 
-    @OneToMany(mappedBy = "image")
-    private List<FilePath> subFilePaths = new ArrayList<>();
+    @OneToMany(mappedBy = "image", cascade = CascadeType.REMOVE)
+    private List<SubFilePath> subFilePaths = new ArrayList<>();
 
     @OneToOne(mappedBy = "pubImage")
-    private FestivalPub festivalPub;
+    private Pub pub;
 
-    public static PubImage of(PubRequest pubRequest) throws IOException {  // pub 임시
-
-        String mainFileName = createStoreFileName(pubRequest.getMainFile().getOriginalFilename());
-
-
-
-        file.transferTo(new java.io.File(filePath + storeFileName));
-
-        return PubImage.builder()
-                .name(storeFileName)
-                .type(file.getContentType())
-                .mainFilePath(filePath + storeFileName)
-                .subFilePaths(subFilePaths)
-                .festivalPub(pub)
-                .build();
+    public PubImage(PubRequest pubRequest, String name, String mainFilePath, Pub pub) throws IOException {
+        this.name = name;
+        this.type = pubRequest.getMainFile().getContentType();
+        this.mainFilePath = mainFilePath;
+        this.pub = pub;
     }
 
-    private static String createStoreFileName(String originalFilename) {
-        String ext = extractExt(originalFilename);
-        String uuid = UUID.randomUUID().toString();
-        return uuid + "." + ext;
-    }
-
-    private static String extractExt(String originalFilename) {
-        int pos = originalFilename.lastIndexOf(".");
-        return originalFilename.substring(pos + 1);
+    public void setSubFilePath(List<SubFilePath> subFilePath) {
+        this.subFilePaths = subFilePath;
     }
 }

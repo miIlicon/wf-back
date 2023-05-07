@@ -8,17 +8,27 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class FilePath {
+public class SubFilePath {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "type", nullable = false)
+    private String type;
 
     private String filePath;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private PubImage image;
 
-    public FilePath(String filePath) {
+    public SubFilePath(String name, String type, String filePath, PubImage image) {
+        this.name = name;
+        this.type = type;
         this.filePath = filePath;
+        this.image = image;
     }
 }
