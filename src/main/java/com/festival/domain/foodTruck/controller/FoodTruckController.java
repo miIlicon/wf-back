@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +26,13 @@ public class FoodTruckController {
      */
     @PostMapping("/new")
     public FoodTruckResponse createFoodTruck(@RequestPart("dto") @Valid FoodTruckRequest foodTruckRequest,
-                                             @RequestPart("main-file") @NotEmpty MultipartFile multipartFile, @RequestPart("sub-file") List<MultipartFile> multipartFileList) throws IOException {
+                                             @RequestPart("main-file") @NotEmpty MultipartFile mainImageFile, @RequestPart("sub-file") List<MultipartFile> subImageFileList) throws Exception {
         log.debug("Start : FoodTruckController : createFoodTruck");
         //TODO: 입력값 검증
-        //TODO: 생성로직
-        FoodTruckResponse foodTruckResponse = new FoodTruckResponse();
+        FoodTruckResponse foodTruckResponse = foodTruckService.createFoodTruck(foodTruckRequest, mainImageFile, subImageFileList);
+        if (foodTruckResponse == null) {
+            throw new Exception("FoodTruckResponse is Null");
+        }
         return foodTruckResponse;
     }
 
