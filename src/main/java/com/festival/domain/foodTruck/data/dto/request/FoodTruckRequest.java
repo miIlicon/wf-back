@@ -36,4 +36,5 @@ public class FoodTruckRequest implements Serializable {
 
     @NotNull(message = "상태를 입력해주세요.")
     private Boolean foodTruckState;
+    
 }
