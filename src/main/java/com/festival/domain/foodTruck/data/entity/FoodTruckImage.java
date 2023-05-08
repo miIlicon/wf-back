@@ -21,7 +21,7 @@ public class FoodTruckImage {
     @Column(name = "main_file_path", nullable = false)
     private String mainFilePath;
 
-    @OneToMany(mappedBy = "image", cascade = CascadeType.REMOVE)
+    @ElementCollection(fetch = FetchType.LAZY)
     private List<String> subFilePaths = new ArrayList<>();
 
     @OneToOne(mappedBy = "foodTruckImage")
