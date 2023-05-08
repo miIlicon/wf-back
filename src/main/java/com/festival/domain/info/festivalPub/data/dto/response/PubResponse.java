@@ -1,9 +1,7 @@
 package com.festival.domain.info.festivalPub.data.dto.response;
 
-import com.festival.domain.info.festivalPub.data.entity.file.SubFilePath;
 import com.festival.domain.info.festivalPub.data.entity.pub.Pub;
 import com.querydsl.core.annotations.QueryProjection;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -57,9 +55,9 @@ public class PubResponse {
 
     public static PubResponse of(final Pub pub, String filePath) {
         if (!pub.getPubImage().getSubFilePaths().isEmpty()) {
-            List<String > list = new ArrayList<>();
-            for (SubFilePath subFilePath: pub.getPubImage().getSubFilePaths()) {
-                list.add(filePath + subFilePath.getFilePath());
+            List<String> list = new ArrayList<>();
+            for (String subFilePath: pub.getPubImage().getSubFilePaths()) {
+                list.add(filePath + subFilePath);
             }
             return PubResponse.builder()
                     .pubId(pub.getId())

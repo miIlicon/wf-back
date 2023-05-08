@@ -1,6 +1,5 @@
 package com.festival.domain.info.festivalPub.data.dto.request;
 
-import com.festival.domain.info.festivalPub.data.entity.pub.PubState;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -24,8 +23,6 @@ public class PubRequest {
     @NotBlank(message = "내용을 입력해주세요.")
     private String content;
 
-    private MultipartFile mainFile;
-
     private List<MultipartFile> subFiles;
 
     @NotNull(message = "위치를 입력해주세요.")
@@ -46,11 +43,10 @@ public class PubRequest {
         this.pubState = pubState;
     }
 
-    public PubRequest(String title, String subTitle, String content, MultipartFile mainFile, List<MultipartFile> subFiles, int latitude, int longitude, Boolean pubState) {
+    public PubRequest(String title, String subTitle, String content, List<MultipartFile> subFiles, int latitude, int longitude, Boolean pubState) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
-        this.mainFile = mainFile;
         this.subFiles = subFiles;
         this.latitude = latitude;
         this.longitude = longitude;

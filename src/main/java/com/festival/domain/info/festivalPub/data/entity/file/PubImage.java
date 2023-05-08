@@ -1,6 +1,5 @@
 package com.festival.domain.info.festivalPub.data.entity.file;
 
-import com.festival.domain.info.festivalPub.data.dto.request.PubRequest;
 import com.festival.domain.info.festivalPub.data.entity.pub.Pub;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,41 +9,44 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PubImage {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "pub_image_id")
     private Long id;
-
-    @Column(name = "name", nullable = false)
-    private String name;
-
-    @Column(name = "type", nullable = false)
-    private String type;
 
     @Column(name = "main_file_path", nullable = false)
     private String mainFilePath;
 
-    @OneToMany(mappedBy = "image", cascade = CascadeType.REMOVE)
-    private List<SubFilePath> subFilePaths = new ArrayList<>();
+    @ElementCollection(fetch = FetchType.LAZY)
+    private List<String> subFilePaths = new ArrayList<>();
 
     @OneToOne(mappedBy = "pubImage")
     private Pub pub;
 
-    public PubImage(PubRequest pubRequest, String name, String mainFilePath, Pub pub) throws IOException {
-        this.name = name;
-        this.type = pubRequest.getMainFile().getContentType();
+    public PubImage(String mainFilePath, Pub pub) {
         this.mainFilePath = mainFilePath;
         this.pub = pub;
     }
 
-    public void setSubFilePath(List<SubFilePath> subFilePath) {
+    public void saveSubFilePaths(List<String> subFilePath) {
         this.subFilePaths = subFilePath;
+    }
+
+    public void modifySubFilePaths(List<String> subFilePath) {
+        for (String subFile : this.subFilePaths) {
+            new File(subFile).delete();
+        }
+        this.subFilePaths = subFilePath;
+    }
+
+    public void modifyMainFilePath(String filePath, String mainFilePath, MultipartFile mainFile) throws IOException {
+        new File(filePath + mainFilePath).delete();
+        this.mainFilePath = mainFilePath;
+        mainFile.transferTo(new File(filePath + mainFilePath));
     }
 }

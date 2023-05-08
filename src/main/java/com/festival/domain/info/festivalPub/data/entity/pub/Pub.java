@@ -28,7 +28,7 @@ public class Pub extends BaseTimeEntity {
     private String content;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "pub_file_id")
+    @JoinColumn(name = "pub_image_id")
     private PubImage pubImage;
 
     @Column(name = "latitude", nullable = false) // 위도
@@ -66,5 +66,14 @@ public class Pub extends BaseTimeEntity {
 
     public void setPubImage(PubImage pubImage) {
         this.pubImage = pubImage;
+    }
+
+    public void modify(PubRequest pubRequest) {
+        this.title = pubRequest.getTitle();
+        this.subTitle = pubRequest.getSubTitle();
+        this.content = pubRequest.getContent();
+        this.latitude = pubRequest.getLatitude();
+        this.longitude = pubRequest.getLongitude();
+        this.pubState = pubRequest.getPubState();
     }
 }

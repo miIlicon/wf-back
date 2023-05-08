@@ -4,11 +4,10 @@ import com.festival.global.exception.ErrorCode;
 import com.festival.global.exception.baseException;
 import org.springframework.http.HttpStatus;
 
-public class AdminException extends baseException {
+public class AdminNotMatchException extends baseException {
+    private static final ErrorCode code = ErrorCode.ADMIN_NOT_MATCH;
 
-    private static final ErrorCode code = ErrorCode.ADMIN_NOT_FOUND;
-
-    public AdminException(String message) {
+    public AdminNotMatchException(String message) {
         super(code, HttpStatus.BAD_REQUEST, message);
     }
 }
