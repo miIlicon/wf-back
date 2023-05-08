@@ -1,8 +1,6 @@
 package com.festival.domain.info.festivalEvent.data.entity;
 
 import com.festival.domain.info.festivalPub.data.dto.request.PubRequest;
-import com.festival.domain.info.festivalPub.data.entity.file.SubFilePath;
-import com.festival.domain.info.festivalPub.data.entity.pub.Pub;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
