@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,7 +20,7 @@ public class FoodTruckImage {
     private String mainFilePath;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    private List<String> subFilePaths = new ArrayList<>();
+    private List<String> subFilePaths;
 
     @OneToOne(mappedBy = "foodTruckImage")
     private FoodTruck foodTruck;

@@ -1,16 +1,17 @@
 package com.festival.domain.foodTruck.controller;
 
 import com.festival.domain.foodTruck.data.dto.request.FoodTruckRequest;
+import com.festival.domain.foodTruck.data.dto.response.FoodTruckCreateResponse;
 import com.festival.domain.foodTruck.data.dto.response.FoodTruckResponse;
 import com.festival.domain.foodTruck.service.FoodTruckService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -25,11 +26,11 @@ public class FoodTruckController {
      * FoodTruck 생성
      */
     @PostMapping("/new")
-    public FoodTruckResponse createFoodTruck(@RequestPart("dto") @Valid FoodTruckRequest foodTruckRequest,
-                                             @RequestPart("main-file") @NotEmpty MultipartFile mainImageFile, @RequestPart("sub-file") List<MultipartFile> subImageFileList) throws Exception {
+    public FoodTruckCreateResponse createFoodTruck(@RequestPart("dto") @Valid FoodTruckRequest foodTruckRequest,
+                                                   @RequestPart("main-file") @NotEmpty MultipartFile mainImageFile, @RequestPart("sub-file") List<MultipartFile> subImageFileList) throws Exception {
         log.debug("Start : FoodTruckController : createFoodTruck");
         //TODO: 입력값 검증
-        FoodTruckResponse foodTruckResponse = foodTruckService.createFoodTruck(foodTruckRequest, mainImageFile, subImageFileList);
+        FoodTruckCreateResponse foodTruckResponse = foodTruckService.createFoodTruck(foodTruckRequest, mainImageFile, subImageFileList);
         if (foodTruckResponse == null) {
             throw new Exception("FoodTruckResponse is Null");
         }
@@ -40,11 +41,10 @@ public class FoodTruckController {
      * FoodTruck 상세 조회
      */
     @GetMapping("/{foodTruckId}")
-    public FoodTruckResponse getFoodTruck(@PathVariable String foodTruckId) {
+    public FoodTruckResponse getFoodTruck(@PathVariable Long foodTruckId) throws Exception {
         log.debug("Start : FoodTruckController : getFoodTruck");
         //TODO: 입력값 검증
-        //TODO: 조회로직
-        FoodTruckResponse foodTruckResponse = new FoodTruckResponse();
+        FoodTruckResponse foodTruckResponse = foodTruckService.getFoodTruck(foodTruckId);
         return foodTruckResponse;
     }
 
@@ -52,13 +52,10 @@ public class FoodTruckController {
      * FoodTruck 목록 조회
      */
     @GetMapping("/list")
-    public List<FoodTruckResponse> getFoodTruckList() {
+    public Page<FoodTruckResponse> getFoodTruckList(@RequestParam("page") int offset, @RequestParam("state") Boolean state) {
         log.debug("Start : FoodTruckController : getFoodTruckList");
         //TODO: 입력값 검증
-        //TODO: 목록조회로직
-        FoodTruckResponse foodTruckResponse = new FoodTruckResponse();
-        List<FoodTruckResponse> foodTruckResponseList = new ArrayList<>();
-        foodTruckResponseList.add(foodTruckResponse);
+        Page<FoodTruckResponse> foodTruckResponseList = foodTruckService.getFoodTruckList(offset, state);
         return foodTruckResponseList;
     }
 
