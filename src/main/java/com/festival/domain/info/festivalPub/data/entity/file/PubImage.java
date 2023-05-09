@@ -16,16 +16,17 @@ import java.util.List;
 public class PubImage {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pub_image_id")
     private Long id;
 
     @Column(name = "main_file_path", nullable = false)
     private String mainFilePath;
 
     @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "pub_sub_image", joinColumns = @JoinColumn(name = "pub_image_id"))
+    @Column(name = "file_path")
     private List<String> subFilePaths = new ArrayList<>();
 
-    @OneToOne(mappedBy = "pubImage")
+    @OneToOne(mappedBy = "pubImage", fetch = FetchType.LAZY)
     private Pub pub;
 
     public PubImage(String mainFilePath, Pub pub) {

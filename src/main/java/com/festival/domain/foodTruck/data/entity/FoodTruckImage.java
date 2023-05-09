@@ -12,7 +12,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@RequiredArgsConstructor
 public class FoodTruckImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
