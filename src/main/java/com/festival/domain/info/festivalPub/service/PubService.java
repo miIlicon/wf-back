@@ -14,8 +14,10 @@ import com.festival.domain.info.festivalPub.repository.PubImageRepository;
 import com.festival.domain.info.festivalPub.repository.PubRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ import java.util.List;
 import java.util.UUID;
 
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -68,7 +71,6 @@ public class PubService {
         Pub pub = pubRepository.findById(pubId).orElseThrow(() -> new PubNotFoundException("주점을 찾을 수 없습니다."));
 
         if (pub.getAdmin().equals(admin)) {
-            pub.modify(pubRequest);
 
             PubImage pubImage = pub.getPubImage();
             pubImage.modifyMainFilePath(filePath, createStoreFileName(mainFile.getOriginalFilename()), mainFile);
@@ -77,6 +79,10 @@ public class PubService {
                 List<String> list = saveSubImages(pubRequest.getSubFiles());
                 pubImage.modifySubFilePaths(list);
             }
+            pub.modify(pubRequest);
+
+            em.flush();
+            em.clear();
 
             return PubResponse.of(pub, filePath);
         } else {
@@ -97,6 +103,7 @@ public class PubService {
         }
     }
 
+    @Transactional(readOnly = true)
     public PubResponse getPub(Long adminId, Long pubId) {
 
         Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminException("관리자를 찾을 수 없습니다."));
@@ -109,12 +116,14 @@ public class PubService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Page<PubResponse> getPubs(Long adminId, int offset, Boolean state) {
 
         Pageable pageable = PageRequest.of(offset, 6);
         PubSearchCond cond = new PubSearchCond(adminId, state);
 
-        return pubRepository.findByIdPubs(cond, pageable);
+        Page<Pub> findPubs = pubRepository.findByIdPubs(cond, pageable);
+        return findPubs.map(pub -> PubResponse.of(pub, filePath));
     }
 
     private void saveSubFiles(PubRequest pubRequest, PubImage pubImage) throws IOException {

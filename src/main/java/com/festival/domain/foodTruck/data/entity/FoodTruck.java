@@ -4,14 +4,13 @@ import com.festival.domain.admin.data.entity.Admin;
 import com.festival.domain.foodTruck.data.dto.request.FoodTruckRequest;
 import com.festival.global.base.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FoodTruck extends BaseTimeEntity {
 
     @Id

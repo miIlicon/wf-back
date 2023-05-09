@@ -4,6 +4,7 @@ import com.festival.domain.admin.data.entity.Admin;
 import com.festival.domain.admin.repository.AdminRepository;
 import com.festival.domain.info.festivalPub.data.dto.request.PubRequest;
 import com.festival.domain.info.festivalPub.data.dto.response.PubResponse;
+import com.festival.domain.info.festivalPub.data.entity.pub.Pub;
 import com.festival.domain.info.festivalPub.service.PubService;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
