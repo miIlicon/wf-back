@@ -4,6 +4,7 @@ package com.festival.domain.info.festivalEvent.data.entity;
 import com.festival.domain.admin.data.entity.Admin;
 import com.festival.domain.info.festivalEvent.data.dto.FestivalEventReq;
 import com.festival.domain.info.festivalPub.data.entity.file.PubImage;
+import com.festival.global.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class FestivalEvent {
+public class FestivalEvent extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "festivalEvent_id")
