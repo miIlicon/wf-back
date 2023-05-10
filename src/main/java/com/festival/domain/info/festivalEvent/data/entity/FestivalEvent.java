@@ -3,16 +3,12 @@ package com.festival.domain.info.festivalEvent.data.entity;
 
 import com.festival.domain.admin.data.entity.Admin;
 import com.festival.domain.info.festivalEvent.data.dto.FestivalEventReq;
-import com.festival.domain.info.festivalPub.data.entity.file.PubImage;
-import com.festival.global.base.BaseTimeEntity;
+import com.festival.common.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Entity
 @Getter

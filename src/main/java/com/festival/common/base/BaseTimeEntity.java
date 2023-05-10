@@ -1,4 +1,4 @@
-package com.festival.global.base;
+package com.festival.common.base;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
