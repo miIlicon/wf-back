@@ -46,7 +46,7 @@ public class PubService {
     @Value("${file.path}")
     private String filePath;
 
-    public PubResponse create(Long adminId, PubRequest pubRequest, MultipartFile mainFile) throws IOException {
+    public PubResponse create(Long adminId, PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
 
         Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminException("관리자를 찾을 수 없습니다."));
 
@@ -59,13 +59,13 @@ public class PubService {
         PubImage pubImage = new PubImage(mainFileName, pub);
         pubImageRepository.save(pubImage);
 
-        saveSubFiles(pubRequest, pubImage);
+        saveSubFiles(subFiles, pubImage);
         pub.setPubImage(pubImage);
 
         return PubResponse.of(pub, filePath);
     }
 
-    public PubResponse modify(Long adminId, Long pubId, PubRequest pubRequest, MultipartFile mainFile) throws IOException {
+    public PubResponse modify(Long adminId, Long pubId, PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
 
         Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminException("관리자를 찾을 수 없습니다."));
         Pub pub = pubRepository.findById(pubId).orElseThrow(() -> new PubNotFoundException("주점을 찾을 수 없습니다."));
@@ -75,8 +75,8 @@ public class PubService {
             PubImage pubImage = pub.getPubImage();
             pubImage.modifyMainFilePath(filePath, createStoreFileName(mainFile.getOriginalFilename()), mainFile);
 
-            if (!pubRequest.getSubFiles().isEmpty()) {
-                List<String> list = saveSubImages(pubRequest.getSubFiles());
+            if (!subFiles.isEmpty()) {
+                List<String> list = saveSubImages(subFiles);
                 pubImage.modifySubFilePaths(list);
             }
             pub.modify(pubRequest);
@@ -126,8 +126,8 @@ public class PubService {
         return findPubs.map(pub -> PubResponse.of(pub, filePath));
     }
 
-    private void saveSubFiles(PubRequest pubRequest, PubImage pubImage) throws IOException {
-        List<String> subFilePaths = saveSubImages(pubRequest.getSubFiles());
+    private void saveSubFiles(List<MultipartFile> subFiles, PubImage pubImage) throws IOException {
+        List<String> subFilePaths = saveSubImages(subFiles);
         pubImage.saveSubFilePaths(subFilePaths);
     }
 
@@ -154,13 +154,5 @@ public class PubService {
     private static String extractExt(String originalFilename) {
         int pos = originalFilename.lastIndexOf(".");
         return originalFilename.substring(pos + 1);
-    }
-
-    public void testAdmin() {
-        Admin saveAdmin = new Admin();
-        adminRepository.save(saveAdmin);
-
-        em.flush();
-        em.clear();
     }
 }

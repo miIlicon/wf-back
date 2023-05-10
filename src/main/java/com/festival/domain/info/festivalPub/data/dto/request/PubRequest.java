@@ -23,8 +23,6 @@ public class PubRequest {
     @NotBlank(message = "내용을 입력해주세요.")
     private String content;
 
-    private List<MultipartFile> subFiles;
-
     @NotNull(message = "위치를 입력해주세요.")
     private int latitude;
 
@@ -38,16 +36,6 @@ public class PubRequest {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.pubState = pubState;
-    }
-
-    public PubRequest(String title, String subTitle, String content, List<MultipartFile> subFiles, int latitude, int longitude, Boolean pubState) {
-        this.title = title;
-        this.subTitle = subTitle;
-        this.content = content;
-        this.subFiles = subFiles;
         this.latitude = latitude;
         this.longitude = longitude;
         this.pubState = pubState;

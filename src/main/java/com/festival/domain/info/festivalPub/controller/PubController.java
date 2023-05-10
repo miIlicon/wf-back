@@ -29,27 +29,16 @@ public class PubController {
 
     private final PubService pubService;
 
-    @GetMapping("/admin")
-    public void testAdmin() {
-        pubService.testAdmin();
-    }
-
     @PostMapping("/new")
     public ResponseEntity<PubResponse> createPub(@RequestPart("dto") @Valid PubRequest dto,
                                                  @RequestPart("main-file") @NotEmpty MultipartFile file, @RequestPart("sub-file") List<MultipartFile> files) throws IOException {
-        if (!files.isEmpty()) {
-            dto.setSubFiles(files);
-        }
-        return ResponseEntity.ok().body(pubService.create(1L, dto, file));
+        return ResponseEntity.ok().body(pubService.create(1L, dto, file, files));
     }
 
     @PutMapping("/modify")
     public ResponseEntity<PubResponse> modifyPub(@RequestParam("id") Long pubId, @RequestPart("dto") @Valid PubRequest dto,
                                                  @RequestPart("main-file") @NotEmpty MultipartFile file, @RequestPart("sub-file") List<MultipartFile> files) throws IOException {
-        if (!files.isEmpty()) {
-            dto.setSubFiles(files);
-        }
-        return ResponseEntity.ok().body(pubService.modify(1L, pubId, dto, file));
+        return ResponseEntity.ok().body(pubService.modify(1L, pubId, dto, file, files));
     }
 
     @DeleteMapping("/pub")
