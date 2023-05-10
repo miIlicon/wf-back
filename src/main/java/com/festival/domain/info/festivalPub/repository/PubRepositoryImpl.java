@@ -1,5 +1,6 @@
 package com.festival.domain.info.festivalPub.repository;
 
+import com.festival.common.vo.SearchCond;
 import com.festival.domain.info.festivalPub.data.dto.request.PubSearchCond;
 import com.festival.domain.info.festivalPub.data.dto.response.PubResponse;
 import com.festival.domain.info.festivalPub.data.dto.response.QPubResponse;
@@ -27,7 +28,29 @@ public class PubRepositoryImpl implements PubRepositoryCustom {
     }
 
     @Override
-    public Page<Pub> findByIdPubs(PubSearchCond cond, Pageable pageable) {
+    public Page<Pub> findByIdPubs(SearchCond cond, Pageable pageable) {
+        List<Pub> result = queryFactory
+                .selectFrom(pub)
+                .leftJoin(pub.pubImage, pubImage)
+                .leftJoin(pub.admin, admin)
+                .where(
+                        adminIdEq(cond))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory
+                .select(pub.count())
+                .from(pub)
+                .leftJoin(pub.admin, admin)
+                .where(
+                        adminIdEq(cond));
+
+        return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public Page<Pub> findByIdPubsWithState(PubSearchCond cond, Pageable pageable) {
         List<Pub> result = queryFactory
                 .selectFrom(pub)
                 .leftJoin(pub.pubImage, pubImage)
@@ -50,48 +73,15 @@ public class PubRepositoryImpl implements PubRepositoryCustom {
         return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
     }
 
-    @Override
-    public Page<PubResponse> findByIdPubsResponse(PubSearchCond cond, Pageable pageable) {
-            return null;
-        //        List<PubResponse> result = queryFactory
-//                .select(new QPubResponse(
-//                        pub.id,
-//                        pub.title,
-//                        pub.subTitle,
-//                        pub.content,
-//                        pub.createdDate.as("created_date"),
-//                        pub.modifiedDate.as("modified_date"),
-//                        pubImage.mainFilePath.as("main_file_path"),
-//                        pub.latitude,
-//                        pub.longitude,
-//                        pub.pubState.as("pub_state")
-//                ))
-//                .from(pub)
-//                .leftJoin(pub.pubImage, pubImage)
-//                .leftJoin(pub.admin, admin)
-//                .where(
-//                        adminIdEq(cond),
-//                        stateEq(cond))
-//                .offset(pageable.getOffset())
-//                .limit(pageable.getPageSize())
-//                .fetch();
-//
-//        JPAQuery<Long> countQuery = queryFactory
-//                .select(pub.count())
-//                .from(pub)
-//                .leftJoin(pub.admin, admin)
-//                .where(
-//                        adminIdEq(cond),
-//                        stateEq(cond));
-//
-//        return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
-    }
-
-    private static BooleanExpression stateEq(PubSearchCond cond) {
-        return pub.pubState.eq(cond.getState());
+    private static BooleanExpression adminIdEq(SearchCond cond) {
+        return admin.id.eq(cond.getUserId());
     }
 
     private static BooleanExpression adminIdEq(PubSearchCond cond) {
         return admin.id.eq(cond.getUserId());
+    }
+
+    private static BooleanExpression stateEq(PubSearchCond cond) {
+        return pub.pubState.eq(cond.getState());
     }
 }

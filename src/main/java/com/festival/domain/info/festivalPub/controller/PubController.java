@@ -9,6 +9,7 @@ import com.festival.domain.info.festivalPub.service.PubService;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +53,12 @@ public class PubController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Page<PubResponse>> getPubs(@RequestParam("page") int offset, @RequestParam("state") Boolean state) {
-        return ResponseEntity.ok().body(pubService.getPubs(1L, offset, state));
+    public ResponseEntity<Page<PubResponse>> getPubs(@RequestParam("page") int offset) {
+        return ResponseEntity.ok().body(pubService.getPubs(1L, offset));
+    }
+
+    @GetMapping("/list/state")
+    public ResponseEntity<Page<PubResponse>> getPubsForState(@RequestParam("page") int offset, @RequestParam("state") Boolean state) {
+        return ResponseEntity.ok().body(pubService.getPubsForState(1L, offset, state));
     }
 }
