@@ -6,7 +6,6 @@ import com.festival.domain.admin.exception.AdminException;
 import com.festival.domain.admin.exception.AdminNotMatchException;
 import com.festival.domain.admin.repository.AdminRepository;
 import com.festival.domain.info.festivalPub.data.dto.request.PubRequest;
-import com.festival.domain.info.festivalPub.data.dto.request.PubSearchCond;
 import com.festival.domain.info.festivalPub.data.dto.response.PubResponse;
 import com.festival.domain.info.festivalPub.data.entity.file.PubImage;
 import com.festival.domain.info.festivalPub.data.entity.pub.Pub;
@@ -18,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -46,6 +44,17 @@ public class PubService {
 
     @Value("${file.path}")
     private String filePath;
+
+    private static String createStoreFileName(String originalFilename) {
+        String ext = extractExt(originalFilename);
+        String uuid = UUID.randomUUID().toString();
+        return uuid + "." + ext;
+    }
+
+    private static String extractExt(String originalFilename) {
+        int pos = originalFilename.lastIndexOf(".");
+        return originalFilename.substring(pos + 1);
+    }
 
     public PubResponse create(Long adminId, PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
 
@@ -154,16 +163,5 @@ public class PubService {
             }
         }
         return subFilePaths;
-    }
-
-    private static String createStoreFileName(String originalFilename) {
-        String ext = extractExt(originalFilename);
-        String uuid = UUID.randomUUID().toString();
-        return uuid + "." + ext;
-    }
-
-    private static String extractExt(String originalFilename) {
-        int pos = originalFilename.lastIndexOf(".");
-        return originalFilename.substring(pos + 1);
     }
 }
