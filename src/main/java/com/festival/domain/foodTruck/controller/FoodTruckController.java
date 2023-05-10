@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -63,11 +64,11 @@ public class FoodTruckController {
      * FoodTruck 수정
      */
     @PutMapping("/{foodTruckId}")
-    public FoodTruckResponse updateFoodTruck(@PathVariable String foodTruckId) {
+    public FoodTruckResponse updateFoodTruck(@RequestParam("id") Long foodTruckId, @RequestPart("dto") @Valid FoodTruckRequest foodTruckRequest,
+                                             @RequestPart("main-file") @NotEmpty MultipartFile mainImageFile, @RequestPart("sub-file") List<MultipartFile> subImageFileList) throws IOException {
         log.debug("Start : FoodTruckController : updateFoodTruck");
         //TODO: 입력값 검증
-        //TODO: 수정로직
-        FoodTruckResponse foodTruckResponse = new FoodTruckResponse();
+        FoodTruckResponse foodTruckResponse = foodTruckService.updateFoodTruck(foodTruckId, foodTruckRequest, mainImageFile, subImageFileList);
         return foodTruckResponse;
     }
 
@@ -75,11 +76,10 @@ public class FoodTruckController {
      * FoodTruck 삭제
      */
     @DeleteMapping("/{foodTruckId}")
-    public FoodTruckResponse deleteFoodTruck(@PathVariable String foodTruckId) {
+    public void deleteFoodTruck(@PathVariable Long foodTruckId) {
         log.debug("Start : FoodTruckController : deleteFoodTruck");
         //TODO: 입력값 검증
-        //TODO: 삭제로직
-        FoodTruckResponse foodTruckResponse = new FoodTruckResponse();
-        return foodTruckResponse;
+        foodTruckService.deleteFoodTruck(foodTruckId);
+        return;
     }
 }
