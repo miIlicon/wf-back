@@ -45,7 +45,7 @@ public class FestivalEvent extends BaseTimeEntity {
     @Column(nullable = false)
     private Boolean festivalEventState;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "festivalEvent_admin_id", nullable = false)
     private Admin admin;
 

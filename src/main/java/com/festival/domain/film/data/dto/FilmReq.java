@@ -24,5 +24,5 @@ public class FilmReq {
     private String youtubeUrl;
 
     @NotNull(message = "상태를 입력해주세요.")
-    private String youtubeImg;
+    private String youtubeImgUrl;
 }
