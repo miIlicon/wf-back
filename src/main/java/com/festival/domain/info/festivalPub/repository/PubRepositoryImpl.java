@@ -50,7 +50,7 @@ public class PubRepositoryImpl implements PubRepositoryCustom {
     }
 
     @Override
-    public Page<Pub> findByIdPubsWithState(PubSearchCond cond, Pageable pageable) {
+    public Page<Pub> findByIdPubsWithState(SearchCond cond, Pageable pageable) {
         List<Pub> result = queryFactory
                 .selectFrom(pub)
                 .leftJoin(pub.pubImage, pubImage)
@@ -77,11 +77,7 @@ public class PubRepositoryImpl implements PubRepositoryCustom {
         return admin.id.eq(cond.getUserId());
     }
 
-    private static BooleanExpression adminIdEq(PubSearchCond cond) {
-        return admin.id.eq(cond.getUserId());
-    }
-
-    private static BooleanExpression stateEq(PubSearchCond cond) {
+    private static BooleanExpression stateEq(SearchCond cond) {
         return pub.pubState.eq(cond.getState());
     }
 }

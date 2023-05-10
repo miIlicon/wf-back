@@ -131,7 +131,7 @@ public class PubService {
     public Page<PubResponse> getPubsForState(Long adminId, int offset, Boolean state) {
 
         Pageable pageable = PageRequest.of(offset, 6);
-        PubSearchCond cond = new PubSearchCond(adminId, state);
+        SearchCond cond = new SearchCond(adminId, state);
 
         Page<Pub> findPubs = pubRepository.findByIdPubsWithState(cond, pageable);
         return findPubs.map(pub -> PubResponse.of(pub, filePath));

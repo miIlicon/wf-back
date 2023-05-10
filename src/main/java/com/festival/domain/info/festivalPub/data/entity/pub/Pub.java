@@ -3,7 +3,7 @@ package com.festival.domain.info.festivalPub.data.entity.pub;
 import com.festival.domain.admin.data.entity.Admin;
 import com.festival.domain.info.festivalPub.data.dto.request.PubRequest;
 import com.festival.domain.info.festivalPub.data.entity.file.PubImage;
-import com.festival.global.base.BaseTimeEntity;
+import com.festival.common.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

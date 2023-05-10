@@ -12,5 +12,5 @@ import java.util.List;
 public interface PubRepositoryCustom {
 
     Page<Pub> findByIdPubs(SearchCond cond, Pageable pageable);
-    Page<Pub> findByIdPubsWithState(PubSearchCond cond, Pageable pageable);
+    Page<Pub> findByIdPubsWithState(SearchCond cond, Pageable pageable);
 }

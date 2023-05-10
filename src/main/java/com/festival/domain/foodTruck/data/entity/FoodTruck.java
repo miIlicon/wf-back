@@ -2,7 +2,7 @@ package com.festival.domain.foodTruck.data.entity;
 
 import com.festival.domain.admin.data.entity.Admin;
 import com.festival.domain.foodTruck.data.dto.request.FoodTruckRequest;
-import com.festival.global.base.BaseTimeEntity;
+import com.festival.common.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
