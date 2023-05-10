@@ -1,5 +1,6 @@
 package com.festival.domain.info.festivalPub.service;
 
+import com.festival.common.vo.SearchCond;
 import com.festival.domain.admin.data.entity.Admin;
 import com.festival.domain.admin.exception.AdminException;
 import com.festival.domain.admin.exception.AdminNotMatchException;
@@ -117,12 +118,22 @@ public class PubService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PubResponse> getPubs(Long adminId, int offset, Boolean state) {
+    public Page<PubResponse> getPubs(Long adminId, int offset) {
+
+        Pageable pageable = PageRequest.of(offset, 6);
+        SearchCond cond = new SearchCond(adminId);
+
+        Page<Pub> findPubs = pubRepository.findByIdPubs(cond, pageable);
+        return findPubs.map(pub -> PubResponse.of(pub, filePath));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PubResponse> getPubsForState(Long adminId, int offset, Boolean state) {
 
         Pageable pageable = PageRequest.of(offset, 6);
         PubSearchCond cond = new PubSearchCond(adminId, state);
 
-        Page<Pub> findPubs = pubRepository.findByIdPubs(cond, pageable);
+        Page<Pub> findPubs = pubRepository.findByIdPubsWithState(cond, pageable);
         return findPubs.map(pub -> PubResponse.of(pub, filePath));
     }
 
