@@ -51,7 +51,7 @@ public class Pub extends BaseTimeEntity {
         this.longitude = longitude;
         this.pubState = pubState;
         this.admin = admin;
-        admin.addPub(this);
+        admin.getPubs().add(this);
     }
 
     public Pub(PubRequest pubRequest, Admin admin) {
@@ -62,7 +62,7 @@ public class Pub extends BaseTimeEntity {
         this.longitude = pubRequest.getLongitude();
         this.pubState = pubRequest.getPubState();
         this.admin = admin;
-        admin.addPub(this);
+        admin.getPubs().add(this);
     }
 
     public void connectPubImage(PubImage pubImage) {
