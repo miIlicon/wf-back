@@ -51,6 +51,7 @@ public class PubService {
 
         Pub pub = new Pub(pubRequest, admin);
         pubRepository.save(pub);
+        admin.addPub(pub);
 
         String mainFileName = utils.createStoreFileName(mainFile.getOriginalFilename());
         mainFile.transferTo(new File(filePath + mainFileName));
