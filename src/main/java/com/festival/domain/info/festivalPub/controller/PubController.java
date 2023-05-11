@@ -30,7 +30,7 @@ public class PubController {
 
     private final PubService pubService;
 
-    @PostMapping("/new")
+    @PostMapping("/pub")
     public ResponseEntity<PubResponse> createPub(@RequestPart("dto") @Valid PubRequest dto,
                                                  @RequestPart("main-file") @NotEmpty MultipartFile file, @RequestPart("sub-file") List<MultipartFile> files) throws IOException {
         return ResponseEntity.ok().body(pubService.create(1L, dto, file, files));
