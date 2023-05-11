@@ -1,5 +1,6 @@
 package com.festival.domain.info.festivalPub.service;
 
+import com.festival.common.utils.ImageServiceUtils;
 import com.festival.common.vo.SearchCond;
 import com.festival.domain.admin.data.entity.Admin;
 import com.festival.domain.admin.exception.AdminException;
@@ -27,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 
 @Slf4j
@@ -41,20 +41,10 @@ public class PubService {
 
     private final AdminRepository adminRepository;
     private final EntityManager em;
+    private final ImageServiceUtils utils;
 
     @Value("${file.path}")
     private String filePath;
-
-    private static String createStoreFileName(String originalFilename) {
-        String ext = extractExt(originalFilename);
-        String uuid = UUID.randomUUID().toString();
-        return uuid + "." + ext;
-    }
-
-    private static String extractExt(String originalFilename) {
-        int pos = originalFilename.lastIndexOf(".");
-        return originalFilename.substring(pos + 1);
-    }
 
     public PubResponse create(Long adminId, PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
 
@@ -64,7 +54,7 @@ public class PubService {
         pubRepository.save(pub);
         admin.addPub(pub);
 
-        String mainFileName = createStoreFileName(mainFile.getOriginalFilename());
+        String mainFileName = utils.createStoreFileName(mainFile.getOriginalFilename());
         mainFile.transferTo(new File(filePath + mainFileName));
         PubImage pubImage = new PubImage(mainFileName, pub);
         pubImageRepository.save(pubImage);
@@ -83,7 +73,7 @@ public class PubService {
         if (pub.getAdmin().equals(admin)) {
 
             PubImage pubImage = pub.getPubImage();
-            pubImage.modifyMainFilePath(filePath, createStoreFileName(mainFile.getOriginalFilename()), mainFile);
+            pubImage.modifyMainFilePath(filePath, utils.createStoreFileName(mainFile.getOriginalFilename()), mainFile);
 
             if (!subFiles.isEmpty()) {
                 List<String> list = saveSubImages(subFiles);
@@ -160,7 +150,7 @@ public class PubService {
 
         for (MultipartFile subFile : subFiles) {
             if (!subFile.isEmpty()) {
-                String savePath = createStoreFileName(subFile.getOriginalFilename());
+                String savePath = utils.createStoreFileName(subFile.getOriginalFilename());
                 subFilePaths.add(savePath);
                 subFile.transferTo(new File(filePath + savePath));
             }
