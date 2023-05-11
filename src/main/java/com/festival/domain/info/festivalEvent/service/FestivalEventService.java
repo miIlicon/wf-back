@@ -10,6 +10,7 @@ import com.festival.domain.info.festivalEvent.repository.FestivalEventImageRepos
 import com.festival.domain.info.festivalEvent.repository.FestivalEventRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +33,18 @@ public class FestivalEventService {
     private final FestivalEventRepository festivalEventRepository;
     private final FestivalEventImageRepository festivalEventImageRepository;
     private final EntityManager em;
+    @Value("${file.path}")
+    private String filePath;
     @Transactional
     public FestivalEventRes create(FestivalEventReq festivalEventReq, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
         Admin admin = adminRepository.findById(1L).orElse(null);
 
 
-        String mainFileName = createStoreFileName(mainFile.getOriginalFilename());
-        List<String> subFileNames = createSubFileNames(subFiles);
+        String mainFileName = saveMainFile(mainFile); // 메인 파일 저장
+        List<String> subFileNames = saveSubFiles(subFiles); // 서브 파일 저장
 
+
+        // 파일명으로 Entity생성 후 저장
         FestivalEventImage festivalEventImage = FestivalEventImage.of(mainFileName, subFileNames);
         festivalEventImageRepository.save(festivalEventImage);
 
@@ -49,14 +55,23 @@ public class FestivalEventService {
         return FestivalEventRes.of(festivalEvent);
     }
 
-    private List<String> createSubFileNames(List<MultipartFile> subFiles) {
+    private List<String> saveSubFiles(List<MultipartFile> subFiles) throws IOException {
         List<String> subFileNames = new ArrayList<>();
-
-        for(MultipartFile subFile: subFiles){
-            subFileNames.add(createStoreFileName(subFile.getOriginalFilename()));
+        for (MultipartFile subFile: subFiles){
+            String fileName = createStoreFileName(subFile.getOriginalFilename());
+            subFileNames.add(fileName);
+            subFile.transferTo(new File(filePath + fileName));
         }
         return subFileNames;
     }
+
+    private String saveMainFile(MultipartFile mainFile) throws IOException {
+        String fileName = createStoreFileName(mainFile.getOriginalFilename());
+        mainFile.transferTo(new File(filePath + fileName));
+
+        return fileName;
+    }
+
 
     public FestivalEventRes find(Long festivalEventId) {
         FestivalEvent festivalEvent = festivalEventRepository.findById(festivalEventId).orElse(null);
@@ -72,15 +87,16 @@ public class FestivalEventService {
     }
 
     @Transactional
-    public FestivalEventRes modify(Long festivalEventId, FestivalEventReq festivalEventReq, MultipartFile mainFile, List<MultipartFile> subFiles) {
+    public FestivalEventRes modify(Long festivalEventId, FestivalEventReq festivalEventReq, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
         FestivalEvent festivalEvent = festivalEventRepository.findById(festivalEventId).orElse(null);
         FestivalEventImage festivalEventImage = festivalEvent.getFestivalEventImage();
 
-        String mainFileName = createStoreFileName(mainFile.getOriginalFilename());
-        List<String> subFileNames = createSubFileNames(subFiles);
-
-        festivalEventImage.modify(mainFileName, subFileNames);
         festivalEvent.modify(festivalEventReq);
+        festivalEventImage.deleteOriginalFile(filePath);
+
+        String mainFileName = saveMainFile(mainFile); // 메인 파일 저장
+        List<String> subFileNames = saveSubFiles(subFiles); // 서브 파일 저장
+        festivalEventImage.modify(mainFileName, subFileNames);
 
         return FestivalEventRes.of(festivalEvent);
     }
@@ -99,7 +115,8 @@ public class FestivalEventService {
     @Transactional
     public void delete(Long festivalEventId) {
         FestivalEvent festivalEvent = festivalEventRepository.findById(festivalEventId).orElse(null);
-
+        FestivalEventImage festivalEventImage = festivalEvent.getFestivalEventImage();
+        festivalEventImage.deleteOriginalFile(filePath);
         festivalEventRepository.delete(festivalEvent);
 
     }

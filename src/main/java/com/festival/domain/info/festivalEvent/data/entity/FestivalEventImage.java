@@ -3,6 +3,7 @@ package com.festival.domain.info.festivalEvent.data.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,5 +44,11 @@ public class FestivalEventImage {
         this.mainFileName = mainFilePath;
         this.subFileNames = subFileNames;
         System.out.println("modify fileNames" + getSubFileNames());
+    }
+
+    public void deleteOriginalFile(String filePath) {
+        new File(filePath + this.mainFileName).delete();
+        for(String subFileName: this.subFileNames)
+            new File(filePath + subFileName).delete();
     }
 }
