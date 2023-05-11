@@ -27,7 +27,7 @@ public class PubResponse {
 
     private LocalDateTime modifiedDate;
 
-    private String filePath;
+    private String mainFilePath;
 
     private List<String> subFilePath;
 
@@ -39,14 +39,14 @@ public class PubResponse {
 
     @Builder
     @QueryProjection
-    public PubResponse(Long pubId, String title, String subTitle, String content, LocalDateTime createdDate, LocalDateTime modifiedDate, String filePath, List<String> subFilePath, int latitude, int longitude, Boolean pubState) {
+    public PubResponse(Long pubId, String title, String subTitle, String content, LocalDateTime createdDate, LocalDateTime modifiedDate, String mainFilePath, List<String> subFilePath, int latitude, int longitude, Boolean pubState) {
         this.pubId = pubId;
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
-        this.filePath = filePath;
+        this.mainFilePath = mainFilePath;
         this.subFilePath = subFilePath;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -54,9 +54,9 @@ public class PubResponse {
     }
 
     public static PubResponse of(final Pub pub, String filePath) {
-        if (!pub.getPubImage().getSubFilePaths().isEmpty()) {
+        if (!pub.getPubImage().getSubFileNames().isEmpty()) {
             List<String> list = new ArrayList<>();
-            for (String subFilePath: pub.getPubImage().getSubFilePaths()) {
+            for (String subFilePath: pub.getPubImage().getSubFileNames()) {
                 list.add(filePath + subFilePath);
             }
             return PubResponse.builder()
@@ -66,7 +66,7 @@ public class PubResponse {
                     .content(pub.getContent())
                     .createdDate(pub.getCreatedDate())
                     .modifiedDate(pub.getModifiedDate())
-                    .filePath(pub.getPubImage().getMainFilePath())
+                    .mainFilePath(filePath + pub.getPubImage().getMainFileName())
                     .subFilePath(list)
                     .latitude(pub.getLatitude())
                     .longitude(pub.getLongitude())
@@ -79,7 +79,7 @@ public class PubResponse {
                     .content(pub.getContent())
                     .createdDate(pub.getCreatedDate())
                     .modifiedDate(pub.getModifiedDate())
-                    .filePath(pub.getPubImage().getMainFilePath())
+                    .mainFilePath(filePath + pub.getPubImage().getMainFileName())
                     .latitude(pub.getLatitude())
                     .longitude(pub.getLongitude())
                     .pubState(pub.getPubState())

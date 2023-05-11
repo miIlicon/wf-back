@@ -1,5 +1,6 @@
 package com.festival.domain.info.festivalPub.service;
 
+import com.festival.common.utils.ImageServiceUtils;
 import com.festival.common.vo.SearchCond;
 import com.festival.domain.admin.data.entity.Admin;
 import com.festival.domain.admin.exception.AdminException;
@@ -25,9 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 
 @Slf4j
@@ -41,20 +40,10 @@ public class PubService {
 
     private final AdminRepository adminRepository;
     private final EntityManager em;
+    private final ImageServiceUtils utils;
 
     @Value("${file.path}")
     private String filePath;
-
-    private static String createStoreFileName(String originalFilename) {
-        String ext = extractExt(originalFilename);
-        String uuid = UUID.randomUUID().toString();
-        return uuid + "." + ext;
-    }
-
-    private static String extractExt(String originalFilename) {
-        int pos = originalFilename.lastIndexOf(".");
-        return originalFilename.substring(pos + 1);
-    }
 
     public PubResponse create(Long adminId, PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
 
@@ -64,7 +53,7 @@ public class PubService {
         pubRepository.save(pub);
         admin.addPub(pub);
 
-        String mainFileName = createStoreFileName(mainFile.getOriginalFilename());
+        String mainFileName = utils.createStoreFileName(mainFile.getOriginalFilename());
         mainFile.transferTo(new File(filePath + mainFileName));
         PubImage pubImage = new PubImage(mainFileName, pub);
         pubImageRepository.save(pubImage);
@@ -83,11 +72,11 @@ public class PubService {
         if (pub.getAdmin().equals(admin)) {
 
             PubImage pubImage = pub.getPubImage();
-            pubImage.modifyMainFilePath(filePath, createStoreFileName(mainFile.getOriginalFilename()), mainFile);
+            pubImage.modifyMainFileName(filePath, utils.createStoreFileName(mainFile.getOriginalFilename()), mainFile);
 
             if (!subFiles.isEmpty()) {
-                List<String> list = saveSubImages(subFiles);
-                pubImage.modifySubFilePaths(list);
+                List<String> list = utils.saveSubImages(filePath, subFiles);
+                pubImage.modifySubFileNames(filePath, list);
             }
             pub.modify(pubRequest);
 
@@ -106,7 +95,10 @@ public class PubService {
         Pub pub = pubRepository.findById(pubId).orElseThrow(() -> new PubNotFoundException("주점을 찾을 수 없습니다."));
 
         if (pub.getAdmin().equals(admin)) {
+
+            pub.getPubImage().deleteFile(filePath);
             pubRepository.delete(pub);
+
             return PubResponse.of(pub, filePath);
         } else {
             throw new AdminNotMatchException("권한이 없습니다.");
@@ -147,21 +139,7 @@ public class PubService {
     }
 
     private void saveSubFiles(List<MultipartFile> subFiles, PubImage pubImage) throws IOException {
-        List<String> subFilePaths = saveSubImages(subFiles);
-        pubImage.saveSubFilePaths(subFilePaths);
-    }
-
-    private List<String> saveSubImages(List<MultipartFile> subFiles) throws IOException {
-
-        List<String> subFilePaths = new ArrayList<>();
-
-        for (MultipartFile subFile : subFiles) {
-            if (!subFile.isEmpty()) {
-                String savePath = createStoreFileName(subFile.getOriginalFilename());
-                subFilePaths.add(savePath);
-                subFile.transferTo(new File(filePath + savePath));
-            }
-        }
-        return subFilePaths;
+        List<String> subFilePaths = utils.saveSubImages(filePath, subFiles);
+        pubImage.saveSubFileNames(subFilePaths);
     }
 }
