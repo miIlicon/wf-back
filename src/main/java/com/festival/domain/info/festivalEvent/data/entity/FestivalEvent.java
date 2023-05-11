@@ -79,4 +79,5 @@ public class FestivalEvent extends BaseTimeEntity {
         this.longitude = festivalEventReq.getLongitude();
 
     }
+
 }

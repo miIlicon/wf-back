@@ -39,7 +39,7 @@ public class FestivalEventController {
         return ResponseEntity.ok().body(festivalEventService.list(1L, offset, state));
     }
     @PutMapping("/festivalEvent")
-    public void modifyFestivalEvent(@RequestParam("id") Long festivalEventId, @RequestPart("dto") @Valid FestivalEventReq festivalEventReq, @RequestPart("main-file") @NotEmpty MultipartFile mainFile, @RequestPart("sub-file") List<MultipartFile> subFiles){
+    public void modifyFestivalEvent(@RequestParam("id") Long festivalEventId, @RequestPart("dto") @Valid FestivalEventReq festivalEventReq, @RequestPart("main-file") @NotEmpty MultipartFile mainFile, @RequestPart("sub-file") List<MultipartFile> subFiles) throws IOException {
         festivalEventService.modify(festivalEventId, festivalEventReq, mainFile, subFiles);
     }
 
