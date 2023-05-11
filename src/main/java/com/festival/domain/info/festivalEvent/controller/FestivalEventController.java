@@ -30,12 +30,21 @@ public class FestivalEventController {
         FestivalEventRes festivalEventRes = festivalEventService.create(festivalEventReq, mainFile, subFiles);
 
     }
-    @GetMapping("/festivalEvent/{id}")
-    public ResponseEntity<FestivalEventRes> findFestivalEvent(@PathVariable("id") Long festivalEventId){
+    @GetMapping("/festivalEvent")
+    public ResponseEntity<FestivalEventRes> findFestivalEvent(@RequestParam("id") Long festivalEventId){
         return ResponseEntity.ok().body(festivalEventService.find(festivalEventId));
     }
     @GetMapping("/festivalEvent/list")
     public ResponseEntity<Page<FestivalEventRes>> findFestivalEventList(@RequestParam("page") int offset, @RequestParam("state") Boolean state){
         return ResponseEntity.ok().body(festivalEventService.list(1L, offset, state));
+    }
+    @PutMapping("/festivalEvent")
+    public void modifyFestivalEvent(@RequestParam("id") Long festivalEventId, @RequestPart("dto") @Valid FestivalEventReq festivalEventReq, @RequestPart("main-file") @NotEmpty MultipartFile mainFile, @RequestPart("sub-file") List<MultipartFile> subFiles){
+        festivalEventService.modify(festivalEventId, festivalEventReq, mainFile, subFiles);
+    }
+
+    @DeleteMapping("/festivalEvent")
+    public void deleteFestivalEvent(@RequestParam("id") Long festivalEventId){
+        festivalEventService.delete(festivalEventId);
     }
 }
