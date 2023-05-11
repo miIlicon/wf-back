@@ -59,7 +59,7 @@ public class PubService {
         pubImageRepository.save(pubImage);
 
         saveSubFiles(subFiles, pubImage);
-        pub.setPubImage(pubImage);
+        pub.connectPubImage(pubImage);
 
         return PubResponse.of(pub, filePath);
     }
