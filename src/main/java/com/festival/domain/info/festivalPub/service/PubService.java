@@ -87,7 +87,7 @@ public class PubService {
 
             if (!subFiles.isEmpty()) {
                 List<String> list = saveSubImages(subFiles);
-                pubImage.modifySubFilePaths(list);
+                pubImage.modifySubFilePaths(filePath, list);
             }
             pub.modify(pubRequest);
 
@@ -106,7 +106,10 @@ public class PubService {
         Pub pub = pubRepository.findById(pubId).orElseThrow(() -> new PubNotFoundException("주점을 찾을 수 없습니다."));
 
         if (pub.getAdmin().equals(admin)) {
+
+            pub.getPubImage().delete(filePath);
             pubRepository.delete(pub);
+
             return PubResponse.of(pub, filePath);
         } else {
             throw new AdminNotMatchException("권한이 없습니다.");

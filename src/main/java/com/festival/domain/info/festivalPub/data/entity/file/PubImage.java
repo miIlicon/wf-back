@@ -38,16 +38,33 @@ public class PubImage {
         this.subFilePaths = subFilePath;
     }
 
-    public void modifySubFilePaths(List<String> subFilePath) {
+    public void modifySubFilePaths(String filePath, List<String> subFilePath) {
+        boolean delete = false;
         for (String subFile : this.subFilePaths) {
-            new File(subFile).delete();
+            File file = new File(filePath + subFile);
+            delete = file.delete();
         }
-        this.subFilePaths = subFilePath;
+        if (delete) {
+            this.subFilePaths = subFilePath;
+        }
     }
 
     public void modifyMainFilePath(String filePath, String mainFilePath, MultipartFile mainFile) throws IOException {
-        new File(filePath + mainFilePath).delete();
-        this.mainFilePath = mainFilePath;
-        mainFile.transferTo(new File(filePath + mainFilePath));
+        boolean delete;
+        File file = new File(filePath + mainFilePath);
+        delete = file.delete();
+        if (delete) {
+            this.mainFilePath = mainFilePath;
+            mainFile.transferTo(new File(filePath + mainFilePath));
+        }
+    }
+
+    public void delete(String filePath) {
+        for (String subFile : this.subFilePaths) {
+            File file = new File(filePath + subFile);
+            file.delete();
+        }
+        File file = new File(filePath + mainFilePath);
+        file.delete();
     }
 }
