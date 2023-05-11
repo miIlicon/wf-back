@@ -30,15 +30,16 @@ public class GlobalExceptionAdvice {
         return ResponseEntity.status(errorCode.getStatus()).body(errorResponse);
     }
 
-    @ExceptionHandler({PubNotFoundException.class, FestivalEventNotFoundException.class})
-    public ResponseEntity<ErrorResponse> EntityNotFoundHandleException(PubNotFoundException e) {
+    @ExceptionHandler({PubNotFoundException.class})
+    public ResponseEntity<ErrorResponse> PubNotFoundHandleException(PubNotFoundException e) {
         ErrorCode errorCode = e.getErrorCode();
         log.error("[exceptionHandle] ex", e);
         ErrorResponse errorResponse = new ErrorResponse(errorCode.getCode(), e.getMessage());
         return ResponseEntity.status(errorCode.getStatus()).body(errorResponse);
     }
-    @ExceptionHandler({FestivalEventImageNotFoundException.class})
-    public ResponseEntity<ErrorResponse> ImageNotFoundHandleException(PubNotFoundException e) {
+
+    @ExceptionHandler({FestivalEventNotFoundException.class})
+    public ResponseEntity<ErrorResponse> FestivalEventNotFoundHandleException(FestivalEventNotFoundException e) {
         ErrorCode errorCode = e.getErrorCode();
         log.error("[exceptionHandle] ex", e);
         ErrorResponse errorResponse = new ErrorResponse(errorCode.getCode(), e.getMessage());

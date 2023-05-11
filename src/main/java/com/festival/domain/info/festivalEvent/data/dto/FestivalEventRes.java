@@ -67,7 +67,7 @@ public class FestivalEventRes {
                 .createdDate(festivalEvent.getCreatedDate())
                 .modifiedDate(festivalEvent.getModifiedDate())
                 .mainFilePath(festivalEvent.getFestivalEventImage().getMainFileName())
-                .subFilePaths(festivalEvent.getFestivalEventImage().getSubFileNames())
+                .subFilePaths(list)
                 .latitude(festivalEvent.getLatitude())
                 .longitude(festivalEvent.getLongitude())
                 .festivalEventState(festivalEvent.getFestivalEventState())
