@@ -29,8 +29,7 @@ public class FestivalEventImage {
     @Builder
     public FestivalEventImage(String mainFileName, List<String> subFileNames) throws IOException {
         this.mainFileName = mainFileName;
-        for(String subFileName: subFileNames)
-            this.subFileNames.add(subFileName);
+        this.subFileNames = subFileNames;
     }
     public static FestivalEventImage of(String mainFileName, List<String> subFileNames) throws IOException {
         return FestivalEventImage.builder()
@@ -40,10 +39,8 @@ public class FestivalEventImage {
     }
 
     public void modify(String mainFilePath, List<String> subFileNames) {
-        System.out.println("orginal fileNames: " + getSubFileNames());
         this.mainFileName = mainFilePath;
         this.subFileNames = subFileNames;
-        System.out.println("modify fileNames" + getSubFileNames());
     }
 
     public void deleteOriginalFile(String filePath) {

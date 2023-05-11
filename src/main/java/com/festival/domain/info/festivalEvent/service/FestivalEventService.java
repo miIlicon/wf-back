@@ -33,6 +33,7 @@ public class FestivalEventService {
     private final FestivalEventRepository festivalEventRepository;
     private final FestivalEventImageRepository festivalEventImageRepository;
     private final EntityManager em;
+
     @Value("${file.path}")
     private String filePath;
     @Transactional
@@ -52,37 +53,19 @@ public class FestivalEventService {
         festivalEventRepository.save(festivalEvent);
 
 
-        return FestivalEventRes.of(festivalEvent);
+        return FestivalEventRes.of(festivalEvent, filePath);
     }
-
-    private List<String> saveSubFiles(List<MultipartFile> subFiles) throws IOException {
-        List<String> subFileNames = new ArrayList<>();
-        for (MultipartFile subFile: subFiles){
-            String fileName = createStoreFileName(subFile.getOriginalFilename());
-            subFileNames.add(fileName);
-            subFile.transferTo(new File(filePath + fileName));
-        }
-        return subFileNames;
-    }
-
-    private String saveMainFile(MultipartFile mainFile) throws IOException {
-        String fileName = createStoreFileName(mainFile.getOriginalFilename());
-        mainFile.transferTo(new File(filePath + fileName));
-
-        return fileName;
-    }
-
 
     public FestivalEventRes find(Long festivalEventId) {
         FestivalEvent festivalEvent = festivalEventRepository.findById(festivalEventId).orElse(null);
-        return FestivalEventRes.of(festivalEvent);
+        return FestivalEventRes.of(festivalEvent, filePath);
 
     }
     public Page<FestivalEventRes> list(long l, int offset, Boolean state) {
 
         Pageable pageable = PageRequest.of(offset, 6);
         Page<FestivalEvent> festivalEvents = festivalEventRepository.findByAdminIdAndFestivalEventState(1L, true, pageable);
-        return festivalEvents.map(FestivalEventRes::of);
+        return festivalEvents.map(festivalEvent -> FestivalEventRes.of(festivalEvent, filePath));
 
     }
 
@@ -98,9 +81,36 @@ public class FestivalEventService {
         List<String> subFileNames = saveSubFiles(subFiles); // 서브 파일 저장
         festivalEventImage.modify(mainFileName, subFileNames);
 
-        return FestivalEventRes.of(festivalEvent);
+        return FestivalEventRes.of(festivalEvent, filePath);
     }
 
+    @Transactional
+    public FestivalEventRes delete(Long festivalEventId) {
+        FestivalEvent festivalEvent = festivalEventRepository.findById(festivalEventId).orElse(null);
+        FestivalEventImage festivalEventImage = festivalEvent.getFestivalEventImage();
+        festivalEventImage.deleteOriginalFile(filePath);
+        festivalEventRepository.delete(festivalEvent);
+
+        return FestivalEventRes.of(festivalEvent, filePath);
+
+    }
+
+    private String saveMainFile(MultipartFile mainFile) throws IOException {
+        String fileName = createStoreFileName(mainFile.getOriginalFilename());
+        mainFile.transferTo(new File(filePath + fileName));
+
+        return fileName;
+    }
+
+    private List<String> saveSubFiles(List<MultipartFile> subFiles) throws IOException {
+        List<String> subFileNames = new ArrayList<>();
+        for (MultipartFile subFile: subFiles){
+            String fileName = createStoreFileName(subFile.getOriginalFilename());
+            subFileNames.add(fileName);
+            subFile.transferTo(new File(filePath + fileName));
+        }
+        return subFileNames;
+    }
     private static String createStoreFileName(String originalFilename) {
         String ext = extractExt(originalFilename);
         String uuid = UUID.randomUUID().toString();
@@ -112,12 +122,5 @@ public class FestivalEventService {
         return originalFilename.substring(pos + 1);
     }
 
-    @Transactional
-    public void delete(Long festivalEventId) {
-        FestivalEvent festivalEvent = festivalEventRepository.findById(festivalEventId).orElse(null);
-        FestivalEventImage festivalEventImage = festivalEvent.getFestivalEventImage();
-        festivalEventImage.deleteOriginalFile(filePath);
-        festivalEventRepository.delete(festivalEvent);
 
-    }
 }

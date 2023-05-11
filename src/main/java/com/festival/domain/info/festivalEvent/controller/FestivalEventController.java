@@ -25,10 +25,11 @@ public class FestivalEventController {
 
     private final FestivalEventService festivalEventService;
     @PostMapping("/festivalEvent")
-    public void createFestivalEvent(@RequestPart("dto") @Valid FestivalEventReq festivalEventReq, @RequestPart("main-file") @NotEmpty MultipartFile mainFile, @RequestPart("sub-file") List<MultipartFile> subFiles) throws IOException {
+    public ResponseEntity<FestivalEventRes> createFestivalEvent(@RequestPart("dto") @Valid FestivalEventReq festivalEventReq, @RequestPart("main-file") @NotEmpty MultipartFile mainFile, @RequestPart("sub-file") List<MultipartFile> subFiles) throws IOException {
 
         FestivalEventRes festivalEventRes = festivalEventService.create(festivalEventReq, mainFile, subFiles);
 
+        return ResponseEntity.ok().body(festivalEventRes);
     }
     @GetMapping("/festivalEvent")
     public ResponseEntity<FestivalEventRes> findFestivalEvent(@RequestParam("id") Long festivalEventId){
@@ -39,8 +40,9 @@ public class FestivalEventController {
         return ResponseEntity.ok().body(festivalEventService.list(1L, offset, state));
     }
     @PutMapping("/festivalEvent")
-    public void modifyFestivalEvent(@RequestParam("id") Long festivalEventId, @RequestPart("dto") @Valid FestivalEventReq festivalEventReq, @RequestPart("main-file") @NotEmpty MultipartFile mainFile, @RequestPart("sub-file") List<MultipartFile> subFiles) throws IOException {
-        festivalEventService.modify(festivalEventId, festivalEventReq, mainFile, subFiles);
+    public ResponseEntity<FestivalEventRes> modifyFestivalEvent(@RequestParam("id") Long festivalEventId, @RequestPart("dto") @Valid FestivalEventReq festivalEventReq, @RequestPart("main-file") @NotEmpty MultipartFile mainFile, @RequestPart("sub-file") List<MultipartFile> subFiles) throws IOException {
+        FestivalEventRes modifyResult = festivalEventService.modify(festivalEventId, festivalEventReq, mainFile, subFiles);
+        return ResponseEntity.ok().body(modifyResult);
     }
 
     @DeleteMapping("/festivalEvent")
