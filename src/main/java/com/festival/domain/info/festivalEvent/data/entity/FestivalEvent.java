@@ -69,4 +69,14 @@ public class FestivalEvent extends BaseTimeEntity {
                 .admin(admin)
                 .build();
     }
+
+    public void modify(FestivalEventReq festivalEventReq) {
+        this.title = festivalEventReq.getTitle();
+        this.subTitle = festivalEventReq.getSubTitle();
+        this.content = festivalEventReq.getContent();
+        this.festivalEventState = festivalEventReq.getFestivalEventState();
+        this.latitude = festivalEventReq.getLatitude();
+        this.longitude = festivalEventReq.getLongitude();
+
+    }
 }
