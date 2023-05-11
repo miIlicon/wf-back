@@ -15,8 +15,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PubResponse {
 
-    private Long pubId;
-
     private String title;
 
     private String subTitle;
@@ -39,8 +37,7 @@ public class PubResponse {
 
     @Builder
     @QueryProjection
-    public PubResponse(Long pubId, String title, String subTitle, String content, LocalDateTime createdDate, LocalDateTime modifiedDate, String mainFilePath, List<String> subFilePath, int latitude, int longitude, Boolean pubState) {
-        this.pubId = pubId;
+    public PubResponse(String title, String subTitle, String content, LocalDateTime createdDate, LocalDateTime modifiedDate, String mainFilePath, List<String> subFilePath, int latitude, int longitude, Boolean pubState) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
@@ -60,7 +57,6 @@ public class PubResponse {
                 list.add(filePath + subFilePath);
             }
             return PubResponse.builder()
-                    .pubId(pub.getId())
                     .title(pub.getTitle())
                     .subTitle(pub.getSubTitle())
                     .content(pub.getContent())
@@ -74,7 +70,6 @@ public class PubResponse {
                     .build();
         } else {
             return PubResponse.builder()
-                    .pubId(pub.getId())
                     .title(pub.getTitle())
                     .content(pub.getContent())
                     .createdDate(pub.getCreatedDate())
