@@ -26,7 +26,8 @@ public class PubImage {
     @Column(name = "file_name")
     private List<String> subFileNames = new ArrayList<>();
 
-    @OneToOne(mappedBy = "pubImage", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "pub_id")
     private Pub pub;
 
     public PubImage(String mainFilePath, Pub pub) {

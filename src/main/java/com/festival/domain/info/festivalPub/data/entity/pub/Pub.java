@@ -27,8 +27,7 @@ public class Pub extends BaseTimeEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "pub_image_id")
+    @OneToOne(mappedBy = "pub", fetch = FetchType.LAZY)
     private PubImage pubImage;
 
     @Column(name = "latitude", nullable = false) // 위도
