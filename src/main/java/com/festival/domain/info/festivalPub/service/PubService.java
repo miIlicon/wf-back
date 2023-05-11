@@ -72,11 +72,11 @@ public class PubService {
         if (pub.getAdmin().equals(admin)) {
 
             PubImage pubImage = pub.getPubImage();
-            pubImage.modifyMainFilePath(filePath, utils.createStoreFileName(mainFile.getOriginalFilename()), mainFile);
+            pubImage.modifyMainFileName(filePath, utils.createStoreFileName(mainFile.getOriginalFilename()), mainFile);
 
             if (!subFiles.isEmpty()) {
                 List<String> list = utils.saveSubImages(filePath, subFiles);
-                pubImage.modifySubFilePaths(filePath, list);
+                pubImage.modifySubFileNames(filePath, list);
             }
             pub.modify(pubRequest);
 
@@ -96,7 +96,7 @@ public class PubService {
 
         if (pub.getAdmin().equals(admin)) {
 
-            pub.getPubImage().delete(filePath);
+            pub.getPubImage().deleteFile(filePath);
             pubRepository.delete(pub);
 
             return PubResponse.of(pub, filePath);
@@ -140,6 +140,6 @@ public class PubService {
 
     private void saveSubFiles(List<MultipartFile> subFiles, PubImage pubImage) throws IOException {
         List<String> subFilePaths = utils.saveSubImages(filePath, subFiles);
-        pubImage.saveSubFilePaths(subFilePaths);
+        pubImage.saveSubFileNames(subFilePaths);
     }
 }
