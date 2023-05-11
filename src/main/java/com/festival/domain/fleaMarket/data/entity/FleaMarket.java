@@ -25,8 +25,7 @@ public class FleaMarket extends BaseTimeEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "market_image_id")
+    @OneToOne(mappedBy = "fleaMarket", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private FleaMarketImage marketImage;
 
     @Column(name = "latitude", nullable = false) // 위도

@@ -49,16 +49,16 @@ public class PubService {
 
         Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminException("관리자를 찾을 수 없습니다."));
 
-        Pub pub = new Pub(pubRequest, admin);
+        Pub pub = new Pub(pubRequest);
         pubRepository.save(pub);
-        admin.addPub(pub);
 
-        String mainFileName = utils.createStoreFileName(mainFile.getOriginalFilename());
-        mainFile.transferTo(new File(filePath + mainFileName));
+        String mainFileName = saveMainFile(mainFile);
         PubImage pubImage = new PubImage(mainFileName, pub);
         pubImageRepository.save(pubImage);
 
         saveSubFiles(subFiles, pubImage);
+
+        pub.connectAdmin(admin);
         pub.connectPubImage(pubImage);
 
         return PubResponse.of(pub, filePath);
@@ -136,6 +136,12 @@ public class PubService {
 
         Page<Pub> findPubs = pubRepository.findByIdPubsWithState(cond, pageable);
         return findPubs.map(pub -> PubResponse.of(pub, filePath));
+    }
+
+    private String saveMainFile(MultipartFile mainFile) throws IOException {
+        String mainFileName = utils.createStoreFileName(mainFile.getOriginalFilename());
+        mainFile.transferTo(new File(filePath + mainFileName));
+        return mainFileName;
     }
 
     private void saveSubFiles(List<MultipartFile> subFiles, PubImage pubImage) throws IOException {

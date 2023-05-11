@@ -27,8 +27,7 @@ public class Pub extends BaseTimeEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "pub_image_id")
+    @OneToOne(mappedBy = "pub", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private PubImage pubImage;
 
     @Column(name = "latitude", nullable = false) // 위도
@@ -44,24 +43,27 @@ public class Pub extends BaseTimeEntity {
     @JoinColumn(name = "admin_id", nullable = false)
     private Admin admin;
 
-    public Pub(String title, String subTitle, String content, int latitude, int longitude, Boolean pubState, Admin admin) {
+    public Pub(String title, String subTitle, String content, int latitude, int longitude, Boolean pubState) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
         this.latitude = latitude;
         this.longitude = longitude;
         this.pubState = pubState;
-        this.admin = admin;
     }
 
-    public Pub(PubRequest pubRequest, Admin admin) {
+    public Pub(PubRequest pubRequest) {
         this.title = pubRequest.getTitle();
         this.subTitle = pubRequest.getSubTitle();
         this.content = pubRequest.getContent();
         this.latitude = pubRequest.getLatitude();
         this.longitude = pubRequest.getLongitude();
         this.pubState = pubRequest.getPubState();
+    }
+
+    public void connectAdmin(Admin admin) {
         this.admin = admin;
+        admin.getPubs().add(this);
     }
 
     public void connectPubImage(PubImage pubImage) {

@@ -23,8 +23,4 @@ public class Admin {
 
     @OneToMany(mappedBy = "admin")
     private List<FoodTruck> foodTruckList = new ArrayList<>();
-
-    public void addPub(Pub pub) {
-        this.pubs.add(pub);
-    }
 }
