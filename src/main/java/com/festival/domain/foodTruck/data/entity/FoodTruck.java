@@ -1,8 +1,8 @@
 package com.festival.domain.foodTruck.data.entity;
 
+import com.festival.common.base.BaseTimeEntity;
 import com.festival.domain.admin.data.entity.Admin;
 import com.festival.domain.foodTruck.data.dto.request.FoodTruckRequest;
-import com.festival.common.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -56,4 +56,12 @@ public class FoodTruck extends BaseTimeEntity {
                 .build();
     }
 
+    public void modify(FoodTruckRequest foodTruckRequest) {
+        this.title = foodTruckRequest.getTitle();
+        this.subTitle = foodTruckRequest.getSubTitle();
+        this.content = foodTruckRequest.getContent();
+        this.latitude = foodTruckRequest.getLatitude();
+        this.longitude = foodTruckRequest.getLongitude();
+        this.foodTruckState = foodTruckRequest.getFoodTruckState();
+    }
 }

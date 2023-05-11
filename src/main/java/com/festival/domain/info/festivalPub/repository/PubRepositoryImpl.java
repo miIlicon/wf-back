@@ -1,9 +1,6 @@
 package com.festival.domain.info.festivalPub.repository;
 
 import com.festival.common.vo.SearchCond;
-import com.festival.domain.info.festivalPub.data.dto.request.PubSearchCond;
-import com.festival.domain.info.festivalPub.data.dto.response.PubResponse;
-import com.festival.domain.info.festivalPub.data.dto.response.QPubResponse;
 import com.festival.domain.info.festivalPub.data.entity.pub.Pub;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -15,9 +12,9 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
-import static com.festival.domain.admin.data.entity.QAdmin.*;
-import static com.festival.domain.info.festivalPub.data.entity.file.QPubImage.*;
-import static com.festival.domain.info.festivalPub.data.entity.pub.QPub.*;
+import static com.festival.domain.admin.data.entity.QAdmin.admin;
+import static com.festival.domain.info.festivalPub.data.entity.file.QPubImage.pubImage;
+import static com.festival.domain.info.festivalPub.data.entity.pub.QPub.pub;
 
 public class PubRepositoryImpl implements PubRepositoryCustom {
 
@@ -25,6 +22,14 @@ public class PubRepositoryImpl implements PubRepositoryCustom {
 
     public PubRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
+    }
+
+    private static BooleanExpression adminIdEq(SearchCond cond) {
+        return admin.id.eq(cond.getUserId());
+    }
+
+    private static BooleanExpression stateEq(SearchCond cond) {
+        return pub.pubState.eq(cond.getState());
     }
 
     @Override
@@ -71,13 +76,5 @@ public class PubRepositoryImpl implements PubRepositoryCustom {
                         stateEq(cond));
 
         return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
-    }
-
-    private static BooleanExpression adminIdEq(SearchCond cond) {
-        return admin.id.eq(cond.getUserId());
-    }
-
-    private static BooleanExpression stateEq(SearchCond cond) {
-        return pub.pubState.eq(cond.getState());
     }
 }
