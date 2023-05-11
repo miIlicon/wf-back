@@ -25,7 +25,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/pubs")
+@RequestMapping("/api/v1/pubs")
 public class PubController {
 
     private final PubService pubService;
