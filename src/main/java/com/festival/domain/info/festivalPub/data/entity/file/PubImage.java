@@ -39,24 +39,19 @@ public class PubImage {
     }
 
     public void modifySubFileNames(String filePath, List<String> subFilePath) {
-        boolean delete = false;
         for (String subFile : this.subFileNames) {
             File file = new File(filePath + subFile);
-            delete = file.delete();
+            file.delete();
         }
-        if (delete) {
-            this.subFileNames = subFilePath;
-        }
+        this.subFileNames = subFilePath;
     }
 
     public void modifyMainFileName(String filePath, String mainFilePath, MultipartFile mainFile) throws IOException {
-        boolean delete;
-        File file = new File(filePath + mainFilePath);
-        delete = file.delete();
-        if (delete) {
-            this.mainFileName = mainFilePath;
-            mainFile.transferTo(new File(filePath + mainFilePath));
-        }
+        File file = new File(filePath + this.mainFileName);
+        file.delete();
+
+        this.mainFileName = mainFilePath;
+        mainFile.transferTo(new File(filePath + mainFilePath));
     }
 
     public void deleteFile(String filePath) {
@@ -64,7 +59,7 @@ public class PubImage {
             File file = new File(filePath + subFile);
             file.delete();
         }
-        File file = new File(filePath + mainFileName);
+        File file = new File(filePath + this.mainFileName);
         file.delete();
     }
 }
