@@ -25,7 +25,8 @@ public class FleaMarketImage {
     @Column(name = "file_name")
     private List<String> subFileNames = new ArrayList<>();
 
-    @OneToOne(mappedBy = "marketImage", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "market_image_id")
     private FleaMarket fleaMarket;
 
     public FleaMarketImage(String mainFilePath, FleaMarket fleaMarket) {
