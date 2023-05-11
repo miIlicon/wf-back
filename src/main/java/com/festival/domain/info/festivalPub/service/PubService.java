@@ -26,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -76,7 +75,7 @@ public class PubService {
             pubImage.modifyMainFilePath(filePath, utils.createStoreFileName(mainFile.getOriginalFilename()), mainFile);
 
             if (!subFiles.isEmpty()) {
-                List<String> list = saveSubImages(subFiles);
+                List<String> list = utils.saveSubImages(filePath, subFiles);
                 pubImage.modifySubFilePaths(filePath, list);
             }
             pub.modify(pubRequest);
@@ -140,21 +139,7 @@ public class PubService {
     }
 
     private void saveSubFiles(List<MultipartFile> subFiles, PubImage pubImage) throws IOException {
-        List<String> subFilePaths = saveSubImages(subFiles);
+        List<String> subFilePaths = utils.saveSubImages(filePath, subFiles);
         pubImage.saveSubFilePaths(subFilePaths);
-    }
-
-    private List<String> saveSubImages(List<MultipartFile> subFiles) throws IOException {
-
-        List<String> subFilePaths = new ArrayList<>();
-
-        for (MultipartFile subFile : subFiles) {
-            if (!subFile.isEmpty()) {
-                String savePath = utils.createStoreFileName(subFile.getOriginalFilename());
-                subFilePaths.add(savePath);
-                subFile.transferTo(new File(filePath + savePath));
-            }
-        }
-        return subFilePaths;
     }
 }
