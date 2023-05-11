@@ -3,7 +3,7 @@ package com.festival.domain.info.festivalPub.service;
 import com.festival.common.utils.ImageServiceUtils;
 import com.festival.common.vo.SearchCond;
 import com.festival.domain.admin.data.entity.Admin;
-import com.festival.domain.admin.exception.AdminException;
+import com.festival.domain.admin.exception.AdminNotFoundException;
 import com.festival.domain.admin.exception.AdminNotMatchException;
 import com.festival.domain.admin.repository.AdminRepository;
 import com.festival.domain.info.festivalPub.data.dto.request.PubRequest;
@@ -47,7 +47,7 @@ public class PubService {
 
     public PubResponse create(Long adminId, PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
 
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminException("관리자를 찾을 수 없습니다."));
+        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
         Pub pub = new Pub(pubRequest);
         pubRepository.save(pub);
@@ -66,7 +66,7 @@ public class PubService {
 
     public PubResponse modify(Long adminId, Long pubId, PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
 
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminException("관리자를 찾을 수 없습니다."));
+        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
         Pub pub = pubRepository.findById(pubId).orElseThrow(() -> new PubNotFoundException("주점을 찾을 수 없습니다."));
 
         if (pub.getAdmin().equals(admin)) {
@@ -91,7 +91,7 @@ public class PubService {
 
     public PubResponse delete(Long adminId, Long pubId) {
 
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminException("관리자를 찾을 수 없습니다."));
+        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
         Pub pub = pubRepository.findById(pubId).orElseThrow(() -> new PubNotFoundException("주점을 찾을 수 없습니다."));
 
         if (pub.getAdmin().equals(admin)) {
@@ -108,7 +108,7 @@ public class PubService {
     @Transactional(readOnly = true)
     public PubResponse getPub(Long adminId, Long pubId) {
 
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminException("관리자를 찾을 수 없습니다."));
+        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
         Pub pub = pubRepository.findById(pubId).orElseThrow(() -> new PubNotFoundException("주점을 찾을 수 없습니다."));
 
         if (pub.getAdmin().equals(admin)) {

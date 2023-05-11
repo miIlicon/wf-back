@@ -45,6 +45,7 @@ public class FestivalEventImage {
 
     public void deleteOriginalFile(String filePath) {
         new File(filePath + this.mainFileName).delete();
+
         for(String subFileName: this.subFileNames)
             new File(filePath + subFileName).delete();
     }

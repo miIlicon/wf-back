@@ -1,11 +1,13 @@
 package com.festival.domain.info.festivalEvent.service;
 
 import com.festival.domain.admin.data.entity.Admin;
+import com.festival.domain.admin.exception.AdminNotFoundException;
 import com.festival.domain.admin.repository.AdminRepository;
 import com.festival.domain.info.festivalEvent.data.dto.FestivalEventReq;
 import com.festival.domain.info.festivalEvent.data.dto.FestivalEventRes;
 import com.festival.domain.info.festivalEvent.data.entity.FestivalEvent;
 import com.festival.domain.info.festivalEvent.data.entity.FestivalEventImage;
+import com.festival.domain.info.festivalEvent.exception.FestivalEventNotFoundException;
 import com.festival.domain.info.festivalEvent.repository.FestivalEventImageRepository;
 import com.festival.domain.info.festivalEvent.repository.FestivalEventRepository;
 import jakarta.persistence.EntityManager;
@@ -38,7 +40,7 @@ public class FestivalEventService {
     private String filePath;
     @Transactional
     public FestivalEventRes create(FestivalEventReq festivalEventReq, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
-        Admin admin = adminRepository.findById(1L).orElse(null);
+        Admin admin = adminRepository.findById(1L).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
 
         String mainFileName = saveMainFile(mainFile); // 메인 파일 저장
@@ -57,7 +59,7 @@ public class FestivalEventService {
     }
 
     public FestivalEventRes find(Long festivalEventId) {
-        FestivalEvent festivalEvent = festivalEventRepository.findById(festivalEventId).orElse(null);
+        FestivalEvent festivalEvent = festivalEventRepository.findById(festivalEventId).orElseThrow(() -> new FestivalEventNotFoundException("존재하지 않는 게시물입니다."));
         return FestivalEventRes.of(festivalEvent, filePath);
 
     }
@@ -71,7 +73,7 @@ public class FestivalEventService {
 
     @Transactional
     public FestivalEventRes modify(Long festivalEventId, FestivalEventReq festivalEventReq, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
-        FestivalEvent festivalEvent = festivalEventRepository.findById(festivalEventId).orElse(null);
+        FestivalEvent festivalEvent = festivalEventRepository.findById(festivalEventId).orElseThrow(() -> new FestivalEventNotFoundException("존재하지 않는 게시물입니다."));
         FestivalEventImage festivalEventImage = festivalEvent.getFestivalEventImage();
 
         festivalEvent.modify(festivalEventReq);
@@ -86,7 +88,7 @@ public class FestivalEventService {
 
     @Transactional
     public FestivalEventRes delete(Long festivalEventId) {
-        FestivalEvent festivalEvent = festivalEventRepository.findById(festivalEventId).orElse(null);
+        FestivalEvent festivalEvent = festivalEventRepository.findById(festivalEventId).orElseThrow(() -> new FestivalEventNotFoundException("이미 삭제된 게시물입니다."));
         FestivalEventImage festivalEventImage = festivalEvent.getFestivalEventImage();
         festivalEventImage.deleteOriginalFile(filePath);
         festivalEventRepository.delete(festivalEvent);
