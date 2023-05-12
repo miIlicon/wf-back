@@ -17,10 +17,4 @@ public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-
-    @OneToMany(mappedBy = "admin")
-    private List<Pub> pubs = new ArrayList<>();
-
-    @OneToMany(mappedBy = "admin")
-    private List<FoodTruck> foodTruckList = new ArrayList<>();
 }
