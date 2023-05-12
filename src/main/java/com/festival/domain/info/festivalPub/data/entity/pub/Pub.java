@@ -63,7 +63,6 @@ public class Pub extends BaseTimeEntity {
 
     public void connectAdmin(Admin admin) {
         this.admin = admin;
-        admin.getPubs().add(this);
     }
 
     public void connectPubImage(PubImage pubImage) {
