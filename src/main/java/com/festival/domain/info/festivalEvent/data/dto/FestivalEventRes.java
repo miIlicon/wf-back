@@ -4,8 +4,10 @@ import com.festival.domain.info.festivalEvent.data.entity.FestivalEvent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -25,9 +27,9 @@ public class FestivalEventRes {
 
     private LocalDateTime modifiedDate;
 
-    private String filePath;
+    private String mainFilePath;
 
-    private List<String> subFilePath;
+    private List<String> subFilePaths;
 
     private int latitude;
 
@@ -35,21 +37,28 @@ public class FestivalEventRes {
 
     private Boolean festivalEventState;
 
+
     @Builder
-    public FestivalEventRes(Long festivalEventId, String title, String subTitle, String content, LocalDateTime createdDate, LocalDateTime modifiedDate, String filePath, List<String> subFilePath, int latitude, int longitude, Boolean festivalEventState) {
+    public FestivalEventRes(Long festivalEventId, String title, String subTitle, String content, LocalDateTime createdDate, LocalDateTime modifiedDate, String mainFilePath, List<String> subFilePaths, int latitude, int longitude, Boolean festivalEventState) {
         this.festivalEventId = festivalEventId;
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
-        this.filePath = filePath;
-        this.subFilePath = subFilePath;
+        this.mainFilePath = mainFilePath;
+        this.subFilePaths = subFilePaths;
         this.latitude = latitude;
         this.longitude = longitude;
         this.festivalEventState = festivalEventState;
     }
-    public static FestivalEventRes of(FestivalEvent festivalEvent){
+    public static FestivalEventRes of(FestivalEvent festivalEvent, String filePath){
+
+        List<String> list = new ArrayList<>();
+        for (String subFilePath: festivalEvent.getFestivalEventImage().getSubFileNames()) {
+            list.add(filePath + subFilePath);
+        }
+
         return FestivalEventRes.builder()
                 .festivalEventId(festivalEvent.getId())
                 .title(festivalEvent.getTitle())
@@ -57,8 +66,8 @@ public class FestivalEventRes {
                 .subTitle(festivalEvent.getSubTitle())
                 .createdDate(festivalEvent.getCreatedDate())
                 .modifiedDate(festivalEvent.getModifiedDate())
-                .filePath(festivalEvent.getFestivalEventImage().getMainFileName())
-                .subFilePath(festivalEvent.getFestivalEventImage().getSubFileNames())
+                .mainFilePath(festivalEvent.getFestivalEventImage().getMainFileName())
+                .subFilePaths(list)
                 .latitude(festivalEvent.getLatitude())
                 .longitude(festivalEvent.getLongitude())
                 .festivalEventState(festivalEvent.getFestivalEventState())
