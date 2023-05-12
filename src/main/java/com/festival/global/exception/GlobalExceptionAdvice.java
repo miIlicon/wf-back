@@ -2,6 +2,7 @@ package com.festival.global.exception;
 
 import com.festival.domain.admin.exception.AdminNotFoundException;
 import com.festival.domain.admin.exception.AdminNotMatchException;
+import com.festival.domain.film.exception.FilmNotFoundException;
 import com.festival.domain.info.festivalEvent.exception.FestivalEventImageNotFoundException;
 import com.festival.domain.info.festivalEvent.exception.FestivalEventNotFoundException;
 import com.festival.domain.info.festivalPub.exception.PubNotFoundException;
@@ -40,6 +41,13 @@ public class GlobalExceptionAdvice {
 
     @ExceptionHandler({FestivalEventNotFoundException.class})
     public ResponseEntity<ErrorResponse> FestivalEventNotFoundHandleException(FestivalEventNotFoundException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        log.error("[exceptionHandle] ex", e);
+        ErrorResponse errorResponse = new ErrorResponse(errorCode.getCode(), e.getMessage());
+        return ResponseEntity.status(errorCode.getStatus()).body(errorResponse);
+    }
+    @ExceptionHandler({FilmNotFoundException.class})
+    public ResponseEntity<ErrorResponse> FilmNotFoundHandleException(FilmNotFoundException e) {
         ErrorCode errorCode = e.getErrorCode();
         log.error("[exceptionHandle] ex", e);
         ErrorResponse errorResponse = new ErrorResponse(errorCode.getCode(), e.getMessage());

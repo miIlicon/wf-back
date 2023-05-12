@@ -59,4 +59,12 @@ public class Film {
                 .admin(admin)
                 .build();
     }
+
+    public void modify(FilmReq filmReq) {
+        this.title = filmReq.getTitle();
+        this.subTitle = filmReq.getSubTitle();
+        this.content = filmReq.getContent();
+        this.youtubeUrl = filmReq.getYoutubeUrl();
+        this.youtubeImgUrl = filmReq.getYoutubeImgUrl();
+    }
 }
