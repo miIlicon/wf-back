@@ -50,6 +50,7 @@ public class PubService {
         Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
         Pub pub = new Pub(pubRequest);
+        pub.connectAdmin(admin);
         pubRepository.save(pub);
 
         String mainFileName = saveMainFile(mainFile);
@@ -57,8 +58,6 @@ public class PubService {
         pubImageRepository.save(pubImage);
 
         saveSubFiles(subFiles, pubImage);
-
-        pub.connectAdmin(admin);
         pub.connectPubImage(pubImage);
 
         return PubResponse.of(pub, filePath);

@@ -1,21 +1,14 @@
 package com.festival.domain.info.festivalPub.controller;
 
-import com.festival.domain.admin.data.entity.Admin;
-import com.festival.domain.admin.repository.AdminRepository;
 import com.festival.domain.info.festivalPub.data.dto.request.PubRequest;
 import com.festival.domain.info.festivalPub.data.dto.response.PubResponse;
-import com.festival.domain.info.festivalPub.data.entity.pub.Pub;
 import com.festival.domain.info.festivalPub.service.PubService;
-import jakarta.annotation.PostConstruct;
-import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,7 +29,7 @@ public class PubController {
         return ResponseEntity.ok().body(pubService.create(1L, dto, file, files));
     }
 
-    @PutMapping("/modify")
+    @PutMapping("/pub")
     public ResponseEntity<PubResponse> modifyPub(@RequestParam("id") Long pubId, @RequestPart("dto") @Valid PubRequest dto,
                                                  @RequestPart("main-file") @NotEmpty MultipartFile file, @RequestPart("sub-file") List<MultipartFile> files) throws IOException {
         return ResponseEntity.ok().body(pubService.modify(1L, pubId, dto, file, files));

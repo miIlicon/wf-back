@@ -40,7 +40,7 @@ public class Pub extends BaseTimeEntity {
     private Boolean pubState;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_id")
+    @JoinColumn(name = "admin_id", nullable = false)
     private Admin admin;
 
     public Pub(String title, String subTitle, String content, int latitude, int longitude, Boolean pubState) {
