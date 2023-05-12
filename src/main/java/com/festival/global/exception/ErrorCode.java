@@ -12,7 +12,8 @@ public enum ErrorCode {
     PUB_CONTENT_NOT_FOUND(404, "PUB-002", "주점의 이미지가 존재하지 않는 경우"),
     FESTIVALEVENT_NOT_FOUND(404, "FESTIVALEVENT-001", "축제 이벤트가 존재하지 않는 경우"),
     FESTIVALEVENT_IMAGE_NOT_FOUND(404, "FESTIVALEVENT-002", "축제 이벤트 이미지가 존재하지 않는 경우"),
-    FILM_NOT_FOUND(404, "Film-001", "축제 이벤트가 존재하지 않는 경우");
+    FILM_NOT_FOUND(404, "Film-001", "축제 이벤트가 존재하지 않는 경우"),
+    FLEA_MARKET_NOT_FOUND(404, "FLEA_MARKET-001", "플리마켓이 존재하지 않는 경우");
 
     private final int status;
     private final String code;
