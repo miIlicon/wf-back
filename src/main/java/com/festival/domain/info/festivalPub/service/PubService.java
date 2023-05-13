@@ -42,7 +42,7 @@ public class PubService {
     private final EntityManager em;
     private final ImageServiceUtils utils;
 
-    @Value("${file.path}")
+    @Value("${cloud.aws.s3.bucket}")
     private String filePath;
 
     public PubResponse create(Long adminId, PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
