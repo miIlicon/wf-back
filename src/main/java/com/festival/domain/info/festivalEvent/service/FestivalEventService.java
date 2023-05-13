@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -36,8 +35,20 @@ public class FestivalEventService {
     private final FestivalEventImageRepository festivalEventImageRepository;
     private final EntityManager em;
 
-    @Value("${file.path}")
+    @Value("${cloud.aws.s3.bucket}")
     private String filePath;
+
+    private static String createStoreFileName(String originalFilename) {
+        String ext = extractExt(originalFilename);
+        String uuid = UUID.randomUUID().toString();
+        return uuid + "." + ext;
+    }
+
+    private static String extractExt(String originalFilename) {
+        int pos = originalFilename.lastIndexOf(".");
+        return originalFilename.substring(pos + 1);
+    }
+
     @Transactional
     public FestivalEventRes create(FestivalEventReq festivalEventReq, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
         Admin admin = adminRepository.findById(1L).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
@@ -63,6 +74,7 @@ public class FestivalEventService {
         return FestivalEventRes.of(festivalEvent, filePath);
 
     }
+
     public Page<FestivalEventRes> list(long l, int offset, Boolean state) {
 
         Pageable pageable = PageRequest.of(offset, 6);
@@ -106,22 +118,12 @@ public class FestivalEventService {
 
     private List<String> saveSubFiles(List<MultipartFile> subFiles) throws IOException {
         List<String> subFileNames = new ArrayList<>();
-        for (MultipartFile subFile: subFiles){
+        for (MultipartFile subFile : subFiles) {
             String fileName = createStoreFileName(subFile.getOriginalFilename());
             subFileNames.add(fileName);
             subFile.transferTo(new File(filePath + fileName));
         }
         return subFileNames;
-    }
-    private static String createStoreFileName(String originalFilename) {
-        String ext = extractExt(originalFilename);
-        String uuid = UUID.randomUUID().toString();
-        return uuid + "." + ext;
-    }
-
-    private static String extractExt(String originalFilename) {
-        int pos = originalFilename.lastIndexOf(".");
-        return originalFilename.substring(pos + 1);
     }
 
 

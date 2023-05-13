@@ -13,12 +13,6 @@ import com.festival.domain.fleaMarket.data.entity.FleaMarketImage;
 import com.festival.domain.fleaMarket.exception.FleaMarketNotFoundException;
 import com.festival.domain.fleaMarket.repository.FleaMarketImageRepository;
 import com.festival.domain.fleaMarket.repository.FleaMarketRepository;
-import com.festival.domain.info.festivalPub.data.dto.request.PubRequest;
-import com.festival.domain.info.festivalPub.data.dto.response.PubResponse;
-import com.festival.domain.info.festivalPub.data.entity.file.PubImage;
-import com.festival.domain.info.festivalPub.data.entity.pub.Pub;
-import com.festival.domain.info.festivalPub.exception.PubNotFoundException;
-import com.festival.domain.info.festivalPub.repository.PubImageRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +41,7 @@ public class FleaMarketService {
     private final EntityManager em;
     private final ImageServiceUtils utils;
 
-    @Value("${file.path}")
+    @Value("${cloud.aws.s3.bucket}")
     private String filePath;
 
     public FleaMarketResponse create(Long adminId, FleaMarketRequest fleaMarketRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
