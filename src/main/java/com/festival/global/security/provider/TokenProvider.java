@@ -37,7 +37,7 @@ public class TokenProvider {
         System.out.println(authorities);
 
         long now = (new Date()).getTime();
-        Date accessTokenExpiresIn = new Date(now + 86400000);
+        Date accessTokenExpiresIn = new Date(now + 10 * 1000 * 60 *30); //30분
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName()) // 토큰 제목
                 .claim("auth", role) //
@@ -46,7 +46,7 @@ public class TokenProvider {
                 .compact();
 
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + 86400000))
+                .setExpiration(new Date(now + 10 * 1000 * 60 *30))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
