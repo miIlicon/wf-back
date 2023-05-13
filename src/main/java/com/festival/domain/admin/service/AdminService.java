@@ -27,7 +27,7 @@ public class AdminService {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginReq.getUsername(), loginReq.getPassword());
         // 인증객체 생성 (authenticated 값은 false)
         Authentication authenticate = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        Collection<? extends GrantedAuthority> authorities = authenticate.getAuthorities();
+        //Collection<? extends GrantedAuthority> authorities = authenticate.getAuthorities();
 
         // 실제 인증 과정으로 authenticate실행 시 CustomUserDetailsService의 loadByUserName실행
         return tokenProvider.generateToken(authenticate, "ADMIN");

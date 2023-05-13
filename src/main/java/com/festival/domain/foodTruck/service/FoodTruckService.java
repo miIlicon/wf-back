@@ -14,7 +14,7 @@ public interface FoodTruckService {
 
     FoodTruckResponse getFoodTruck(Long foodTruckId) throws Exception;
 
-    Page<FoodTruckResponse> getFoodTruckList(int offset, Boolean state);
+    Page<FoodTruckResponse> getFoodTruckList(int offset);
 
     FoodTruckResponse updateFoodTruck(Long foodTruckId, FoodTruckRequest foodTruckRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException;
 

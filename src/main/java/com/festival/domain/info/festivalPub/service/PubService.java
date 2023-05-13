@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,9 +46,10 @@ public class PubService {
     @Value("${cloud.aws.s3.bucket}")
     private String filePath;
 
-    public PubResponse create(Long adminId, PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
+    public PubResponse create(PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
         Pub pub = new Pub(pubRequest);
         pub.connectAdmin(admin);
@@ -63,9 +65,10 @@ public class PubService {
         return PubResponse.of(pub, filePath);
     }
 
-    public PubResponse modify(Long adminId, Long pubId, PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
+    public PubResponse modify(Long pubId, PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
         Pub pub = pubRepository.findById(pubId).orElseThrow(() -> new PubNotFoundException("주점을 찾을 수 없습니다."));
 
         if (pub.getAdmin().equals(admin)) {
@@ -88,9 +91,10 @@ public class PubService {
         }
     }
 
-    public PubResponse delete(Long adminId, Long pubId) {
+    public PubResponse delete(Long pubId) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
         Pub pub = pubRepository.findById(pubId).orElseThrow(() -> new PubNotFoundException("주점을 찾을 수 없습니다."));
 
         if (pub.getAdmin().equals(admin)) {
@@ -105,9 +109,11 @@ public class PubService {
     }
 
     @Transactional(readOnly = true)
-    public PubResponse getPub(Long adminId, Long pubId) {
+    public PubResponse getPub( Long pubId) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+
         Pub pub = pubRepository.findById(pubId).orElseThrow(() -> new PubNotFoundException("주점을 찾을 수 없습니다."));
 
         if (pub.getAdmin().equals(admin)) {
@@ -118,11 +124,14 @@ public class PubService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PubResponse> getPubs(Long adminId, int offset) {
+    public Page<PubResponse> getPubs(int offset) {
 
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+        Long adminId = admin.getId();
         Pageable pageable = PageRequest.of(offset, 6);
         SearchCond cond = new SearchCond(adminId);
-
         Page<Pub> findPubs = pubRepository.findByIdPubs(cond, pageable);
         return findPubs.map(pub -> PubResponse.of(pub, filePath));
     }

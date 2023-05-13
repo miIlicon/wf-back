@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,7 +27,8 @@ public class FoodTruckController {
     /*
      * FoodTruck 생성
      */
-    @PostMapping("/new")
+    @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public FoodTruckCreateResponse createFoodTruck(@RequestPart("dto") @Valid FoodTruckRequest foodTruckRequest,
                                                    @RequestPart("main-file") @NotEmpty MultipartFile mainImageFile, @RequestPart("sub-file") List<MultipartFile> subImageFileList) throws Exception {
         log.debug("Start : FoodTruckController : createFoodTruck");
@@ -41,8 +43,8 @@ public class FoodTruckController {
     /*
      * FoodTruck 상세 조회
      */
-    @GetMapping("/{foodTruckId}")
-    public FoodTruckResponse getFoodTruck(@PathVariable Long foodTruckId) throws Exception {
+    @GetMapping("/{id}")
+    public FoodTruckResponse getFoodTruck(@PathVariable("id") Long foodTruckId) throws Exception {
         log.debug("Start : FoodTruckController : getFoodTruck");
         //TODO: 입력값 검증
         FoodTruckResponse foodTruckResponse = foodTruckService.getFoodTruck(foodTruckId);
@@ -53,18 +55,19 @@ public class FoodTruckController {
      * FoodTruck 목록 조회
      */
     @GetMapping("/list")
-    public Page<FoodTruckResponse> getFoodTruckList(@RequestParam("page") int offset, @RequestParam("state") Boolean state) {
+    public Page<FoodTruckResponse> getFoodTruckList(@RequestParam("page") int offset) {
         log.debug("Start : FoodTruckController : getFoodTruckList");
         //TODO: 입력값 검증
-        Page<FoodTruckResponse> foodTruckResponseList = foodTruckService.getFoodTruckList(offset, state);
+        Page<FoodTruckResponse> foodTruckResponseList = foodTruckService.getFoodTruckList(offset);
         return foodTruckResponseList;
     }
 
     /*
      * FoodTruck 수정
      */
-    @PutMapping("/{foodTruckId}")
-    public FoodTruckResponse updateFoodTruck(@RequestParam("id") Long foodTruckId, @RequestPart("dto") @Valid FoodTruckRequest foodTruckRequest,
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public FoodTruckResponse updateFoodTruck(@PathVariable("id") Long foodTruckId, @RequestPart("dto") @Valid FoodTruckRequest foodTruckRequest,
                                              @RequestPart("main-file") @NotEmpty MultipartFile mainImageFile, @RequestPart("sub-file") List<MultipartFile> subImageFileList) throws IOException {
         log.debug("Start : FoodTruckController : updateFoodTruck");
         //TODO: 입력값 검증
@@ -75,8 +78,9 @@ public class FoodTruckController {
     /*
      * FoodTruck 삭제
      */
-    @DeleteMapping("/{foodTruckId}")
-    public void deleteFoodTruck(@PathVariable Long foodTruckId) {
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public void deleteFoodTruck(@PathVariable("id") Long foodTruckId) {
         log.debug("Start : FoodTruckController : deleteFoodTruck");
         //TODO: 입력값 검증
         foodTruckService.deleteFoodTruck(foodTruckId);

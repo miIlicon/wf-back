@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,8 @@ public class FilmService {
     private final AdminRepository adminRepository;
     private final FilmRepository filmRepository;
     public FilmRes create(FilmReq filmReq) {
-        Admin admin = adminRepository.findById(1L).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
         Film film = Film.of(filmReq, admin);
         filmRepository.save(film);
@@ -46,7 +48,9 @@ public class FilmService {
     }
 
     public FilmRes modify(FilmReq filmReq, Long filmId) {
-        Admin admin = adminRepository.findById(1L).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
         Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException("존재하지 않는 영상입니다."));
 
         film.modify(filmReq);
@@ -55,6 +59,7 @@ public class FilmService {
     }
 
     public FilmRes delete(Long filmId) {
+
         Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException("존재하지 않는 영상입니다."));
         filmRepository.delete(film);
 

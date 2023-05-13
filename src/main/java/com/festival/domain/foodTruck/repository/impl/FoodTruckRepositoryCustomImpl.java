@@ -24,10 +24,6 @@ public class FoodTruckRepositoryCustomImpl implements FoodTruckCustomRepository 
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    private static BooleanExpression stateEq(SearchCond cond) {
-        return foodTruck.foodTruckState.eq(cond.getState());
-    }
-
     private static BooleanExpression adminIdEq(SearchCond cond) {
         return admin.id.eq(cond.getUserId());
     }
@@ -39,8 +35,7 @@ public class FoodTruckRepositoryCustomImpl implements FoodTruckCustomRepository 
                 .leftJoin(foodTruck.foodTruckImage, foodTruckImage)
                 .leftJoin(foodTruck.admin, admin)
                 .where(
-                        adminIdEq(cond),
-                        stateEq(cond))
+                        adminIdEq(cond))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -50,8 +45,7 @@ public class FoodTruckRepositoryCustomImpl implements FoodTruckCustomRepository 
                 .from(foodTruck)
                 .leftJoin(foodTruck.admin, admin)
                 .where(
-                        adminIdEq(cond),
-                        stateEq(cond));
+                        adminIdEq(cond));
 
         return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
     }

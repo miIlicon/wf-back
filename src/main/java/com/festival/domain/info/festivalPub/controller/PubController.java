@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/pubs")
+@RequestMapping("/api/v1")
 public class PubController {
 
     private final PubService pubService;
@@ -26,32 +26,27 @@ public class PubController {
     @PostMapping("/pub")
     public ResponseEntity<PubResponse> createPub(@RequestPart("dto") @Valid PubRequest dto,
                                                  @RequestPart("main-file") @NotEmpty MultipartFile file, @RequestPart("sub-file") List<MultipartFile> files) throws IOException {
-        return ResponseEntity.ok().body(pubService.create(1L, dto, file, files));
+        return ResponseEntity.ok().body(pubService.create(dto, file, files));
     }
 
-    @PutMapping("/pub")
-    public ResponseEntity<PubResponse> modifyPub(@RequestParam("id") Long pubId, @RequestPart("dto") @Valid PubRequest dto,
+    @PutMapping("/pub/{id}")
+    public ResponseEntity<PubResponse> modifyPub(@PathVariable("id") Long pubId, @RequestPart("dto") @Valid PubRequest dto,
                                                  @RequestPart("main-file") @NotEmpty MultipartFile file, @RequestPart("sub-file") List<MultipartFile> files) throws IOException {
-        return ResponseEntity.ok().body(pubService.modify(1L, pubId, dto, file, files));
+        return ResponseEntity.ok().body(pubService.modify(pubId, dto, file, files));
     }
 
-    @DeleteMapping("/pub")
-    public ResponseEntity<PubResponse> deletePub(@RequestParam("id") Long pubId) {
-        return ResponseEntity.ok().body(pubService.delete(1L, pubId));
+    @DeleteMapping("/pub/{id}")
+    public ResponseEntity<PubResponse> deletePub(@PathVariable("id") Long pubId) {
+        return ResponseEntity.ok().body(pubService.delete(pubId));
     }
 
-    @GetMapping("/pub")
-    public ResponseEntity<PubResponse> getPub(@RequestParam("id") Long pubId) {
-        return ResponseEntity.ok().body(pubService.getPub(1L, pubId));
+    @GetMapping("/pub/{id}")
+    public ResponseEntity<PubResponse> getPub(@PathVariable("id") Long pubId) {
+        return ResponseEntity.ok().body(pubService.getPub(pubId));
     }
 
     @GetMapping("/list")
     public ResponseEntity<Page<PubResponse>> getPubs(@RequestParam("page") int offset) {
-        return ResponseEntity.ok().body(pubService.getPubs(1L, offset));
-    }
-
-    @GetMapping("/list/state")
-    public ResponseEntity<Page<PubResponse>> getPubsForState(@RequestParam("page") int offset, @RequestParam("state") Boolean state) {
-        return ResponseEntity.ok().body(pubService.getPubsForState(1L, offset, state));
+        return ResponseEntity.ok().body(pubService.getPubs(offset));
     }
 }
