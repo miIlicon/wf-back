@@ -40,7 +40,7 @@ public class FoodTruck extends BaseTimeEntity {
     private Boolean foodTruckState;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "festivalEvent_admin_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(nullable = false)
     private Admin admin;
 
     public static FoodTruck of(FoodTruckRequest foodTruckRequest, FoodTruckImage foodTruckImage, Admin admin) {

@@ -19,30 +19,30 @@ public class FestivalEvent extends BaseTimeEntity {
     @Column(name = "festivalEvent_id")
     private Long id;
 
-    @Column(name = "festivalEvent_title",nullable = false)
+    @Column(name = "title",nullable = false)
     private String title;
 
-    @Column(name = "festivalEvent_subTitle",nullable = false)
+    @Column(name = "subTitle",nullable = false)
     private String subTitle;
 
-    @Column(name = "festivalEvent_content", nullable = false)
+    @Column(name = "content", nullable = false)
     private String content;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "festivalEventImage_id")
     private FestivalEventImage festivalEventImage;
 
-    @Column(name = "festivalEvent_latitude",nullable = false) // 위도
+    @Column(name = "latitude",nullable = false) // 위도
     private int latitude;
 
-    @Column(name = "festivalEvent_longitude",nullable = false) // 경도
+    @Column(name = "longitude",nullable = false) // 경도
     private int longitude;
 
     @Column(nullable = false)
     private Boolean festivalEventState;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "festivalEvent_admin_id", nullable = false)
+    @JoinColumn(name = "admin_id", nullable = false)
     private Admin admin;
 
     @Builder

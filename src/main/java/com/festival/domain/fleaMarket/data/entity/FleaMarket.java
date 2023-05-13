@@ -40,7 +40,7 @@ public class FleaMarket extends BaseTimeEntity {
     private Boolean fleaMarketState;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_id", nullable = false)
+    @JoinColumn(nullable = false)
     private Admin admin;
 
     public FleaMarket(String title, String subTitle, String content, int latitude, int longitude, Boolean fleaMarketState) {
