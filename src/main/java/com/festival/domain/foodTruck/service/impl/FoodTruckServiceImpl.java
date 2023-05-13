@@ -3,6 +3,7 @@ package com.festival.domain.foodTruck.service.impl;
 import com.festival.common.utils.ImageServiceUtils;
 import com.festival.common.vo.SearchCond;
 import com.festival.domain.admin.data.entity.Admin;
+import com.festival.domain.admin.exception.AdminNotFoundException;
 import com.festival.domain.admin.exception.AdminNotMatchException;
 import com.festival.domain.admin.repository.AdminRepository;
 import com.festival.domain.foodTruck.data.dto.request.FoodTruckRequest;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,12 +50,9 @@ public class FoodTruckServiceImpl implements FoodTruckService {
             throw new Exception("Main Image File Is Null");
         FoodTruckCreateResponse foodTruckResponse = null;
         try {
-            //TODO: JWT_USER_PARSER_FOR_ADMIN
-//            Admin admin = adminRepository.findById(jwtUserParser.getUserId()).orElseThrow(
-//                    () -> new IllegalArgumentException("해당되는 유저가 존재하지 않습니다.")
-//            );
             //임시 어드민
-            Admin admin = adminRepository.findById(1L).orElse(null);
+            String name = SecurityContextHolder.getContext().getAuthentication().getName();
+            Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
             FoodTruckImage foodTruckImage = new FoodTruckImage(mainFile, subFiles);
             foodTruckImageRepository.save(foodTruckImage);
@@ -78,12 +77,13 @@ public class FoodTruckServiceImpl implements FoodTruckService {
     }
 
     @Override
-    public Page<FoodTruckResponse> getFoodTruckList(int offset, Boolean state) {
-        //TODO: JWT_USER_PARSER_FOR_ADMIN(어드민 임시 데이터 1L)
-        Admin admin = adminRepository.findById(1L).orElse(null);
+    public Page<FoodTruckResponse> getFoodTruckList(int offset) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
+        Long adminId = admin.getId();
         Pageable pageable = PageRequest.of(offset, 6);
-        SearchCond cond = new SearchCond(admin.getId(), state);
+        SearchCond cond = new SearchCond(admin.getId());
 
         Page<FoodTruck> foodTruckList = foodTruckRepository.findFoodTrucksById(cond, pageable);
         return foodTruckList.map(foodTruck -> FoodTruckResponse.of(foodTruck));
@@ -92,7 +92,9 @@ public class FoodTruckServiceImpl implements FoodTruckService {
     @Override
     public FoodTruckResponse updateFoodTruck(Long foodTruckId, FoodTruckRequest foodTruckRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
         //TODO: JWT_USER_PARSER_FOR_ADMIN(어드민 임시 데이터 1L)
-        Admin admin = adminRepository.findById(1L).orElse(null);
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+
 
         FoodTruck foodTruck = foodTruckRepository.findById(foodTruckId).orElseThrow(() -> new IllegalArgumentException("해당 푸드트럭 게시글이 존재하지 않습니다."));
         if (foodTruck.getAdmin().equals(admin)) {

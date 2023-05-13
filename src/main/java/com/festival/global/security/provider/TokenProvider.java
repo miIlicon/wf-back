@@ -34,7 +34,7 @@ public class TokenProvider {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-        System.out.println(authorities);
+        //System.out.println(authorities);
 
         long now = (new Date()).getTime();
         Date accessTokenExpiresIn = new Date(now + 10 * 1000 * 60 *30); //30분

@@ -24,8 +24,8 @@ public class FilmController {
     }
 
 
-    @GetMapping("/film")
-    public ResponseEntity<FilmRes> findFilm(@RequestParam("id") Long filmId){
+    @GetMapping("/film/{id}")
+    public ResponseEntity<FilmRes> findFilm(@PathVariable("id") Long filmId){
         FilmRes filmRes = filmService.find(filmId);
 
         return ResponseEntity.ok().body(filmRes);
@@ -39,13 +39,13 @@ public class FilmController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping("/film")
-    public ResponseEntity<FilmRes> modifyFilm(@RequestPart("dto") @Valid FilmReq filmReq, @RequestParam("id") Long filmId){
+    @PutMapping("/film/{id}")
+    public ResponseEntity<FilmRes> modifyFilm(@RequestPart("dto") @Valid FilmReq filmReq, @PathVariable("id") Long filmId){
         return ResponseEntity.ok().body(filmService.modify(filmReq, filmId));
     }
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/film")
-    public ResponseEntity<FilmRes> deleteFilm(@RequestParam("id") Long filmId){
+    @DeleteMapping("/film/{id}")
+    public ResponseEntity<FilmRes> deleteFilm(@PathVariable("id") Long filmId){
         FilmRes filmRes = filmService.delete(filmId);
 
         return ResponseEntity.ok().body(filmRes);

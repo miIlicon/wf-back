@@ -31,22 +31,22 @@ public class FestivalEventController {
 
         return ResponseEntity.ok().body(festivalEventRes);
     }
-    @GetMapping("/festivalEvent")
-    public ResponseEntity<FestivalEventRes> findFestivalEvent(@RequestParam("id") Long festivalEventId){
+    @GetMapping("/festivalEvent/{id}")
+    public ResponseEntity<FestivalEventRes> findFestivalEvent(@PathVariable("id") Long festivalEventId){
         return ResponseEntity.ok().body(festivalEventService.find(festivalEventId));
     }
     @GetMapping("/festivalEvent/list")
-    public ResponseEntity<Page<FestivalEventRes>> findFestivalEventList(@RequestParam("page") int offset, @RequestParam("state") Boolean state){
-        return ResponseEntity.ok().body(festivalEventService.list(1L, offset, state));
+    public ResponseEntity<Page<FestivalEventRes>> findFestivalEventList(@RequestParam("page") int offset){
+        return ResponseEntity.ok().body(festivalEventService.list(offset));
     }
-    @PutMapping("/festivalEvent")
-    public ResponseEntity<FestivalEventRes> modifyFestivalEvent(@RequestParam("id") Long festivalEventId, @RequestPart("dto") @Valid FestivalEventReq festivalEventReq, @RequestPart("main-file") @NotEmpty MultipartFile mainFile, @RequestPart("sub-file") List<MultipartFile> subFiles) throws IOException {
+    @PutMapping("/festivalEvent/{id}")
+    public ResponseEntity<FestivalEventRes> modifyFestivalEvent(@PathVariable("id") Long festivalEventId, @RequestPart("dto") @Valid FestivalEventReq festivalEventReq, @RequestPart("main-file") @NotEmpty MultipartFile mainFile, @RequestPart("sub-file") List<MultipartFile> subFiles) throws IOException {
         FestivalEventRes modifyResult = festivalEventService.modify(festivalEventId, festivalEventReq, mainFile, subFiles);
         return ResponseEntity.ok().body(modifyResult);
     }
 
-    @DeleteMapping("/festivalEvent")
-    public void deleteFestivalEvent(@RequestParam("id") Long festivalEventId){
+    @DeleteMapping("/festivalEvent/{id}")
+    public void deleteFestivalEvent(@PathVariable("id") Long festivalEventId){
         festivalEventService.delete(festivalEventId);
     }
 }

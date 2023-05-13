@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,9 +45,11 @@ public class FleaMarketService {
     @Value("${cloud.aws.s3.bucket}")
     private String filePath;
 
-    public FleaMarketResponse create(Long adminId, FleaMarketRequest fleaMarketRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
+    public FleaMarketResponse create(FleaMarketRequest fleaMarketRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
 
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+
 
         FleaMarket fleaMarket = new FleaMarket(fleaMarketRequest);
         fleaMarket.connectAdmin(admin);
@@ -62,9 +65,11 @@ public class FleaMarketService {
         return FleaMarketResponse.of(fleaMarket, filePath);
     }
 
-    public FleaMarketResponse modify(Long adminId, Long fleaMarketId, FleaMarketRequest fleaMarketRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
+    public FleaMarketResponse modify(Long fleaMarketId, FleaMarketRequest fleaMarketRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
 
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+
         FleaMarket fleaMarket = fleaMarketRepository.findById(fleaMarketId).orElseThrow(() -> new FleaMarketNotFoundException("플리마켓을 찾을 수 없습니다."));
 
         if (fleaMarket.getAdmin().equals(admin)) {
@@ -87,9 +92,10 @@ public class FleaMarketService {
         }
     }
 
-    public FleaMarketResponse delete(Long adminId, Long fleaMarketId) {
+    public FleaMarketResponse delete(Long fleaMarketId) {
 
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
         FleaMarket fleaMarket = fleaMarketRepository.findById(fleaMarketId).orElseThrow(() -> new FleaMarketNotFoundException("플리마켓을 찾을 수 없습니다."));
 
         if (fleaMarket.getAdmin().equals(admin)) {
@@ -104,9 +110,11 @@ public class FleaMarketService {
     }
 
     @Transactional(readOnly = true)
-    public FleaMarketResponse getFleaMarket(Long adminId, Long fleaMarketId) {
+    public FleaMarketResponse getFleaMarket( Long fleaMarketId) {
 
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
         FleaMarket fleaMarket = fleaMarketRepository.findById(fleaMarketId).orElseThrow(() -> new FleaMarketNotFoundException("플리마켓을 찾을 수 없습니다."));
 
         if (fleaMarket.getAdmin().equals(admin)) {
@@ -117,8 +125,11 @@ public class FleaMarketService {
     }
 
     @Transactional(readOnly = true)
-    public Page<FleaMarketResponse> getFleaMarkets(Long adminId, int offset) {
+    public Page<FleaMarketResponse> getFleaMarkets( int offset) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
 
+        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+        Long adminId = admin.getId();
         Pageable pageable = PageRequest.of(offset, 6);
         SearchCond cond = new SearchCond(adminId);
 

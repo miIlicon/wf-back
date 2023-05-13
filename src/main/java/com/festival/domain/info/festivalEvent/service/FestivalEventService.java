@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,7 +52,8 @@ public class FestivalEventService {
 
     @Transactional
     public FestivalEventRes create(FestivalEventReq festivalEventReq, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
-        Admin admin = adminRepository.findById(1L).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
 
         String mainFileName = saveMainFile(mainFile); // 메인 파일 저장
@@ -75,10 +77,13 @@ public class FestivalEventService {
 
     }
 
-    public Page<FestivalEventRes> list(long l, int offset, Boolean state) {
+    public Page<FestivalEventRes> list(int offset) {
+
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
         Pageable pageable = PageRequest.of(offset, 6);
-        Page<FestivalEvent> festivalEvents = festivalEventRepository.findByAdminIdAndFestivalEventState(1L, true, pageable);
+        Page<FestivalEvent> festivalEvents = festivalEventRepository.findByAdminIdAndFestivalEventState(admin.getId(), pageable);
         return festivalEvents.map(festivalEvent -> FestivalEventRes.of(festivalEvent, filePath));
 
     }

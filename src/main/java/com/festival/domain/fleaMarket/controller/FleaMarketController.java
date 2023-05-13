@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,40 +19,39 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/flea-markets")
+@RequestMapping("/api/v1")
 public class FleaMarketController {
 
     private final FleaMarketService fleaMarketService;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/flea-market")
     public ResponseEntity<FleaMarketResponse> createFleaMarket(@RequestPart("dto") @Valid FleaMarketRequest dto,
                                                         @RequestPart("main-file") @NotEmpty MultipartFile file, @RequestPart("sub-file") List<MultipartFile> files) throws IOException {
-        return ResponseEntity.ok().body(fleaMarketService.create(1L, dto, file, files));
+        return ResponseEntity.ok().body(fleaMarketService.create(dto, file, files));
     }
 
-    @PutMapping("/flea-market")
-    public ResponseEntity<FleaMarketResponse> modifyFleaMarket(@RequestParam("id") Long pubId, @RequestPart("dto") @Valid FleaMarketRequest dto,
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/flea-market/{id}")
+    public ResponseEntity<FleaMarketResponse> modifyFleaMarket(@PathVariable("id") Long pubId, @RequestPart("dto") @Valid FleaMarketRequest dto,
                                                  @RequestPart("main-file") @NotEmpty MultipartFile file, @RequestPart("sub-file") List<MultipartFile> files) throws IOException {
-        return ResponseEntity.ok().body(fleaMarketService.modify(1L, pubId, dto, file, files));
+        return ResponseEntity.ok().body(fleaMarketService.modify( pubId, dto, file, files));
     }
 
-    @DeleteMapping("/flea-market")
-    public ResponseEntity<FleaMarketResponse> deleteFleaMarket(@RequestParam("id") Long fleaMarketId) {
-        return ResponseEntity.ok().body(fleaMarketService.delete(1L, fleaMarketId));
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("/flea-market/{id}")
+    public ResponseEntity<FleaMarketResponse> deleteFleaMarket(@PathVariable("id") Long fleaMarketId) {
+        return ResponseEntity.ok().body(fleaMarketService.delete(fleaMarketId));
     }
 
-    @GetMapping("/flea-market")
-    public ResponseEntity<FleaMarketResponse> getFleaMarket(@RequestParam("id") Long fleaMarketId) {
-        return ResponseEntity.ok().body(fleaMarketService.getFleaMarket(1L, fleaMarketId));
+    @GetMapping("/flea-market/{id}")
+    public ResponseEntity<FleaMarketResponse> getFleaMarket(@PathVariable("id") Long fleaMarketId) {
+        return ResponseEntity.ok().body(fleaMarketService.getFleaMarket(fleaMarketId));
     }
 
     @GetMapping("/list")
     public ResponseEntity<Page<FleaMarketResponse>> getFleaMarkets(@RequestParam("page") int offset) {
-        return ResponseEntity.ok().body(fleaMarketService.getFleaMarkets(1L, offset));
+        return ResponseEntity.ok().body(fleaMarketService.getFleaMarkets( offset));
     }
 
-    @GetMapping("/list/state")
-    public ResponseEntity<Page<FleaMarketResponse>> getFleaMarketsForState(@RequestParam("page") int offset, @RequestParam("state") Boolean state) {
-        return ResponseEntity.ok().body(fleaMarketService.getFleaMarketsForState(1L, offset, state));
-    }
 }
