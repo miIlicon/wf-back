@@ -20,23 +20,23 @@ public class Film {
     @Column(name = "film_id")
     private Long id;
 
-    @Column(name = "film_title",nullable = false)
+    @Column(name = "title",nullable = false)
     private String title;
 
-    @Column(name = "film_subTitle",nullable = false)
+    @Column(name = "subTitle",nullable = false)
     private String subTitle;
 
-    @Column(name = "film_content", nullable = false)
+    @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "film_youtubeUrl",nullable = false)
+    @Column(name = "youtubeUrl",nullable = false)
     private String youtubeUrl;
 
-    @Column(name = "film_youtubeImgUrl",nullable = false) // 경도
+    @Column(name = "youtubeImgUrl",nullable = false) // 경도
     private String youtubeImgUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "film_admin_id", nullable = false)
+    @JoinColumn(nullable = false)
     private Admin admin;
 
     @Builder
