@@ -24,13 +24,13 @@ public class PubController {
     private final PubService pubService;
 
     @PostMapping("/pub")
-    public ResponseEntity<PubResponse> createPub(@RequestPart("dto") @Valid PubRequest dto,
-                                                 @RequestPart("main-file") @NotEmpty MultipartFile file, @RequestPart("sub-file") List<MultipartFile> files) throws IOException {
+    public ResponseEntity<CommonIdResponse> createPub(@RequestPart("dto") @Valid PubRequest dto,
+                                                      @RequestPart("main-file") @NotEmpty MultipartFile file, @RequestPart("sub-file") List<MultipartFile> files) throws IOException {
         return ResponseEntity.ok().body(pubService.create(dto, file, files));
     }
 
     @PutMapping("/pub/{id}")
-    public ResponseEntity<PubResponse> modifyPub(@PathVariable("id") Long pubId, @RequestPart("dto") @Valid PubRequest dto,
+    public ResponseEntity<CommonIdResponse> modifyPub(@PathVariable("id") Long pubId, @RequestPart("dto") @Valid PubRequest dto,
                                                  @RequestPart("main-file") @NotEmpty MultipartFile file, @RequestPart("sub-file") List<MultipartFile> files) throws IOException {
         return ResponseEntity.ok().body(pubService.modify(pubId, dto, file, files));
     }
@@ -46,7 +46,7 @@ public class PubController {
     }
 
     @GetMapping("/pub/list")
-    public ResponseEntity<Page<PubResponse>> getPubs(@RequestParam("page") int offset) {
-        return ResponseEntity.ok().body(pubService.getPubs(offset));
+    public ResponseEntity<Page<PubResponse>> getPubs(@RequestParam("page") int offset, @RequestParam("state") boolean state) {
+        return ResponseEntity.ok().body(pubService.getPubs(offset, state));
     }
 }

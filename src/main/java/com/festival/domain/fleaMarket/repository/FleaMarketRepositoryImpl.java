@@ -39,29 +39,6 @@ public class FleaMarketRepositoryImpl implements FleaMarketRepositoryCustom {
                 .leftJoin(fleaMarket.fleaMarketImage, fleaMarketImage)
                 .leftJoin(fleaMarket.admin, admin)
                 .where(
-                        adminIdEq(cond))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        JPAQuery<Long> countQuery = queryFactory
-                .select(fleaMarket.count())
-                .from(fleaMarket)
-                .leftJoin(fleaMarket.admin, admin)
-                .where(
-                        adminIdEq(cond));
-
-        return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
-    }
-
-    @Override
-    public Page<FleaMarket> findByIdFleaMarketsWithState(SearchCond cond, Pageable pageable) {
-        List<FleaMarket> result = queryFactory
-                .selectFrom(fleaMarket)
-                .leftJoin(fleaMarket.fleaMarketImage, fleaMarketImage)
-                .leftJoin(fleaMarket.admin, admin)
-                .where(
-                        adminIdEq(cond),
                         stateEq(cond))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -72,7 +49,6 @@ public class FleaMarketRepositoryImpl implements FleaMarketRepositoryCustom {
                 .from(fleaMarket)
                 .leftJoin(fleaMarket.admin, admin)
                 .where(
-                        adminIdEq(cond),
                         stateEq(cond));
 
         return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);

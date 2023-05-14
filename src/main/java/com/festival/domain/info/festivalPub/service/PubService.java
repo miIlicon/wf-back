@@ -13,7 +13,6 @@ import com.festival.domain.info.festivalPub.data.entity.pub.Pub;
 import com.festival.domain.info.festivalPub.exception.PubNotFoundException;
 import com.festival.domain.info.festivalPub.repository.PubImageRepository;
 import com.festival.domain.info.festivalPub.repository.PubRepository;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,15 +39,14 @@ public class PubService {
     private final PubImageRepository pubImageRepository;
 
     private final AdminRepository adminRepository;
-    private final EntityManager em;
     private final ImageServiceUtils utils;
 
     @Value("${file.path}")
     private String filePath;
 
-    public PubResponse create(PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+    public CommonIdResponse create(PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
 
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
         Pub pub = new Pub(pubRequest);
@@ -62,10 +60,11 @@ public class PubService {
         saveSubFiles(subFiles, pubImage);
         pub.connectPubImage(pubImage);
 
-        return PubResponse.of(pub, filePath);
+        return new CommonIdResponse(pub.getId());
     }
 
-    public PubResponse modify(Long pubId, PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
+    public CommonIdResponse modify(Long pubId, PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
+
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
@@ -82,16 +81,14 @@ public class PubService {
             }
             pub.modify(pubRequest);
 
-            em.flush();
-            em.clear();
-
-            return PubResponse.of(pub, filePath);
+            return new CommonIdResponse(pub.getId());
         } else {
             throw new AdminNotMatchException("권한이 없습니다.");
         }
     }
 
     public PubResponse delete(Long pubId) {
+
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
@@ -110,39 +107,19 @@ public class PubService {
 
     @Transactional(readOnly = true)
     public PubResponse getPub( Long pubId) {
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
         Pub pub = pubRepository.findById(pubId).orElseThrow(() -> new PubNotFoundException("주점을 찾을 수 없습니다."));
 
-        if (pub.getAdmin().equals(admin)) {
-            return PubResponse.of(pub, filePath);
-        } else {
-            throw new AdminNotMatchException("권한이 없습니다.");
-        }
+        return PubResponse.of(pub, filePath);
     }
 
     @Transactional(readOnly = true)
-    public Page<PubResponse> getPubs(int offset) {
+    public Page<PubResponse> getPubs(int offset, boolean state) {
 
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        Pageable pageable = PageRequest.of(offset, 20);
+        SearchCond cond = new SearchCond(state);
 
-        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
-        Long adminId = admin.getId();
-        Pageable pageable = PageRequest.of(offset, 6);
-        SearchCond cond = new SearchCond(adminId);
         Page<Pub> findPubs = pubRepository.findByIdPubs(cond, pageable);
-        return findPubs.map(pub -> PubResponse.of(pub, filePath));
-    }
-
-    @Transactional(readOnly = true)
-    public Page<PubResponse> getPubsForState(Long adminId, int offset, Boolean state) {
-
-        Pageable pageable = PageRequest.of(offset, 6);
-        SearchCond cond = new SearchCond(adminId, state);
-
-        Page<Pub> findPubs = pubRepository.findByIdPubsWithState(cond, pageable);
         return findPubs.map(pub -> PubResponse.of(pub, filePath));
     }
 

@@ -16,6 +16,7 @@ import java.util.List;
 import static com.festival.domain.admin.data.entity.QAdmin.admin;
 import static com.festival.domain.foodTruck.data.entity.QFoodTruck.foodTruck;
 import static com.festival.domain.foodTruck.data.entity.QFoodTruckImage.foodTruckImage;
+import static com.festival.domain.info.festivalPub.data.entity.pub.QPub.pub;
 
 public class FoodTruckRepositoryCustomImpl implements FoodTruckCustomRepository {
     private final JPAQueryFactory queryFactory;
@@ -28,6 +29,10 @@ public class FoodTruckRepositoryCustomImpl implements FoodTruckCustomRepository 
         return admin.id.eq(cond.getUserId());
     }
 
+    private static BooleanExpression stateEq(SearchCond cond) {
+        return foodTruck.foodTruckState.eq(cond.getState());
+    }
+
     @Override
     public Page<FoodTruck> findFoodTrucksById(SearchCond cond, Pageable pageable) {
         List<FoodTruck> result = queryFactory
@@ -35,7 +40,7 @@ public class FoodTruckRepositoryCustomImpl implements FoodTruckCustomRepository 
                 .leftJoin(foodTruck.foodTruckImage, foodTruckImage)
                 .leftJoin(foodTruck.admin, admin)
                 .where(
-                        adminIdEq(cond))
+                        stateEq(cond))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -45,7 +50,7 @@ public class FoodTruckRepositoryCustomImpl implements FoodTruckCustomRepository 
                 .from(foodTruck)
                 .leftJoin(foodTruck.admin, admin)
                 .where(
-                        adminIdEq(cond));
+                        stateEq(cond));
 
         return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
     }

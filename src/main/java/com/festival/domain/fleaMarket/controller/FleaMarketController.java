@@ -26,14 +26,14 @@ public class FleaMarketController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/flea-market")
-    public ResponseEntity<FleaMarketResponse> createFleaMarket(@RequestPart("dto") @Valid FleaMarketRequest dto,
-                                                        @RequestPart("main-file") @NotEmpty MultipartFile file, @RequestPart("sub-file") List<MultipartFile> files) throws IOException {
+    public ResponseEntity<CommonIdResponse> createFleaMarket(@RequestPart("dto") @Valid FleaMarketRequest dto,
+                                                             @RequestPart("main-file") @NotEmpty MultipartFile file, @RequestPart("sub-file") List<MultipartFile> files) throws IOException {
         return ResponseEntity.ok().body(fleaMarketService.create(dto, file, files));
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/flea-market/{id}")
-    public ResponseEntity<FleaMarketResponse> modifyFleaMarket(@PathVariable("id") Long pubId, @RequestPart("dto") @Valid FleaMarketRequest dto,
+    public ResponseEntity<CommonIdResponse> modifyFleaMarket(@PathVariable("id") Long pubId, @RequestPart("dto") @Valid FleaMarketRequest dto,
                                                  @RequestPart("main-file") @NotEmpty MultipartFile file, @RequestPart("sub-file") List<MultipartFile> files) throws IOException {
         return ResponseEntity.ok().body(fleaMarketService.modify( pubId, dto, file, files));
     }
@@ -50,8 +50,8 @@ public class FleaMarketController {
     }
 
     @GetMapping("/flea-market/list")
-    public ResponseEntity<Page<FleaMarketResponse>> getFleaMarkets(@RequestParam("page") int offset) {
-        return ResponseEntity.ok().body(fleaMarketService.getFleaMarkets( offset));
+    public ResponseEntity<Page<FleaMarketResponse>> getFleaMarkets(@RequestParam("page") int offset, @RequestParam("state") boolean state) {
+        return ResponseEntity.ok().body(fleaMarketService.getFleaMarkets(offset, state));
     }
 
 }

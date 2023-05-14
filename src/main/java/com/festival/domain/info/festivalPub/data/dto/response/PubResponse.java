@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,69 +15,48 @@ import java.util.List;
 public class PubResponse {
 
     private String title;
-
     private String subTitle;
 
     private String content;
 
-    private LocalDateTime createdDate;
-
-    private LocalDateTime modifiedDate;
-
     private String mainFilePath;
-
-    private List<String> subFilePath;
+    private List<String> subFilePaths;
 
     private int latitude;
-
     private int longitude;
 
     private Boolean pubState;
 
     @Builder
     @QueryProjection
-    public PubResponse(String title, String subTitle, String content, LocalDateTime createdDate, LocalDateTime modifiedDate, String mainFilePath, List<String> subFilePath, int latitude, int longitude, Boolean pubState) {
+    public PubResponse(String title, String subTitle, String content,
+                       String mainFilePath, List<String> subFilePaths, int latitude, int longitude, Boolean pubState) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
-        this.createdDate = createdDate;
-        this.modifiedDate = modifiedDate;
         this.mainFilePath = mainFilePath;
-        this.subFilePath = subFilePath;
+        this.subFilePaths = subFilePaths;
         this.latitude = latitude;
         this.longitude = longitude;
         this.pubState = pubState;
     }
 
     public static PubResponse of(final Pub pub, String filePath) {
-        if (!pub.getPubImage().getSubFileNames().isEmpty()) {
-            List<String> list = new ArrayList<>();
-            for (String subFilePath: pub.getPubImage().getSubFileNames()) {
-                list.add(filePath + subFilePath);
-            }
-            return PubResponse.builder()
-                    .title(pub.getTitle())
-                    .subTitle(pub.getSubTitle())
-                    .content(pub.getContent())
-                    .createdDate(pub.getCreatedDate())
-                    .modifiedDate(pub.getModifiedDate())
-                    .mainFilePath(filePath + pub.getPubImage().getMainFileName())
-                    .subFilePath(list)
-                    .latitude(pub.getLatitude())
-                    .longitude(pub.getLongitude())
-                    .pubState(pub.getPubState())
-                    .build();
-        } else {
-            return PubResponse.builder()
-                    .title(pub.getTitle())
-                    .content(pub.getContent())
-                    .createdDate(pub.getCreatedDate())
-                    .modifiedDate(pub.getModifiedDate())
-                    .mainFilePath(filePath + pub.getPubImage().getMainFileName())
-                    .latitude(pub.getLatitude())
-                    .longitude(pub.getLongitude())
-                    .pubState(pub.getPubState())
-                    .build();
+
+        List<String> list = new ArrayList<>();
+        for (String subFilePath : pub.getPubImage().getSubFileNames()) {
+            list.add(filePath + subFilePath);
         }
+
+        return PubResponse.builder()
+                .title(pub.getTitle())
+                .subTitle(pub.getSubTitle())
+                .content(pub.getContent())
+                .mainFilePath(filePath + pub.getPubImage().getMainFileName())
+                .subFilePaths(list)
+                .latitude(pub.getLatitude())
+                .longitude(pub.getLongitude())
+                .pubState(pub.getPubState())
+                .build();
     }
 }

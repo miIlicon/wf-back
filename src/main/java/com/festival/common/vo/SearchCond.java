@@ -18,4 +18,8 @@ public class SearchCond {
     public SearchCond(Long userId) {
         this.userId = userId;
     }
+
+    public SearchCond(Boolean state) {
+        this.state = state;
+    }
 }

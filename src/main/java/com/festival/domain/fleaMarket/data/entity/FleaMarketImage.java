@@ -24,7 +24,7 @@ public class FleaMarketImage {
     private String mainFileName;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "market_sub_image", joinColumns = @JoinColumn(name = "market_image_id"))
+    @CollectionTable(name = "flea_market_sub_image", joinColumns = @JoinColumn(name = "market_image_id"))
     @Column(name = "file_name")
     private List<String> subFileNames = new ArrayList<>();
 

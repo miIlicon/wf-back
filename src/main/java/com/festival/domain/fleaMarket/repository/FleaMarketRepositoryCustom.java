@@ -8,6 +8,4 @@ import org.springframework.data.domain.Pageable;
 public interface FleaMarketRepositoryCustom {
 
     Page<FleaMarket> findByIdFleaMarkets(SearchCond cond, Pageable pageable);
-
-    Page<FleaMarket> findByIdFleaMarketsWithState(SearchCond cond, Pageable pageable);
 }
