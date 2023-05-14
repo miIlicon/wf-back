@@ -8,6 +8,7 @@ import com.festival.domain.admin.exception.AdminNotFoundException;
 import com.festival.domain.admin.exception.AdminNotMatchException;
 import com.festival.domain.admin.repository.AdminRepository;
 import com.festival.domain.info.festivalPub.data.dto.request.PubRequest;
+import com.festival.domain.info.festivalPub.data.dto.response.PubListResponse;
 import com.festival.domain.info.festivalPub.data.dto.response.PubResponse;
 import com.festival.domain.info.festivalPub.data.entity.file.PubImage;
 import com.festival.domain.info.festivalPub.data.entity.pub.Pub;
@@ -115,13 +116,13 @@ public class PubService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PubResponse> getPubs(int offset, boolean state) {
+    public Page<PubListResponse> getPubs(int offset, boolean state) {
 
         Pageable pageable = PageRequest.of(offset, 20);
         SearchCond cond = new SearchCond(state);
 
         Page<Pub> findPubs = pubRepository.findByIdPubs(cond, pageable);
-        return findPubs.map(pub -> PubResponse.of(pub, filePath));
+        return findPubs.map(pub -> PubListResponse.of(pub, filePath));
     }
 
     private String saveMainFile(MultipartFile mainFile) throws IOException {

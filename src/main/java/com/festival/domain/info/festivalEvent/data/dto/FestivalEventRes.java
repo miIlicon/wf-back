@@ -14,9 +14,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FestivalEventRes {
 
-    private Long festivalEventId;
-
-
     private String title;
 
     private String subTitle;
@@ -35,8 +32,7 @@ public class FestivalEventRes {
 
 
     @Builder
-    public FestivalEventRes(Long festivalEventId, String title, String subTitle, String content, String mainFilePath, List<String> subFilePaths, int latitude, int longitude, Boolean festivalEventState) {
-        this.festivalEventId = festivalEventId;
+    public FestivalEventRes(String title, String subTitle, String content, String mainFilePath, List<String> subFilePaths, int latitude, int longitude, Boolean festivalEventState) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
@@ -54,7 +50,6 @@ public class FestivalEventRes {
         }
 
         return FestivalEventRes.builder()
-                .festivalEventId(festivalEvent.getId())
                 .title(festivalEvent.getTitle())
                 .content(festivalEvent.getContent())
                 .subTitle(festivalEvent.getSubTitle())

@@ -4,6 +4,7 @@ import com.festival.common.base.CommonIdResponse;
 import com.festival.domain.admin.data.entity.Admin;
 import com.festival.domain.admin.exception.AdminNotFoundException;
 import com.festival.domain.admin.repository.AdminRepository;
+import com.festival.domain.film.data.dto.FilmListRes;
 import com.festival.domain.film.data.dto.FilmReq;
 import com.festival.domain.film.data.dto.FilmRes;
 import com.festival.domain.film.data.entity.Film;
@@ -38,11 +39,11 @@ public class FilmService {
         return FilmRes.of(film);
     }
 
-    public Page<FilmRes> list(int offset) {
+    public Page<FilmListRes> list(int offset) {
         Pageable pageable = PageRequest.of(offset, 20);
         Page<Film> films = filmRepository.findAll(pageable);
 
-        return films.map(FilmRes::of);
+        return films.map(FilmListRes::of);
     }
 
     public CommonIdResponse modify(FilmReq filmReq, Long filmId) {

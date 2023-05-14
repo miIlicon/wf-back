@@ -4,6 +4,7 @@ import com.festival.common.base.CommonIdResponse;
 import com.festival.domain.admin.data.entity.Admin;
 import com.festival.domain.admin.exception.AdminNotFoundException;
 import com.festival.domain.admin.repository.AdminRepository;
+import com.festival.domain.info.festivalEvent.data.dto.FestivalEventListRes;
 import com.festival.domain.info.festivalEvent.data.dto.FestivalEventReq;
 import com.festival.domain.info.festivalEvent.data.dto.FestivalEventRes;
 import com.festival.domain.info.festivalEvent.data.entity.FestivalEvent;
@@ -78,11 +79,11 @@ public class FestivalEventService {
 
     }
 
-    public Page<FestivalEventRes> list(int offset, boolean state) {
+    public Page<FestivalEventListRes> list(int offset, boolean state) {
 
         Pageable pageable = PageRequest.of(offset, 20);
         Page<FestivalEvent> festivalEvents = festivalEventRepository.findByFestivalEventState(pageable, state);
-        return festivalEvents.map(festivalEvent -> FestivalEventRes.of(festivalEvent, filePath));
+        return festivalEvents.map(festivalEvent -> FestivalEventListRes.of(festivalEvent, filePath));
 
     }
 

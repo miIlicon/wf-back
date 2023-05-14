@@ -2,6 +2,7 @@ package com.festival.domain.info.festivalPub.controller;
 
 import com.festival.common.base.CommonIdResponse;
 import com.festival.domain.info.festivalPub.data.dto.request.PubRequest;
+import com.festival.domain.info.festivalPub.data.dto.response.PubListResponse;
 import com.festival.domain.info.festivalPub.data.dto.response.PubResponse;
 import com.festival.domain.info.festivalPub.service.PubService;
 import jakarta.validation.Valid;
@@ -47,7 +48,7 @@ public class PubController {
     }
 
     @GetMapping("/pub/list")
-    public ResponseEntity<Page<PubResponse>> getPubs(@RequestParam("page") int offset, @RequestParam("state") boolean state) {
+    public ResponseEntity<Page<PubListResponse>> getPubs(@RequestParam("page") int offset, @RequestParam("state") boolean state) {
         return ResponseEntity.ok().body(pubService.getPubs(offset, state));
     }
 }

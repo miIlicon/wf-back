@@ -8,6 +8,7 @@ import com.festival.domain.admin.exception.AdminNotFoundException;
 import com.festival.domain.admin.exception.AdminNotMatchException;
 import com.festival.domain.admin.repository.AdminRepository;
 import com.festival.domain.foodTruck.data.dto.request.FoodTruckRequest;
+import com.festival.domain.foodTruck.data.dto.response.FoodTruckListResponse;
 import com.festival.domain.foodTruck.data.dto.response.FoodTruckResponse;
 import com.festival.domain.foodTruck.data.entity.FoodTruck;
 import com.festival.domain.foodTruck.data.entity.FoodTruckImage;
@@ -83,13 +84,13 @@ public class FoodTruckServiceImpl implements FoodTruckService {
     }
 
     @Override
-    public Page<FoodTruckResponse> getFoodTruckList(int offset, boolean state) {
+    public Page<FoodTruckListResponse> getFoodTruckList(int offset, boolean state) {
 
         Pageable pageable = PageRequest.of(offset, 20);
         SearchCond cond = new SearchCond(state);
 
         Page<FoodTruck> foodTruckList = foodTruckRepository.findByIdTrucks(cond, pageable);
-        return foodTruckList.map(foodTruck -> FoodTruckResponse.of(foodTruck, filePath));
+        return foodTruckList.map(foodTruck -> FoodTruckListResponse.of(foodTruck, filePath));
     }
 
     @Override

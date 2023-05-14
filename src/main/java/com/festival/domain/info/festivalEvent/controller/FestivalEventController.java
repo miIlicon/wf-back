@@ -2,6 +2,7 @@ package com.festival.domain.info.festivalEvent.controller;
 
 
 import com.festival.common.base.CommonIdResponse;
+import com.festival.domain.info.festivalEvent.data.dto.FestivalEventListRes;
 import com.festival.domain.info.festivalEvent.data.dto.FestivalEventReq;
 import com.festival.domain.info.festivalEvent.data.dto.FestivalEventRes;
 import com.festival.domain.info.festivalEvent.data.entity.FestivalEvent;
@@ -37,7 +38,7 @@ public class FestivalEventController {
         return ResponseEntity.ok().body(festivalEventService.find(festivalEventId));
     }
     @GetMapping("/festivalEvent/list")
-    public ResponseEntity<Page<FestivalEventRes>> findFestivalEventList(@RequestParam("page") int offset, @RequestPart("state") boolean state){
+    public ResponseEntity<Page<FestivalEventListRes>> findFestivalEventList(@RequestParam("page") int offset, @RequestParam("state") boolean state){
         return ResponseEntity.ok().body(festivalEventService.list(offset, state));
     }
     @PutMapping("/festivalEvent/{id}")
