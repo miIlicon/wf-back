@@ -1,5 +1,6 @@
 package com.festival.domain.film.service;
 
+import com.festival.common.base.CommonIdResponse;
 import com.festival.domain.admin.data.entity.Admin;
 import com.festival.domain.admin.exception.AdminNotFoundException;
 import com.festival.domain.admin.repository.AdminRepository;
@@ -22,47 +23,44 @@ import org.springframework.transaction.annotation.Transactional;
 public class FilmService {
     private final AdminRepository adminRepository;
     private final FilmRepository filmRepository;
-    public FilmRes create(FilmReq filmReq) {
+    public CommonIdResponse create(FilmReq filmReq) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
         Film film = Film.of(filmReq, admin);
         filmRepository.save(film);
 
-        return FilmRes.of(film);
+        return new CommonIdResponse(film.getId());
     }
 
     public FilmRes find(Long filmId) {
         Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException("존재하지 않는 영상입니다."));
-
-
         return FilmRes.of(film);
     }
 
-    public Page<FilmRes> list(Long adminId, int offset) {
-
-        Pageable pageable = PageRequest.of(offset, 6);
-        Page<Film> films = filmRepository.findByAdminId(adminId, pageable);
+    public Page<FilmRes> list(int offset) {
+        Pageable pageable = PageRequest.of(offset, 20);
+        Page<Film> films = filmRepository.findAll(pageable);
 
         return films.map(FilmRes::of);
     }
 
-    public FilmRes modify(FilmReq filmReq, Long filmId) {
+    public CommonIdResponse modify(FilmReq filmReq, Long filmId) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
-
         Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+
         Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException("존재하지 않는 영상입니다."));
 
         film.modify(filmReq);
 
-        return FilmRes.of(film);
+        return new CommonIdResponse(film.getId());
     }
 
-    public FilmRes delete(Long filmId) {
+    public CommonIdResponse delete(Long filmId) {
 
         Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException("존재하지 않는 영상입니다."));
         filmRepository.delete(film);
 
-        return FilmRes.of(film);
+        return new CommonIdResponse(film.getId());
     }
 }

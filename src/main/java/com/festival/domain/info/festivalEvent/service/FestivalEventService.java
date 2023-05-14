@@ -1,5 +1,6 @@
 package com.festival.domain.info.festivalEvent.service;
 
+import com.festival.common.base.CommonIdResponse;
 import com.festival.domain.admin.data.entity.Admin;
 import com.festival.domain.admin.exception.AdminNotFoundException;
 import com.festival.domain.admin.repository.AdminRepository;
@@ -51,7 +52,7 @@ public class FestivalEventService {
     }
 
     @Transactional
-    public FestivalEventRes create(FestivalEventReq festivalEventReq, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
+    public CommonIdResponse create(FestivalEventReq festivalEventReq, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
@@ -68,7 +69,7 @@ public class FestivalEventService {
         festivalEventRepository.save(festivalEvent);
 
 
-        return FestivalEventRes.of(festivalEvent, filePath);
+        return new CommonIdResponse(festivalEvent.getId());
     }
 
     public FestivalEventRes find(Long festivalEventId) {
@@ -77,19 +78,16 @@ public class FestivalEventService {
 
     }
 
-    public Page<FestivalEventRes> list(int offset) {
+    public Page<FestivalEventRes> list(int offset, boolean state) {
 
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
-
-        Pageable pageable = PageRequest.of(offset, 6);
-        Page<FestivalEvent> festivalEvents = festivalEventRepository.findByAdminId(admin.getId(), pageable);
+        Pageable pageable = PageRequest.of(offset, 20);
+        Page<FestivalEvent> festivalEvents = festivalEventRepository.findByFestivalEventState(pageable);
         return festivalEvents.map(festivalEvent -> FestivalEventRes.of(festivalEvent, filePath));
 
     }
 
     @Transactional
-    public FestivalEventRes modify(Long festivalEventId, FestivalEventReq festivalEventReq, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
+    public CommonIdResponse modify(Long festivalEventId, FestivalEventReq festivalEventReq, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
         FestivalEvent festivalEvent = festivalEventRepository.findById(festivalEventId).orElseThrow(() -> new FestivalEventNotFoundException("존재하지 않는 게시물입니다."));
         FestivalEventImage festivalEventImage = festivalEvent.getFestivalEventImage();
 
@@ -100,17 +98,17 @@ public class FestivalEventService {
         List<String> subFileNames = saveSubFiles(subFiles); // 서브 파일 저장
         festivalEventImage.modify(mainFileName, subFileNames);
 
-        return FestivalEventRes.of(festivalEvent, filePath);
+        return new CommonIdResponse(festivalEventId);
     }
 
     @Transactional
-    public FestivalEventRes delete(Long festivalEventId) {
+    public CommonIdResponse delete(Long festivalEventId) {
         FestivalEvent festivalEvent = festivalEventRepository.findById(festivalEventId).orElseThrow(() -> new FestivalEventNotFoundException("이미 삭제된 게시물입니다."));
         FestivalEventImage festivalEventImage = festivalEvent.getFestivalEventImage();
         festivalEventImage.deleteOriginalFile(filePath);
         festivalEventRepository.delete(festivalEvent);
 
-        return FestivalEventRes.of(festivalEvent, filePath);
+        return new CommonIdResponse(festivalEventId);
 
     }
 

@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface FestivalEventRepository extends JpaRepository<FestivalEvent, Long> {
-    Page<FestivalEvent> findByAdminId(Long id, Pageable pageable);
+    Page<FestivalEvent> findByFestivalEventState(Pageable pageable);
 }
