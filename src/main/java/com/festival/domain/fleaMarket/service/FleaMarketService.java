@@ -1,5 +1,6 @@
 package com.festival.domain.fleaMarket.service;
 
+import com.festival.common.base.CommonIdResponse;
 import com.festival.common.utils.ImageServiceUtils;
 import com.festival.common.vo.SearchCond;
 import com.festival.domain.admin.data.entity.Admin;
@@ -45,7 +46,7 @@ public class FleaMarketService {
     @Value("${file.path}")
     private String filePath;
 
-    public FleaMarketResponse create(FleaMarketRequest fleaMarketRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
+    public CommonIdResponse create(FleaMarketRequest fleaMarketRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
 
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
@@ -62,10 +63,10 @@ public class FleaMarketService {
         saveSubFiles(subFiles, fleaMarketImage);
         fleaMarket.connectMarketImage(fleaMarketImage);
 
-        return FleaMarketResponse.of(fleaMarket, filePath);
+        return new CommonIdResponse(fleaMarket.getId());
     }
 
-    public FleaMarketResponse modify(Long fleaMarketId, FleaMarketRequest fleaMarketRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
+    public CommonIdResponse modify(Long fleaMarketId, FleaMarketRequest fleaMarketRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
 
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
@@ -86,7 +87,7 @@ public class FleaMarketService {
             em.flush();
             em.clear();
 
-            return FleaMarketResponse.of(fleaMarket, filePath);
+            return new CommonIdResponse(fleaMarket.getId());
         } else {
             throw new AdminNotMatchException("권한이 없습니다.");
         }
@@ -112,38 +113,17 @@ public class FleaMarketService {
     @Transactional(readOnly = true)
     public FleaMarketResponse getFleaMarket( Long fleaMarketId) {
 
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
         FleaMarket fleaMarket = fleaMarketRepository.findById(fleaMarketId).orElseThrow(() -> new FleaMarketNotFoundException("플리마켓을 찾을 수 없습니다."));
-
-        if (fleaMarket.getAdmin().equals(admin)) {
-            return FleaMarketResponse.of(fleaMarket, filePath);
-        } else {
-            throw new AdminNotMatchException("권한이 없습니다.");
-        }
+        return FleaMarketResponse.of(fleaMarket, filePath);
     }
 
     @Transactional(readOnly = true)
-    public Page<FleaMarketResponse> getFleaMarkets( int offset) {
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+    public Page<FleaMarketResponse> getFleaMarkets( int offset, boolean state) {
 
-        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
-        Long adminId = admin.getId();
-        Pageable pageable = PageRequest.of(offset, 6);
-        SearchCond cond = new SearchCond(adminId);
+        Pageable pageable = PageRequest.of(offset, 20);
+        SearchCond cond = new SearchCond(state);
 
         Page<FleaMarket> markets = fleaMarketRepository.findByIdFleaMarkets(cond, pageable);
-        return markets.map(fleaMarket -> FleaMarketResponse.of(fleaMarket, filePath));
-    }
-
-    @Transactional(readOnly = true)
-    public Page<FleaMarketResponse> getFleaMarketsForState(Long adminId, int offset, Boolean state) {
-
-        Pageable pageable = PageRequest.of(offset, 6);
-        SearchCond cond = new SearchCond(adminId, state);
-
-        Page<FleaMarket> markets = fleaMarketRepository.findByIdFleaMarketsWithState(cond, pageable);
         return markets.map(fleaMarket -> FleaMarketResponse.of(fleaMarket, filePath));
     }
 

@@ -8,6 +8,4 @@ import org.springframework.data.domain.Pageable;
 public interface PubRepositoryCustom {
 
     Page<Pub> findByIdPubs(SearchCond cond, Pageable pageable);
-
-    Page<Pub> findByIdPubsWithState(SearchCond cond, Pageable pageable);
 }

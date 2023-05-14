@@ -1,53 +1,60 @@
 package com.festival.domain.foodTruck.data.dto.response;
 
 import com.festival.domain.foodTruck.data.entity.FoodTruck;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.querydsl.core.annotations.QueryProjection;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FoodTruckResponse {
-    private Long foodTruckId;
 
     private String title;
-
     private String subTitle;
 
     private String content;
 
-    private LocalDateTime createdDate;
-
-    private LocalDateTime modifiedDate;
-
-    private String filePath;
-
-    private List<String> subFilePath;
+    private String mainFilePath;
+    private List<String> subFilePaths;
 
     private int latitude;
-
     private int longitude;
 
     private Boolean foodTruckState;
 
-    public static FoodTruckResponse of(final FoodTruck foodTruck) {
+    @Builder
+    @QueryProjection
+    public FoodTruckResponse(String title, String subTitle, String content,
+                       String mainFilePath, List<String> subFilePaths, int latitude, int longitude, Boolean foodTruckState) {
+        this.title = title;
+        this.subTitle = subTitle;
+        this.content = content;
+        this.mainFilePath = mainFilePath;
+        this.subFilePaths = subFilePaths;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.foodTruckState = foodTruckState;
+    }
+
+    public static FoodTruckResponse of(final FoodTruck foodTruck, String filePath) {
+
+        List<String> list = new ArrayList<>();
+        for (String subFilePath : foodTruck.getFoodTruckImage().getSubFileNames()) {
+            list.add(filePath + subFilePath);
+        }
+
         return FoodTruckResponse.builder()
-                .foodTruckId(foodTruck.getId())
                 .title(foodTruck.getTitle())
                 .subTitle(foodTruck.getSubTitle())
                 .content(foodTruck.getContent())
-                .createdDate(foodTruck.getCreatedDate())
-                .modifiedDate(foodTruck.getModifiedDate())
-                .filePath(foodTruck.getFoodTruckImage().getMainFilePath())
-                .subFilePath(foodTruck.getFoodTruckImage().getSubFilePaths())
+                .mainFilePath(filePath + foodTruck.getFoodTruckImage().getMainFileName())
+                .subFilePaths(list)
                 .latitude(foodTruck.getLatitude())
                 .longitude(foodTruck.getLongitude())
-                .foodTruckState(foodTruck.getFoodTruckState()).build();
+                .foodTruckState(foodTruck.getFoodTruckState())
+                .build();
     }
 }

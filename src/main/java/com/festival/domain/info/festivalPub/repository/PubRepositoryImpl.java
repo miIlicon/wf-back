@@ -39,29 +39,6 @@ public class PubRepositoryImpl implements PubRepositoryCustom {
                 .leftJoin(pub.pubImage, pubImage)
                 .leftJoin(pub.admin, admin)
                 .where(
-                        adminIdEq(cond))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        JPAQuery<Long> countQuery = queryFactory
-                .select(pub.count())
-                .from(pub)
-                .leftJoin(pub.admin, admin)
-                .where(
-                        adminIdEq(cond));
-
-        return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
-    }
-
-    @Override
-    public Page<Pub> findByIdPubsWithState(SearchCond cond, Pageable pageable) {
-        List<Pub> result = queryFactory
-                .selectFrom(pub)
-                .leftJoin(pub.pubImage, pubImage)
-                .leftJoin(pub.admin, admin)
-                .where(
-                        adminIdEq(cond),
                         stateEq(cond))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -72,7 +49,6 @@ public class PubRepositoryImpl implements PubRepositoryCustom {
                 .from(pub)
                 .leftJoin(pub.admin, admin)
                 .where(
-                        adminIdEq(cond),
                         stateEq(cond));
 
         return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);

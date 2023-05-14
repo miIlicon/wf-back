@@ -1,5 +1,6 @@
 package com.festival.domain.foodTruck.service.impl;
 
+import com.festival.common.base.CommonIdResponse;
 import com.festival.common.utils.ImageServiceUtils;
 import com.festival.common.vo.SearchCond;
 import com.festival.domain.admin.data.entity.Admin;
@@ -7,7 +8,6 @@ import com.festival.domain.admin.exception.AdminNotFoundException;
 import com.festival.domain.admin.exception.AdminNotMatchException;
 import com.festival.domain.admin.repository.AdminRepository;
 import com.festival.domain.foodTruck.data.dto.request.FoodTruckRequest;
-import com.festival.domain.foodTruck.data.dto.response.FoodTruckCreateResponse;
 import com.festival.domain.foodTruck.data.dto.response.FoodTruckResponse;
 import com.festival.domain.foodTruck.data.entity.FoodTruck;
 import com.festival.domain.foodTruck.data.entity.FoodTruckImage;
@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -33,82 +34,84 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class FoodTruckServiceImpl implements FoodTruckService {
-    private final AdminRepository adminRepository;
+
     private final FoodTruckRepository foodTruckRepository;
     private final FoodTruckImageRepository foodTruckImageRepository;
-    private final ImageServiceUtils imageServiceUtils;
+
+    private final ImageServiceUtils utils;
+    private final AdminRepository adminRepository;
+
     @Value("${file.path}")
     private String filePath;
 
 
     @Override
-    public FoodTruckCreateResponse createFoodTruck(FoodTruckRequest foodTruckRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws Exception {
+    public CommonIdResponse createFoodTruck(FoodTruckRequest foodTruckRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws Exception {
         log.debug("Start : FoodTruckServiceImpl : createFoodTruck");
         if (foodTruckRequest == null)
             throw new Exception("FoodTruckRequest Is Null");
         if (mainFile.getName().isBlank())
             throw new Exception("Main Image File Is Null");
-        FoodTruckCreateResponse foodTruckResponse = null;
         try {
             //임시 어드민
             String name = SecurityContextHolder.getContext().getAuthentication().getName();
             Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
-            FoodTruckImage foodTruckImage = new FoodTruckImage(mainFile, subFiles);
-            foodTruckImageRepository.save(foodTruckImage);
-
-            FoodTruck foodTruck = FoodTruck.of(foodTruckRequest, foodTruckImage, admin);
+            FoodTruck foodTruck = new FoodTruck(foodTruckRequest);
+            foodTruck.connectAdmin(admin);
             foodTruckRepository.save(foodTruck);
 
-            foodTruckResponse = new FoodTruckCreateResponse(foodTruck.getId());
+            String mainFileName = saveMainFile(mainFile);
+            FoodTruckImage foodTruckImage = new FoodTruckImage(mainFileName, foodTruck);
+            foodTruckImageRepository.save(foodTruckImage);
+
+            saveSubFiles(subFiles, foodTruckImage);
+            foodTruck.connectPubImage(foodTruckImage);
+            return new CommonIdResponse(foodTruck.getId());
         } catch (RuntimeException re) {
             log.error("### FoodTruckServiceImpl createFoodTruck: RuntimeException occur ###");
             throw new RuntimeException("CreateFoodTruck Exception");
         }
-        return foodTruckResponse;
     }
 
     @Override
-    public FoodTruckResponse getFoodTruck(Long foodTruckId) throws Exception {
+    public FoodTruckResponse getFoodTruck(Long foodTruckId) {
         log.debug("Start : FoodTruckServiceImpl : getFoodTruck");
         //TODO: JWT_USER_PARSER_FOR_ADMIN
         FoodTruck foodTruck = foodTruckRepository.findById(foodTruckId).orElseThrow(() -> new IllegalArgumentException("해당 푸드트럭 게시글이 존재하지 않습니다."));
-        return FoodTruckResponse.of(foodTruck);
+        return FoodTruckResponse.of(foodTruck, filePath);
     }
 
     @Override
-    public Page<FoodTruckResponse> getFoodTruckList(int offset) {
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+    public Page<FoodTruckResponse> getFoodTruckList(int offset, boolean state) {
 
-        Long adminId = admin.getId();
-        Pageable pageable = PageRequest.of(offset, 6);
-        SearchCond cond = new SearchCond(admin.getId());
+        Pageable pageable = PageRequest.of(offset, 20);
+        SearchCond cond = new SearchCond(state);
 
         Page<FoodTruck> foodTruckList = foodTruckRepository.findFoodTrucksById(cond, pageable);
-        return foodTruckList.map(foodTruck -> FoodTruckResponse.of(foodTruck));
+        return foodTruckList.map(foodTruck -> FoodTruckResponse.of(foodTruck, filePath));
     }
 
     @Override
-    public FoodTruckResponse updateFoodTruck(Long foodTruckId, FoodTruckRequest foodTruckRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
+    public CommonIdResponse updateFoodTruck(Long foodTruckId, FoodTruckRequest foodTruckRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
         //TODO: JWT_USER_PARSER_FOR_ADMIN(어드민 임시 데이터 1L)
+
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
-
 
         FoodTruck foodTruck = foodTruckRepository.findById(foodTruckId).orElseThrow(() -> new IllegalArgumentException("해당 푸드트럭 게시글이 존재하지 않습니다."));
         if (foodTruck.getAdmin().equals(admin)) {
 
             FoodTruckImage foodTruckImage = foodTruck.getFoodTruckImage();
-            foodTruckImage.modifyMainFilePath(filePath, imageServiceUtils.createStoreFileName(mainFile.getOriginalFilename()), mainFile);
+            foodTruckImage.modifyMainFileName(filePath, utils.createStoreFileName(mainFile.getOriginalFilename()), mainFile);
 
             if (!subFiles.isEmpty()) {
-                List<String> list = imageServiceUtils.saveSubImages(filePath, subFiles);
-                foodTruckImage.modifySubFilePaths(list);
+                List<String> list = utils.saveSubImages(filePath, subFiles);
+                foodTruckImage.modifySubFileNames(filePath, list);
             }
             foodTruck.modify(foodTruckRequest);
 
-            return FoodTruckResponse.of(foodTruck);
+            return new CommonIdResponse(foodTruck.getId());
         } else {
             throw new AdminNotMatchException("권한이 없습니다.");
         }
@@ -126,4 +129,14 @@ public class FoodTruckServiceImpl implements FoodTruckService {
         }
     }
 
+    private String saveMainFile(MultipartFile mainFile) throws IOException {
+        String mainFileName = utils.createStoreFileName(mainFile.getOriginalFilename());
+        mainFile.transferTo(new File(filePath + mainFileName));
+        return mainFileName;
+    }
+
+    private void saveSubFiles(List<MultipartFile> subFiles, FoodTruckImage foodTruckImage) throws IOException {
+        List<String> subFilePaths = utils.saveSubImages(filePath, subFiles);
+        foodTruckImage.saveSubFileNames(subFilePaths);
+    }
 }

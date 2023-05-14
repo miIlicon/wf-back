@@ -1,7 +1,7 @@
 package com.festival.domain.foodTruck.controller;
 
+import com.festival.common.base.CommonIdResponse;
 import com.festival.domain.foodTruck.data.dto.request.FoodTruckRequest;
-import com.festival.domain.foodTruck.data.dto.response.FoodTruckCreateResponse;
 import com.festival.domain.foodTruck.data.dto.response.FoodTruckResponse;
 import com.festival.domain.foodTruck.service.FoodTruckService;
 import jakarta.validation.Valid;
@@ -29,15 +29,11 @@ public class FoodTruckController {
      */
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public FoodTruckCreateResponse createFoodTruck(@RequestPart("dto") @Valid FoodTruckRequest foodTruckRequest,
-                                                   @RequestPart("main-file") @NotEmpty MultipartFile mainImageFile, @RequestPart("sub-file") List<MultipartFile> subImageFileList) throws Exception {
+    public CommonIdResponse createFoodTruck(@RequestPart("dto") @Valid FoodTruckRequest foodTruckRequest,
+                                            @RequestPart("main-file") @NotEmpty MultipartFile mainImageFile, @RequestPart("sub-file") List<MultipartFile> subImageFileList) throws Exception {
         log.debug("Start : FoodTruckController : createFoodTruck");
         //TODO: 입력값 검증
-        FoodTruckCreateResponse foodTruckResponse = foodTruckService.createFoodTruck(foodTruckRequest, mainImageFile, subImageFileList);
-        if (foodTruckResponse == null) {
-            throw new Exception("FoodTruckResponse is Null");
-        }
-        return foodTruckResponse;
+        return foodTruckService.createFoodTruck(foodTruckRequest, mainImageFile, subImageFileList);
     }
 
     /*
@@ -47,19 +43,17 @@ public class FoodTruckController {
     public FoodTruckResponse getFoodTruck(@PathVariable("id") Long foodTruckId) throws Exception {
         log.debug("Start : FoodTruckController : getFoodTruck");
         //TODO: 입력값 검증
-        FoodTruckResponse foodTruckResponse = foodTruckService.getFoodTruck(foodTruckId);
-        return foodTruckResponse;
+        return foodTruckService.getFoodTruck(foodTruckId);
     }
 
     /*
      * FoodTruck 목록 조회
      */
     @GetMapping("/list")
-    public Page<FoodTruckResponse> getFoodTruckList(@RequestParam("page") int offset) {
+    public Page<FoodTruckResponse> getFoodTruckList(@RequestParam("page") int offset, @RequestParam("state") boolean state) {
         log.debug("Start : FoodTruckController : getFoodTruckList");
         //TODO: 입력값 검증
-        Page<FoodTruckResponse> foodTruckResponseList = foodTruckService.getFoodTruckList(offset);
-        return foodTruckResponseList;
+        return foodTruckService.getFoodTruckList(offset, state);
     }
 
     /*
@@ -67,12 +61,11 @@ public class FoodTruckController {
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public FoodTruckResponse updateFoodTruck(@PathVariable("id") Long foodTruckId, @RequestPart("dto") @Valid FoodTruckRequest foodTruckRequest,
-                                             @RequestPart("main-file") @NotEmpty MultipartFile mainImageFile, @RequestPart("sub-file") List<MultipartFile> subImageFileList) throws IOException {
+    public CommonIdResponse updateFoodTruck(@PathVariable("id") Long foodTruckId, @RequestPart("dto") @Valid FoodTruckRequest foodTruckRequest,
+                                            @RequestPart("main-file") @NotEmpty MultipartFile mainImageFile, @RequestPart("sub-file") List<MultipartFile> subImageFileList) throws IOException {
         log.debug("Start : FoodTruckController : updateFoodTruck");
         //TODO: 입력값 검증
-        FoodTruckResponse foodTruckResponse = foodTruckService.updateFoodTruck(foodTruckId, foodTruckRequest, mainImageFile, subImageFileList);
-        return foodTruckResponse;
+        return foodTruckService.updateFoodTruck(foodTruckId, foodTruckRequest, mainImageFile, subImageFileList);
     }
 
     /*
@@ -84,6 +77,5 @@ public class FoodTruckController {
         log.debug("Start : FoodTruckController : deleteFoodTruck");
         //TODO: 입력값 검증
         foodTruckService.deleteFoodTruck(foodTruckId);
-        return;
     }
 }

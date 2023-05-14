@@ -3,6 +3,8 @@ package com.festival.domain.foodTruck.data.entity;
 import com.festival.common.base.BaseTimeEntity;
 import com.festival.domain.admin.data.entity.Admin;
 import com.festival.domain.foodTruck.data.dto.request.FoodTruckRequest;
+import com.festival.domain.info.festivalPub.data.dto.request.PubRequest;
+import com.festival.domain.info.festivalPub.data.entity.file.PubImage;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,8 +15,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FoodTruck extends BaseTimeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "title", nullable = false)
@@ -27,7 +28,7 @@ public class FoodTruck extends BaseTimeEntity {
     private String content;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "food_truck_image_id", referencedColumnName = "id")
+    @JoinColumn(name = "food_truck_image_id")
     private FoodTruckImage foodTruckImage;
 
     @Column(name = "latitude", nullable = false) // 위도
@@ -36,25 +37,39 @@ public class FoodTruck extends BaseTimeEntity {
     @Column(name = "longitude", nullable = false) // 경도
     private int longitude;
 
-    @Column(name = "foodTruck_state", nullable = false)
+    @Column(name = "pub_state", nullable = false)
     private Boolean foodTruckState;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "admin_id", nullable = false)
     private Admin admin;
 
-    public static FoodTruck of(FoodTruckRequest foodTruckRequest, FoodTruckImage foodTruckImage, Admin admin) {
-        return FoodTruck.builder()
-                .title(foodTruckRequest.getTitle())
-                .subTitle(foodTruckRequest.getSubTitle())
-                .content(foodTruckRequest.getContent())
-                .latitude(foodTruckRequest.getLatitude())
-                .longitude(foodTruckRequest.getLongitude())
-                .foodTruckState(foodTruckRequest.getFoodTruckState())
-                .foodTruckImage(foodTruckImage)
-                .admin(admin)
-                .build();
+    public FoodTruck(String title, String subTitle, String content, int latitude, int longitude, Boolean foodTruckState) {
+        this.title = title;
+        this.subTitle = subTitle;
+        this.content = content;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.foodTruckState = foodTruckState;
     }
+
+    public FoodTruck(FoodTruckRequest foodTruckRequest) {
+        this.title = foodTruckRequest.getTitle();
+        this.subTitle = foodTruckRequest.getSubTitle();
+        this.content = foodTruckRequest.getContent();
+        this.latitude = foodTruckRequest.getLatitude();
+        this.longitude = foodTruckRequest.getLongitude();
+        this.foodTruckState = foodTruckRequest.getFoodTruckState();
+    }
+
+    public void connectAdmin(Admin admin) {
+        this.admin = admin;
+    }
+
+    public void connectPubImage(FoodTruckImage foodTruckImage) {
+        this.foodTruckImage = foodTruckImage;
+    }
+
 
     public void modify(FoodTruckRequest foodTruckRequest) {
         this.title = foodTruckRequest.getTitle();
