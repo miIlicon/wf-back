@@ -81,7 +81,7 @@ public class FestivalEventService {
     public Page<FestivalEventRes> list(int offset, boolean state) {
 
         Pageable pageable = PageRequest.of(offset, 20);
-        Page<FestivalEvent> festivalEvents = festivalEventRepository.findByFestivalEventState(pageable);
+        Page<FestivalEvent> festivalEvents = festivalEventRepository.findByFestivalEventState(pageable, state);
         return festivalEvents.map(festivalEvent -> FestivalEventRes.of(festivalEvent, filePath));
 
     }
