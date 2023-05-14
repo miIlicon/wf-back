@@ -23,10 +23,6 @@ public class FestivalEventRes {
 
     private String content;
 
-    private LocalDateTime createdDate;
-
-    private LocalDateTime modifiedDate;
-
     private String mainFilePath;
 
     private List<String> subFilePaths;
@@ -39,13 +35,11 @@ public class FestivalEventRes {
 
 
     @Builder
-    public FestivalEventRes(Long festivalEventId, String title, String subTitle, String content, LocalDateTime createdDate, LocalDateTime modifiedDate, String mainFilePath, List<String> subFilePaths, int latitude, int longitude, Boolean festivalEventState) {
+    public FestivalEventRes(Long festivalEventId, String title, String subTitle, String content, String mainFilePath, List<String> subFilePaths, int latitude, int longitude, Boolean festivalEventState) {
         this.festivalEventId = festivalEventId;
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
-        this.createdDate = createdDate;
-        this.modifiedDate = modifiedDate;
         this.mainFilePath = mainFilePath;
         this.subFilePaths = subFilePaths;
         this.latitude = latitude;
@@ -64,8 +58,6 @@ public class FestivalEventRes {
                 .title(festivalEvent.getTitle())
                 .content(festivalEvent.getContent())
                 .subTitle(festivalEvent.getSubTitle())
-                .createdDate(festivalEvent.getCreatedDate())
-                .modifiedDate(festivalEvent.getModifiedDate())
                 .mainFilePath(festivalEvent.getFestivalEventImage().getMainFileName())
                 .subFilePaths(list)
                 .latitude(festivalEvent.getLatitude())
