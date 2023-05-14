@@ -1,5 +1,7 @@
 package com.festival.domain.info.festivalEvent.data.entity;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,8 +15,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FestivalEventImage {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -25,6 +26,11 @@ public class FestivalEventImage {
 
     @OneToOne(mappedBy = "festivalEventImage")
     private FestivalEvent festivalEvent;
+
+    public void connectFestivalEvent(FestivalEvent festivalEvent) {
+        this.festivalEvent = festivalEvent;
+    }
+
 
     @Builder
     public FestivalEventImage(String mainFileName, List<String> subFileNames) throws IOException {
@@ -43,10 +49,13 @@ public class FestivalEventImage {
         this.subFileNames = subFileNames;
     }
 
-    public void deleteOriginalFile(String filePath) {
-        new File(filePath + this.mainFileName).delete();
+    public void deleteOriginalFile(AmazonS3 amazonS3, String bucket) {
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, this.mainFileName);
+        amazonS3.deleteObject(deleteObjectRequest);
 
-        for(String subFileName: this.subFileNames)
-            new File(filePath + subFileName).delete();
+        for (String subFile : this.subFileNames) {
+            deleteObjectRequest = new DeleteObjectRequest(bucket, subFile);
+            amazonS3.deleteObject(deleteObjectRequest);
+        }
     }
 }

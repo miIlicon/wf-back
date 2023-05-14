@@ -1,5 +1,6 @@
 package com.festival.domain.info.festivalPub.service;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.festival.common.base.CommonIdResponse;
 import com.festival.common.utils.ImageServiceUtils;
 import com.festival.common.vo.SearchCond;
@@ -25,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -42,7 +42,12 @@ public class PubService {
     private final AdminRepository adminRepository;
     private final ImageServiceUtils utils;
 
-    @Value("${file.path}")
+    private final AmazonS3 amazonS3;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    @Value("https://${cloud.aws.s3.bucket}.s3.ap-northeast-2.amazonaws.com/")
     private String filePath;
 
     public CommonIdResponse create(PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
@@ -54,11 +59,13 @@ public class PubService {
         pub.connectAdmin(admin);
         pubRepository.save(pub);
 
-        String mainFileName = saveMainFile(mainFile);
-        PubImage pubImage = new PubImage(mainFileName, pub);
-        pubImageRepository.save(pubImage);
+        String mainFileName = utils.saveMainFile(mainFile);
+        List<String> subFileNames = utils.saveSubImages(subFiles);
 
-        saveSubFiles(subFiles, pubImage);
+        PubImage pubImage = new PubImage(pub);
+        pubImage.connectFileNames(mainFileName, subFileNames);
+
+        pubImageRepository.save(pubImage);
         pub.connectPubImage(pubImage);
 
         return new CommonIdResponse(pub.getId());
@@ -74,12 +81,12 @@ public class PubService {
         if (pub.getAdmin().equals(admin)) {
 
             PubImage pubImage = pub.getPubImage();
-            pubImage.modifyMainFileName(filePath, utils.createStoreFileName(mainFile.getOriginalFilename()), mainFile);
+            pubImage.deleteFile(amazonS3, bucket);
 
-            if (!subFiles.isEmpty()) {
-                List<String> list = utils.saveSubImages(filePath, subFiles);
-                pubImage.modifySubFileNames(filePath, list);
-            }
+            String mainFileName = utils.saveMainFile(mainFile);
+            List<String> subFileNames = utils.saveSubImages(subFiles);
+
+            pubImage.connectFileNames(mainFileName, subFileNames);
             pub.modify(pubRequest);
 
             return new CommonIdResponse(pub.getId());
@@ -96,8 +103,7 @@ public class PubService {
         Pub pub = pubRepository.findById(pubId).orElseThrow(() -> new PubNotFoundException("주점을 찾을 수 없습니다."));
 
         if (pub.getAdmin().equals(admin)) {
-
-            pub.getPubImage().deleteFile(filePath);
+            pub.getPubImage().deleteFile(amazonS3, bucket);
             pubRepository.delete(pub);
 
             return new CommonIdResponse(pub.getId());
@@ -108,30 +114,16 @@ public class PubService {
 
     @Transactional(readOnly = true)
     public PubResponse getPub( Long pubId) {
-
         Pub pub = pubRepository.findById(pubId).orElseThrow(() -> new PubNotFoundException("주점을 찾을 수 없습니다."));
-
         return PubResponse.of(pub, filePath);
     }
 
     @Transactional(readOnly = true)
     public Page<PubResponse> getPubs(int offset, boolean state) {
-
         Pageable pageable = PageRequest.of(offset, 20);
         SearchCond cond = new SearchCond(state);
 
         Page<Pub> findPubs = pubRepository.findByIdPubs(cond, pageable);
         return findPubs.map(pub -> PubResponse.of(pub, filePath));
-    }
-
-    private String saveMainFile(MultipartFile mainFile) throws IOException {
-        String mainFileName = utils.createStoreFileName(mainFile.getOriginalFilename());
-        mainFile.transferTo(new File(filePath + mainFileName));
-        return mainFileName;
-    }
-
-    private void saveSubFiles(List<MultipartFile> subFiles, PubImage pubImage) throws IOException {
-        List<String> subFilePaths = utils.saveSubImages(filePath, subFiles);
-        pubImage.saveSubFileNames(subFilePaths);
     }
 }

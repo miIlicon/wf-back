@@ -1,5 +1,6 @@
 package com.festival.domain.foodTruck.service.impl;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.festival.common.base.CommonIdResponse;
 import com.festival.common.utils.ImageServiceUtils;
 import com.festival.common.vo.SearchCond;
@@ -41,7 +42,12 @@ public class FoodTruckServiceImpl implements FoodTruckService {
     private final ImageServiceUtils utils;
     private final AdminRepository adminRepository;
 
-    @Value("${file.path}")
+    private final AmazonS3 amazonS3;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    @Value("https://${cloud.aws.s3.bucket}.s3.ap-northeast-2.amazonaws.com/")
     private String filePath;
 
 
@@ -53,7 +59,6 @@ public class FoodTruckServiceImpl implements FoodTruckService {
         if (mainFile.getName().isBlank())
             throw new Exception("Main Image File Is Null");
         try {
-            //임시 어드민
             String name = SecurityContextHolder.getContext().getAuthentication().getName();
             Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
@@ -61,12 +66,15 @@ public class FoodTruckServiceImpl implements FoodTruckService {
             foodTruck.connectAdmin(admin);
             foodTruckRepository.save(foodTruck);
 
-            String mainFileName = saveMainFile(mainFile);
-            FoodTruckImage foodTruckImage = new FoodTruckImage(mainFileName, foodTruck);
-            FoodTruckImage save = foodTruckImageRepository.save(foodTruckImage);
+            String mainFileName = utils.saveMainFile(mainFile);
+            List<String> subFileNames = utils.saveSubImages(subFiles);
 
-            saveSubFiles(subFiles, foodTruckImage);
-            foodTruck.connectPubImage(foodTruckImage);
+            FoodTruckImage foodTruckImage = new FoodTruckImage(mainFileName, foodTruck);
+            foodTruckImage.connectFileNames(mainFileName, subFileNames);
+
+            foodTruckImageRepository.save(foodTruckImage);
+            foodTruck.connectFoodTruckImage(foodTruckImage);
+
             return new CommonIdResponse(foodTruck.getId());
         } catch (RuntimeException re) {
             log.error("### FoodTruckServiceImpl createFoodTruck: RuntimeException occur ###");
@@ -94,21 +102,21 @@ public class FoodTruckServiceImpl implements FoodTruckService {
 
     @Override
     public CommonIdResponse updateFoodTruck(Long foodTruckId, FoodTruckRequest foodTruckRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
-        //TODO: JWT_USER_PARSER_FOR_ADMIN(어드민 임시 데이터 1L)
 
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
         FoodTruck foodTruck = foodTruckRepository.findById(foodTruckId).orElseThrow(() -> new IllegalArgumentException("해당 푸드트럭 게시글이 존재하지 않습니다."));
+
         if (foodTruck.getAdmin().equals(admin)) {
 
             FoodTruckImage foodTruckImage = foodTruck.getFoodTruckImage();
-            foodTruckImage.modifyMainFileName(filePath, utils.createStoreFileName(mainFile.getOriginalFilename()), mainFile);
+            foodTruckImage.deleteFile(amazonS3, bucket);
 
-            if (!subFiles.isEmpty()) {
-                List<String> list = utils.saveSubImages(filePath, subFiles);
-                foodTruckImage.modifySubFileNames(filePath, list);
-            }
+            String mainFileName = utils.saveMainFile(mainFile);
+            List<String> subFileNames = utils.saveSubImages(subFiles);
+
+            foodTruckImage.connectFileNames(mainFileName, subFileNames);
             foodTruck.modify(foodTruckRequest);
 
             return new CommonIdResponse(foodTruck.getId());
@@ -120,23 +128,16 @@ public class FoodTruckServiceImpl implements FoodTruckService {
     @Override
     public void deleteFoodTruck(Long foodTruckId) {
         //TODO: JWT_USER_PARSER_FOR_ADMIN(어드민 임시 데이터 1L)
-        Admin admin = adminRepository.findById(1L).orElse(null);
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+
         FoodTruck foodTruck = foodTruckRepository.findById(foodTruckId).orElseThrow(() -> new IllegalArgumentException("해당 푸드트럭 게시글이 존재하지 않습니다."));
+
         if (foodTruck.getAdmin().equals(admin)) {
+            foodTruck.getFoodTruckImage().deleteFile(amazonS3, bucket);
             foodTruckRepository.delete(foodTruck);
         } else {
             throw new AdminNotMatchException("권한이 없습니다.");
         }
-    }
-
-    private String saveMainFile(MultipartFile mainFile) throws IOException {
-        String mainFileName = utils.createStoreFileName(mainFile.getOriginalFilename());
-        mainFile.transferTo(new File(filePath + mainFileName));
-        return mainFileName;
-    }
-
-    private void saveSubFiles(List<MultipartFile> subFiles, FoodTruckImage foodTruckImage) throws IOException {
-        List<String> subFilePaths = utils.saveSubImages(filePath, subFiles);
-        foodTruckImage.saveSubFileNames(subFilePaths);
     }
 }

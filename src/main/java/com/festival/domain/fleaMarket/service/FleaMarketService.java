@@ -1,5 +1,6 @@
 package com.festival.domain.fleaMarket.service;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.festival.common.base.CommonIdResponse;
 import com.festival.common.utils.ImageServiceUtils;
 import com.festival.common.vo.SearchCond;
@@ -40,10 +41,14 @@ public class FleaMarketService {
     private final FleaMarketImageRepository fleaMarketImageRepository;
 
     private final AdminRepository adminRepository;
-    private final EntityManager em;
     private final ImageServiceUtils utils;
 
-    @Value("${file.path}")
+    private final AmazonS3 amazonS3;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    @Value("https://${cloud.aws.s3.bucket}.s3.ap-northeast-2.amazonaws.com/")
     private String filePath;
 
     public CommonIdResponse create(FleaMarketRequest fleaMarketRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
@@ -51,16 +56,17 @@ public class FleaMarketService {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
-
         FleaMarket fleaMarket = new FleaMarket(fleaMarketRequest);
         fleaMarket.connectAdmin(admin);
         fleaMarketRepository.save(fleaMarket);
 
-        String mainFileName = saveMainFile(mainFile);
-        FleaMarketImage fleaMarketImage = new FleaMarketImage(mainFileName, fleaMarket);
-        fleaMarketImageRepository.save(fleaMarketImage);
+        String mainFileName = utils.saveMainFile(mainFile);
+        List<String> subFileNames = utils.saveSubImages(subFiles);
 
-        saveSubFiles(subFiles, fleaMarketImage);
+        FleaMarketImage fleaMarketImage = new FleaMarketImage(fleaMarket);
+        fleaMarketImage.connectFileNames(mainFileName, subFileNames);
+
+        fleaMarketImageRepository.save(fleaMarketImage);
         fleaMarket.connectMarketImage(fleaMarketImage);
 
         return new CommonIdResponse(fleaMarket.getId());
@@ -76,16 +82,13 @@ public class FleaMarketService {
         if (fleaMarket.getAdmin().equals(admin)) {
 
             FleaMarketImage fleaMarketImage = fleaMarket.getFleaMarketImage();
-            fleaMarketImage.modifyMainFileName(filePath, utils.createStoreFileName(mainFile.getOriginalFilename()), mainFile);
+            fleaMarketImage.deleteFile(amazonS3, bucket);
 
-            if (!subFiles.isEmpty()) {
-                List<String> list = utils.saveSubImages(filePath, subFiles);
-                fleaMarketImage.modifySubFileNames(filePath, list);
-            }
+            String mainFileName = utils.saveMainFile(mainFile);
+            List<String> subFileNames = utils.saveSubImages(subFiles);
+
+            fleaMarketImage.connectFileNames(mainFileName, subFileNames);
             fleaMarket.modify(fleaMarketRequest);
-
-            em.flush();
-            em.clear();
 
             return new CommonIdResponse(fleaMarket.getId());
         } else {
@@ -97,11 +100,11 @@ public class FleaMarketService {
 
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
+
         FleaMarket fleaMarket = fleaMarketRepository.findById(fleaMarketId).orElseThrow(() -> new FleaMarketNotFoundException("플리마켓을 찾을 수 없습니다."));
 
         if (fleaMarket.getAdmin().equals(admin)) {
-
-            fleaMarket.getFleaMarketImage().deleteFile(filePath);
+            fleaMarket.getFleaMarketImage().deleteFile(amazonS3, bucket);
             fleaMarketRepository.delete(fleaMarket);
 
             return FleaMarketResponse.of(fleaMarket, filePath);
@@ -112,29 +115,16 @@ public class FleaMarketService {
 
     @Transactional(readOnly = true)
     public FleaMarketResponse getFleaMarket( Long fleaMarketId) {
-
         FleaMarket fleaMarket = fleaMarketRepository.findById(fleaMarketId).orElseThrow(() -> new FleaMarketNotFoundException("플리마켓을 찾을 수 없습니다."));
         return FleaMarketResponse.of(fleaMarket, filePath);
     }
 
     @Transactional(readOnly = true)
     public Page<FleaMarketResponse> getFleaMarkets( int offset, boolean state) {
-
         Pageable pageable = PageRequest.of(offset, 20);
         SearchCond cond = new SearchCond(state);
 
         Page<FleaMarket> markets = fleaMarketRepository.findByIdFleaMarkets(cond, pageable);
         return markets.map(fleaMarket -> FleaMarketResponse.of(fleaMarket, filePath));
-    }
-
-    private String saveMainFile(MultipartFile mainFile) throws IOException {
-        String mainFileName = utils.createStoreFileName(mainFile.getOriginalFilename());
-        mainFile.transferTo(new File(filePath + mainFileName));
-        return mainFileName;
-    }
-
-    private void saveSubFiles(List<MultipartFile> subFiles, FleaMarketImage fleaMarketImage) throws IOException {
-        List<String> subFilePaths = utils.saveSubImages(filePath, subFiles);
-        fleaMarketImage.saveSubFileNames(subFilePaths);
     }
 }
