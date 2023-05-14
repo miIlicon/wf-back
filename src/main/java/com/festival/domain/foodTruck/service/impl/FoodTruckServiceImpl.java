@@ -37,7 +37,7 @@ public class FoodTruckServiceImpl implements FoodTruckService {
     private final FoodTruckRepository foodTruckRepository;
     private final FoodTruckImageRepository foodTruckImageRepository;
     private final ImageServiceUtils imageServiceUtils;
-    @Value("${cloud.aws.s3.bucket}")
+    @Value("${file.path}")
     private String filePath;
 
 

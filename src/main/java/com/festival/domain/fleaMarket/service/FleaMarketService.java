@@ -42,7 +42,7 @@ public class FleaMarketService {
     private final EntityManager em;
     private final ImageServiceUtils utils;
 
-    @Value("${cloud.aws.s3.bucket}")
+    @Value("${file.path}")
     private String filePath;
 
     public FleaMarketResponse create(FleaMarketRequest fleaMarketRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
