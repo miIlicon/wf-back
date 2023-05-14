@@ -88,7 +88,7 @@ public class FoodTruckServiceImpl implements FoodTruckService {
         Pageable pageable = PageRequest.of(offset, 20);
         SearchCond cond = new SearchCond(state);
 
-        Page<FoodTruck> foodTruckList = foodTruckRepository.findFoodTrucksById(cond, pageable);
+        Page<FoodTruck> foodTruckList = foodTruckRepository.findByIdTrucks(cond, pageable);
         return foodTruckList.map(foodTruck -> FoodTruckResponse.of(foodTruck, filePath));
     }
 

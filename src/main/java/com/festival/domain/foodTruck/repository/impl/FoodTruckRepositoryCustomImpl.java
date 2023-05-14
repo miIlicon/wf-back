@@ -2,7 +2,7 @@ package com.festival.domain.foodTruck.repository.impl;
 
 import com.festival.common.vo.SearchCond;
 import com.festival.domain.foodTruck.data.entity.FoodTruck;
-import com.festival.domain.foodTruck.repository.FoodTruckCustomRepository;
+import com.festival.domain.foodTruck.repository.FoodTruckRepositoryCustom;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -18,7 +18,7 @@ import static com.festival.domain.foodTruck.data.entity.QFoodTruck.foodTruck;
 import static com.festival.domain.foodTruck.data.entity.QFoodTruckImage.foodTruckImage;
 import static com.festival.domain.info.festivalPub.data.entity.pub.QPub.pub;
 
-public class FoodTruckRepositoryCustomImpl implements FoodTruckCustomRepository {
+public class FoodTruckRepositoryCustomImpl implements FoodTruckRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     public FoodTruckRepositoryCustomImpl(EntityManager em) {
@@ -34,7 +34,7 @@ public class FoodTruckRepositoryCustomImpl implements FoodTruckCustomRepository 
     }
 
     @Override
-    public Page<FoodTruck> findFoodTrucksById(SearchCond cond, Pageable pageable) {
+    public Page<FoodTruck> findByIdTrucks(SearchCond cond, Pageable pageable) {
         List<FoodTruck> result = queryFactory
                 .selectFrom(foodTruck)
                 .leftJoin(foodTruck.foodTruckImage, foodTruckImage)

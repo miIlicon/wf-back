@@ -5,6 +5,6 @@ import com.festival.domain.foodTruck.data.entity.FoodTruck;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface FoodTruckCustomRepository {
-    Page<FoodTruck> findFoodTrucksById(SearchCond cond, Pageable pageable);
+public interface FoodTruckRepositoryCustom {
+    Page<FoodTruck> findByIdTrucks(SearchCond cond, Pageable pageable);
 }
