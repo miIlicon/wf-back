@@ -31,7 +31,7 @@ public class ImageServiceUtils {
         List<String> subFilePaths = new ArrayList<>();
 
         for (MultipartFile subFile : subFiles) {
-            if (!subFile.isEmpty()) {
+            if (subFile.getOriginalFilename() != null) {
                 String savePath = createStoreFileName(subFile.getOriginalFilename());
                 subFilePaths.add(savePath);
                 subFile.transferTo(new File(filePath + savePath));

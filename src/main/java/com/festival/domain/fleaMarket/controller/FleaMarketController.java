@@ -49,7 +49,7 @@ public class FleaMarketController {
         return ResponseEntity.ok().body(fleaMarketService.getFleaMarket(fleaMarketId));
     }
 
-    @GetMapping("/list")
+    @GetMapping("/flea-market/list")
     public ResponseEntity<Page<FleaMarketResponse>> getFleaMarkets(@RequestParam("page") int offset) {
         return ResponseEntity.ok().body(fleaMarketService.getFleaMarkets( offset));
     }

@@ -36,7 +36,7 @@ public class FestivalEventService {
     private final FestivalEventImageRepository festivalEventImageRepository;
     private final EntityManager em;
 
-    @Value("${cloud.aws.s3.bucket}")
+    @Value("${file.path}")
     private String filePath;
 
     private static String createStoreFileName(String originalFilename) {
@@ -83,7 +83,7 @@ public class FestivalEventService {
         Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
         Pageable pageable = PageRequest.of(offset, 6);
-        Page<FestivalEvent> festivalEvents = festivalEventRepository.findByAdminIdAndFestivalEventState(admin.getId(), pageable);
+        Page<FestivalEvent> festivalEvents = festivalEventRepository.findByAdminId(admin.getId(), pageable);
         return festivalEvents.map(festivalEvent -> FestivalEventRes.of(festivalEvent, filePath));
 
     }

@@ -45,7 +45,7 @@ public class PubController {
         return ResponseEntity.ok().body(pubService.getPub(pubId));
     }
 
-    @GetMapping("/list")
+    @GetMapping("/pub/list")
     public ResponseEntity<Page<PubResponse>> getPubs(@RequestParam("page") int offset) {
         return ResponseEntity.ok().body(pubService.getPubs(offset));
     }
