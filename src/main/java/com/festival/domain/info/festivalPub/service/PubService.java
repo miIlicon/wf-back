@@ -88,7 +88,7 @@ public class PubService {
         }
     }
 
-    public PubResponse delete(Long pubId) {
+    public CommonIdResponse delete(Long pubId) {
 
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
@@ -100,7 +100,7 @@ public class PubService {
             pub.getPubImage().deleteFile(filePath);
             pubRepository.delete(pub);
 
-            return PubResponse.of(pub, filePath);
+            return new CommonIdResponse(pub.getId());
         } else {
             throw new AdminNotMatchException("권한이 없습니다.");
         }

@@ -37,7 +37,7 @@ public class PubController {
     }
 
     @DeleteMapping("/pub/{id}")
-    public ResponseEntity<PubResponse> deletePub(@PathVariable("id") Long pubId) {
+    public ResponseEntity<CommonIdResponse> deletePub(@PathVariable("id") Long pubId) {
         return ResponseEntity.ok().body(pubService.delete(pubId));
     }
 

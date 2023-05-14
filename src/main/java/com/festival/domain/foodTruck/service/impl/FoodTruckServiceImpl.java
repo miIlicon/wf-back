@@ -22,9 +22,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -63,7 +63,7 @@ public class FoodTruckServiceImpl implements FoodTruckService {
 
             String mainFileName = saveMainFile(mainFile);
             FoodTruckImage foodTruckImage = new FoodTruckImage(mainFileName, foodTruck);
-            foodTruckImageRepository.save(foodTruckImage);
+            FoodTruckImage save = foodTruckImageRepository.save(foodTruckImage);
 
             saveSubFiles(subFiles, foodTruckImage);
             foodTruck.connectPubImage(foodTruckImage);

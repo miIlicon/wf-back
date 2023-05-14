@@ -24,12 +24,10 @@ public class FoodTruckImage {
     private String mainFileName;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "pub_sub_image", joinColumns = @JoinColumn(name = "pub_image_id"))
-    @Column(name = "file_name")
     private List<String> subFileNames = new ArrayList<>();
 
 
-    @OneToOne(mappedBy = "pubImage", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "foodTruckImage", fetch = FetchType.LAZY)
     private FoodTruck foodTruck;
 
     public FoodTruckImage(String mainFilePath, FoodTruck foodTruck) {
