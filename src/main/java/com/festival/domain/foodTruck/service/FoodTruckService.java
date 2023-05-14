@@ -1,5 +1,6 @@
 package com.festival.domain.foodTruck.service;
 
+import com.festival.common.base.CommonIdResponse;
 import com.festival.domain.foodTruck.data.dto.request.FoodTruckRequest;
 import com.festival.domain.foodTruck.data.dto.response.FoodTruckResponse;
 import org.springframework.data.domain.Page;

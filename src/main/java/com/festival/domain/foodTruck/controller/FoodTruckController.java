@@ -1,5 +1,6 @@
 package com.festival.domain.foodTruck.controller;
 
+import com.festival.common.base.CommonIdResponse;
 import com.festival.domain.foodTruck.data.dto.request.FoodTruckRequest;
 import com.festival.domain.foodTruck.data.dto.response.FoodTruckResponse;
 import com.festival.domain.foodTruck.service.FoodTruckService;
@@ -61,7 +62,7 @@ public class FoodTruckController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public CommonIdResponse updateFoodTruck(@PathVariable("id") Long foodTruckId, @RequestPart("dto") @Valid FoodTruckRequest foodTruckRequest,
-                                             @RequestPart("main-file") @NotEmpty MultipartFile mainImageFile, @RequestPart("sub-file") List<MultipartFile> subImageFileList) throws IOException {
+                                            @RequestPart("main-file") @NotEmpty MultipartFile mainImageFile, @RequestPart("sub-file") List<MultipartFile> subImageFileList) throws IOException {
         log.debug("Start : FoodTruckController : updateFoodTruck");
         //TODO: 입력값 검증
         return foodTruckService.updateFoodTruck(foodTruckId, foodTruckRequest, mainImageFile, subImageFileList);

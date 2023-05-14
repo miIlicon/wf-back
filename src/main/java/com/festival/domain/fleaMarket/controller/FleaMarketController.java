@@ -1,5 +1,6 @@
 package com.festival.domain.fleaMarket.controller;
 
+import com.festival.common.base.CommonIdResponse;
 import com.festival.domain.fleaMarket.data.dto.request.FleaMarketRequest;
 import com.festival.domain.fleaMarket.data.dto.response.FleaMarketResponse;
 import com.festival.domain.fleaMarket.service.FleaMarketService;

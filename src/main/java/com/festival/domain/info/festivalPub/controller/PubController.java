@@ -1,5 +1,6 @@
 package com.festival.domain.info.festivalPub.controller;
 
+import com.festival.common.base.CommonIdResponse;
 import com.festival.domain.info.festivalPub.data.dto.request.PubRequest;
 import com.festival.domain.info.festivalPub.data.dto.response.PubResponse;
 import com.festival.domain.info.festivalPub.service.PubService;
@@ -31,7 +32,7 @@ public class PubController {
 
     @PutMapping("/pub/{id}")
     public ResponseEntity<CommonIdResponse> modifyPub(@PathVariable("id") Long pubId, @RequestPart("dto") @Valid PubRequest dto,
-                                                 @RequestPart("main-file") @NotEmpty MultipartFile file, @RequestPart("sub-file") List<MultipartFile> files) throws IOException {
+                                                      @RequestPart("main-file") @NotEmpty MultipartFile file, @RequestPart("sub-file") List<MultipartFile> files) throws IOException {
         return ResponseEntity.ok().body(pubService.modify(pubId, dto, file, files));
     }
 

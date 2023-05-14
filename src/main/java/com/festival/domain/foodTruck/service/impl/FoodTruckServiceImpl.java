@@ -1,5 +1,6 @@
 package com.festival.domain.foodTruck.service.impl;
 
+import com.festival.common.base.CommonIdResponse;
 import com.festival.common.utils.ImageServiceUtils;
 import com.festival.common.vo.SearchCond;
 import com.festival.domain.admin.data.entity.Admin;

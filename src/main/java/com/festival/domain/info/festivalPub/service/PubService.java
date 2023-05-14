@@ -1,5 +1,6 @@
 package com.festival.domain.info.festivalPub.service;
 
+import com.festival.common.base.CommonIdResponse;
 import com.festival.common.utils.ImageServiceUtils;
 import com.festival.common.vo.SearchCond;
 import com.festival.domain.admin.data.entity.Admin;
