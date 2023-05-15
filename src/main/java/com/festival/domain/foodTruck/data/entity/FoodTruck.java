@@ -10,8 +10,6 @@ import lombok.*;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FoodTruck extends BaseTimeEntity {
 
@@ -66,7 +64,7 @@ public class FoodTruck extends BaseTimeEntity {
         this.admin = admin;
     }
 
-    public void connectPubImage(FoodTruckImage foodTruckImage) {
+    public void connectFoodTruckImage(FoodTruckImage foodTruckImage) {
         this.foodTruckImage = foodTruckImage;
     }
 

@@ -1,19 +1,21 @@
 spring:
-  profiles:
-    include: secret
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   datasource:
-    url: jdbc:h2:tcp://localhost/~/db/festival
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://withfestval.cevuktsbhaoe.ap-northeast-2.rds.amazonaws.com:5432/withFestival
+    username: postgres
+    password: millicon!0303
   jpa:
     hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-#        show_sql: true
-        format_sql: true
-        use_sql_comments: true
-
-logging.level:
-  org.hibernate.SQL: debug
+      ddl-auto: update
+cloud:
+  aws:
+    s3:
+      bucket: millicon
+    region:
+      static: ap-northeast-2
+    credentials:
+      accessKey:
+      secretKey:

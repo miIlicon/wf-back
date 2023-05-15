@@ -1,5 +1,7 @@
 package com.festival.domain.fleaMarket.data.entity;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -31,9 +33,13 @@ public class FleaMarketImage {
     @OneToOne(mappedBy = "fleaMarketImage", fetch = FetchType.LAZY)
     private FleaMarket fleaMarket;
 
-    public FleaMarketImage(String mainFilePath, FleaMarket fleaMarket) {
-        this.mainFileName = mainFilePath;
+    public FleaMarketImage(FleaMarket fleaMarket) {
         this.fleaMarket = fleaMarket;
+    }
+
+    public void connectFileNames(String mainFileName, List<String> subFileNames) {
+        this.mainFileName = mainFileName;
+        this.subFileNames = subFileNames;
     }
 
     public void saveSubFileNames(List<String> subFileNames) {
@@ -56,12 +62,14 @@ public class FleaMarketImage {
         mainFile.transferTo(new File(filePath + mainFilePath));
     }
 
-    public void deleteFile(String filePath) {
+    public void deleteFile(AmazonS3 amazonS3, String bucket) {
+
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, this.mainFileName);
+        amazonS3.deleteObject(deleteObjectRequest);
+
         for (String subFile : this.subFileNames) {
-            File file = new File(filePath + subFile);
-            file.delete();
+            deleteObjectRequest = new DeleteObjectRequest(bucket, subFile);
+            amazonS3.deleteObject(deleteObjectRequest);
         }
-        File file = new File(filePath + this.mainFileName);
-        file.delete();
     }
 }

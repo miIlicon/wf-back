@@ -1,5 +1,7 @@
 package com.festival.domain.foodTruck.data.entity;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.festival.domain.info.festivalPub.data.entity.pub.Pub;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,8 +14,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FoodTruckImage {
 
@@ -39,6 +39,11 @@ public class FoodTruckImage {
         this.subFileNames = subFileNames;
     }
 
+    public void connectFileNames(String mainFileName, List<String> subFileNames) {
+        this.mainFileName = mainFileName;
+        this.subFileNames = subFileNames;
+    }
+
     public void modifySubFileNames(String filePath, List<String> subFilePath) {
         for (String subFile : this.subFileNames) {
             File file = new File(filePath + subFile);
@@ -55,12 +60,14 @@ public class FoodTruckImage {
         mainFile.transferTo(new File(filePath + mainFilePath));
     }
 
-    public void deleteFile(String filePath) {
+    public void deleteFile(AmazonS3 amazonS3, String bucket) {
+
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, this.mainFileName);
+        amazonS3.deleteObject(deleteObjectRequest);
+
         for (String subFile : this.subFileNames) {
-            File file = new File(filePath + subFile);
-            file.delete();
+            deleteObjectRequest = new DeleteObjectRequest(bucket, subFile);
+            amazonS3.deleteObject(deleteObjectRequest);
         }
-        File file = new File(filePath + this.mainFileName);
-        file.delete();
     }
 }

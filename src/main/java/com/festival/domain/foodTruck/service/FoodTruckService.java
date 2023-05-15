@@ -2,6 +2,7 @@ package com.festival.domain.foodTruck.service;
 
 import com.festival.common.base.CommonIdResponse;
 import com.festival.domain.foodTruck.data.dto.request.FoodTruckRequest;
+import com.festival.domain.foodTruck.data.dto.response.FoodTruckListResponse;
 import com.festival.domain.foodTruck.data.dto.response.FoodTruckResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,9 +15,9 @@ public interface FoodTruckService {
 
     FoodTruckResponse getFoodTruck(Long foodTruckId) throws Exception;
 
-    Page<FoodTruckResponse> getFoodTruckList(int offset, boolean state);
+    Page<FoodTruckListResponse> getFoodTruckList(int offset, boolean state);
 
     CommonIdResponse updateFoodTruck(Long foodTruckId, FoodTruckRequest foodTruckRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException;
 
-    void deleteFoodTruck(Long foodTruckId);
+    CommonIdResponse deleteFoodTruck(Long foodTruckId);
 }

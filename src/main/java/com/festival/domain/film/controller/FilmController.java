@@ -1,6 +1,7 @@
 package com.festival.domain.film.controller;
 
 import com.festival.common.base.CommonIdResponse;
+import com.festival.domain.film.data.dto.FilmListRes;
 import com.festival.domain.film.data.dto.FilmReq;
 import com.festival.domain.film.data.dto.FilmRes;
 import com.festival.domain.film.data.entity.Film;
@@ -32,8 +33,8 @@ public class FilmController {
     }
 
     @GetMapping("/film/list")
-    public ResponseEntity<Page<FilmRes>> findFilmList(@RequestParam("page") int offset){
-        Page<FilmRes> result = filmService.list(offset);
+    public ResponseEntity<Page<FilmListRes>> findFilmList(@RequestParam("page") int offset){
+        Page<FilmListRes> result = filmService.list(offset);
 
         return ResponseEntity.ok().body(result);
     }

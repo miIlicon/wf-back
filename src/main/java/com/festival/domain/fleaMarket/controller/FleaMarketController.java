@@ -2,6 +2,7 @@ package com.festival.domain.fleaMarket.controller;
 
 import com.festival.common.base.CommonIdResponse;
 import com.festival.domain.fleaMarket.data.dto.request.FleaMarketRequest;
+import com.festival.domain.fleaMarket.data.dto.response.FleaMarketListResponse;
 import com.festival.domain.fleaMarket.data.dto.response.FleaMarketResponse;
 import com.festival.domain.fleaMarket.service.FleaMarketService;
 import jakarta.validation.Valid;
@@ -51,7 +52,7 @@ public class FleaMarketController {
     }
 
     @GetMapping("/flea-market/list")
-    public ResponseEntity<Page<FleaMarketResponse>> getFleaMarkets(@RequestParam("page") int offset, @RequestParam("state") boolean state) {
+    public ResponseEntity<Page<FleaMarketListResponse>> getFleaMarkets(@RequestParam("page") int offset, @RequestParam("state") boolean state) {
         return ResponseEntity.ok().body(fleaMarketService.getFleaMarkets(offset, state));
     }
 

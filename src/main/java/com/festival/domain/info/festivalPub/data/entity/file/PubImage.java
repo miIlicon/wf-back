@@ -1,12 +1,10 @@
 package com.festival.domain.info.festivalPub.data.entity.file;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.festival.domain.info.festivalPub.data.entity.pub.Pub;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,37 +28,23 @@ public class PubImage {
     @OneToOne(mappedBy = "pubImage", fetch = FetchType.LAZY)
     private Pub pub;
 
-    public PubImage(String mainFilePath, Pub pub) {
-        this.mainFileName = mainFilePath;
+    public PubImage(Pub pub) {
         this.pub = pub;
     }
 
-    public void saveSubFileNames(List<String> subFileNames) {
+    public void connectFileNames(String mainFileName, List<String> subFileNames) {
+        this.mainFileName = mainFileName;
         this.subFileNames = subFileNames;
     }
 
-    public void modifySubFileNames(String filePath, List<String> subFilePath) {
+    public void deleteFile(AmazonS3 amazonS3, String bucket) {
+
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, this.mainFileName);
+        amazonS3.deleteObject(deleteObjectRequest);
+
         for (String subFile : this.subFileNames) {
-            File file = new File(filePath + subFile);
-            file.delete();
+            deleteObjectRequest = new DeleteObjectRequest(bucket, subFile);
+            amazonS3.deleteObject(deleteObjectRequest);
         }
-        this.subFileNames = subFilePath;
-    }
-
-    public void modifyMainFileName(String filePath, String mainFilePath, MultipartFile mainFile) throws IOException {
-        File file = new File(filePath + this.mainFileName);
-        file.delete();
-
-        this.mainFileName = mainFilePath;
-        mainFile.transferTo(new File(filePath + mainFilePath));
-    }
-
-    public void deleteFile(String filePath) {
-        for (String subFile : this.subFileNames) {
-            File file = new File(filePath + subFile);
-            file.delete();
-        }
-        File file = new File(filePath + this.mainFileName);
-        file.delete();
     }
 }
