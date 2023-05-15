@@ -2,6 +2,7 @@ package com.festival.domain.foodTruck.controller;
 
 import com.festival.common.base.CommonIdResponse;
 import com.festival.domain.foodTruck.data.dto.request.FoodTruckRequest;
+import com.festival.domain.foodTruck.data.dto.response.FoodTruckListResponse;
 import com.festival.domain.foodTruck.data.dto.response.FoodTruckResponse;
 import com.festival.domain.foodTruck.service.FoodTruckService;
 import jakarta.validation.Valid;
@@ -50,7 +51,7 @@ public class FoodTruckController {
      * FoodTruck 목록 조회
      */
     @GetMapping("/list")
-    public Page<FoodTruckResponse> getFoodTruckList(@RequestParam("page") int offset, @RequestParam("state") boolean state) {
+    public Page<FoodTruckListResponse> getFoodTruckList(@RequestParam("page") int offset, @RequestParam("state") boolean state) {
         log.debug("Start : FoodTruckController : getFoodTruckList");
         //TODO: 입력값 검증
         return foodTruckService.getFoodTruckList(offset, state);

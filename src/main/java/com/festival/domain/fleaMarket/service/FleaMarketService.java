@@ -9,6 +9,7 @@ import com.festival.domain.admin.exception.AdminNotFoundException;
 import com.festival.domain.admin.exception.AdminNotMatchException;
 import com.festival.domain.admin.repository.AdminRepository;
 import com.festival.domain.fleaMarket.data.dto.request.FleaMarketRequest;
+import com.festival.domain.fleaMarket.data.dto.response.FleaMarketListResponse;
 import com.festival.domain.fleaMarket.data.dto.response.FleaMarketResponse;
 import com.festival.domain.fleaMarket.data.entity.FleaMarket;
 import com.festival.domain.fleaMarket.data.entity.FleaMarketImage;
@@ -120,11 +121,11 @@ public class FleaMarketService {
     }
 
     @Transactional(readOnly = true)
-    public Page<FleaMarketResponse> getFleaMarkets( int offset, boolean state) {
+    public Page<FleaMarketListResponse> getFleaMarkets(int offset, boolean state) {
         Pageable pageable = PageRequest.of(offset, 20);
         SearchCond cond = new SearchCond(state);
 
         Page<FleaMarket> markets = fleaMarketRepository.findByIdFleaMarkets(cond, pageable);
-        return markets.map(fleaMarket -> FleaMarketResponse.of(fleaMarket, filePath));
+        return markets.map(fleaMarket -> FleaMarketListResponse.of(fleaMarket, filePath));
     }
 }

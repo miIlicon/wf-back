@@ -29,7 +29,6 @@ public class NotProd {
                         .roles(Collections.singletonList("ADMIN")).build();
 
                 adminRepository.save(admin);
-
             }
         };
     }

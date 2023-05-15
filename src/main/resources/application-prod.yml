@@ -4,7 +4,7 @@ spring:
       matching-strategy: ant_path_matcher
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://festival.cmumbmusnz38.ap-northeast-2.rds.amazonaws.com:5432/festival
+    url: jdbc:postgresql://withfestival.cmumbmusnz38.ap-northeast-2.rds.amazonaws.com:5432/withFestival
     username: postgres
     password: millicon!0303
   jpa:
