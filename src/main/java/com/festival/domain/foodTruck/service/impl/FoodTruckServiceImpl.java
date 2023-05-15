@@ -127,7 +127,7 @@ public class FoodTruckServiceImpl implements FoodTruckService {
     }
 
     @Override
-    public void deleteFoodTruck(Long foodTruckId) {
+    public CommonIdResponse deleteFoodTruck(Long foodTruckId) {
         //TODO: JWT_USER_PARSER_FOR_ADMIN(어드민 임시 데이터 1L)
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
@@ -137,6 +137,7 @@ public class FoodTruckServiceImpl implements FoodTruckService {
         if (foodTruck.getAdmin().equals(admin)) {
             foodTruck.getFoodTruckImage().deleteFile(amazonS3, bucket);
             foodTruckRepository.delete(foodTruck);
+            return new CommonIdResponse(foodTruck.getId());
         } else {
             throw new AdminNotMatchException("권한이 없습니다.");
         }

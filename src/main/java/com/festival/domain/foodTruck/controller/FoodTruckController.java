@@ -74,9 +74,10 @@ public class FoodTruckController {
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public void deleteFoodTruck(@PathVariable("id") Long foodTruckId) {
+    public CommonIdResponse deleteFoodTruck(@PathVariable("id") Long foodTruckId) {
         log.debug("Start : FoodTruckController : deleteFoodTruck");
         //TODO: 입력값 검증
-        foodTruckService.deleteFoodTruck(foodTruckId);
+        return foodTruckService.deleteFoodTruck(foodTruckId);
+
     }
 }

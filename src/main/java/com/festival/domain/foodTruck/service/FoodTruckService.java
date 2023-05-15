@@ -19,5 +19,5 @@ public interface FoodTruckService {
 
     CommonIdResponse updateFoodTruck(Long foodTruckId, FoodTruckRequest foodTruckRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException;
 
-    void deleteFoodTruck(Long foodTruckId);
+    CommonIdResponse deleteFoodTruck(Long foodTruckId);
 }
