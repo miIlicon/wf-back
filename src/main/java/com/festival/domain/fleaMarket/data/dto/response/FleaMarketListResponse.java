@@ -18,17 +18,17 @@ public class FleaMarketListResponse {
     private String title;
     private String subTitle;
     private String mainFilePath;
-    private Boolean fleaMarketState;
+    private Boolean state;
 
     @Builder
     @QueryProjection
     public FleaMarketListResponse(Long id, String title, String subTitle,
-                                  String mainFilePath, Boolean fleaMarketState) {
+                                  String mainFilePath, Boolean state) {
         this.id = id;
         this.title = title;
         this.subTitle = subTitle;
         this.mainFilePath = mainFilePath;
-        this.fleaMarketState = fleaMarketState;
+        this.state = state;
     }
 
     public static FleaMarketListResponse of(final FleaMarket fleaMarket, String filePath) {
@@ -37,7 +37,7 @@ public class FleaMarketListResponse {
                 .title(fleaMarket.getTitle())
                 .subTitle(fleaMarket.getSubTitle())
                 .mainFilePath(filePath + fleaMarket.getFleaMarketImage().getMainFileName())
-                .fleaMarketState(fleaMarket.getFleaMarketState())
+                .state(fleaMarket.getFleaMarketState())
                 .build();
     }
 }

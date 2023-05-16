@@ -18,17 +18,17 @@ public class PubListResponse {
     private String title;
     private String subTitle;
     private String mainFilePath;
-    private Boolean pubState;
+    private Boolean state;
 
     @Builder
     @QueryProjection
     public PubListResponse(Long id, String title, String subTitle,
-                           String mainFilePath, Boolean pubState) {
+                           String mainFilePath, Boolean state) {
         this.id= id;
         this.title = title;
         this.subTitle = subTitle;
         this.mainFilePath = mainFilePath;
-        this.pubState = pubState;
+        this.state = state;
     }
 
     public static PubListResponse of(final Pub pub, String filePath) {
@@ -43,7 +43,7 @@ public class PubListResponse {
                 .title(pub.getTitle())
                 .subTitle(pub.getSubTitle())
                 .mainFilePath(filePath + pub.getPubImage().getMainFileName())
-                .pubState(pub.getPubState())
+                .state(pub.getPubState())
                 .build();
     }
 }

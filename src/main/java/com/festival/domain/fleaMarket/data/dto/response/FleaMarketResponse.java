@@ -25,12 +25,12 @@ public class FleaMarketResponse {
     private int latitude;
     private int longitude;
 
-    private Boolean fleaMarketState;
+    private Boolean state;
 
     @Builder
     @QueryProjection
     public FleaMarketResponse(String title, String subTitle, String content,
-                              String mainFilePath, List<String> subFilePaths, int latitude, int longitude, Boolean fleaMarketState) {
+                              String mainFilePath, List<String> subFilePaths, int latitude, int longitude, Boolean state) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
@@ -38,7 +38,7 @@ public class FleaMarketResponse {
         this.subFilePaths = subFilePaths;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.fleaMarketState = fleaMarketState;
+        this.state = state;
     }
 
     public static FleaMarketResponse of(final FleaMarket fleaMarket, String filePath) {
@@ -54,7 +54,7 @@ public class FleaMarketResponse {
                     .subFilePaths(list)
                     .latitude(fleaMarket.getLatitude())
                     .longitude(fleaMarket.getLongitude())
-                    .fleaMarketState(fleaMarket.getFleaMarketState())
+                    .state(fleaMarket.getFleaMarketState())
                     .build();
     }
 }

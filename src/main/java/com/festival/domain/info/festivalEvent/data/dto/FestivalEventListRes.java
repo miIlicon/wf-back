@@ -17,16 +17,16 @@ public class FestivalEventListRes {
     private String title;
     private String subTitle;
     private String mainFilePath;
-    private Boolean festivalEventState;
+    private Boolean state;
 
 
     @Builder
-    public FestivalEventListRes(Long id, String title, String subTitle, String mainFilePath, Boolean festivalEventState) {
+    public FestivalEventListRes(Long id, String title, String subTitle, String mainFilePath, Boolean state) {
         this.id = id;
         this.title = title;
         this.subTitle = subTitle;
         this.mainFilePath = mainFilePath;
-        this.festivalEventState = festivalEventState;
+        this.state = state;
     }
     public static FestivalEventListRes of(FestivalEvent festivalEvent, String filePath){
 
@@ -35,7 +35,7 @@ public class FestivalEventListRes {
                 .title(festivalEvent.getTitle())
                 .subTitle(festivalEvent.getSubTitle())
                 .mainFilePath(festivalEvent.getFestivalEventImage().getMainFileName())
-                .festivalEventState(festivalEvent.getFestivalEventState())
+                .state(festivalEvent.getFestivalEventState())
                 .build();
     }
 }
