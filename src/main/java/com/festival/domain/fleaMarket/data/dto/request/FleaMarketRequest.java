@@ -20,15 +20,15 @@ public class FleaMarketRequest {
     private String content;
 
     @NotNull(message = "위치를 입력해주세요.")
-    private int latitude;
+    private float latitude;
 
     @NotNull(message = "위치를 입력해주세요.")
-    private int longitude;
+    private float longitude;
 
     @NotNull(message = "상태를 입력해주세요.")
     private Boolean state;
 
-    public FleaMarketRequest(String title, String subTitle, String content, int latitude, int longitude, Boolean state) {
+    public FleaMarketRequest(String title, String subTitle, String content, float latitude, float longitude, Boolean state) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;

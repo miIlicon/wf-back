@@ -33,10 +33,10 @@ public class FestivalEvent extends BaseTimeEntity {
     private FestivalEventImage festivalEventImage;
 
     @Column(name = "latitude",nullable = false) // 위도
-    private int latitude;
+    private float latitude;
 
     @Column(name = "longitude",nullable = false) // 경도
-    private int longitude;
+    private float longitude;
 
     @Column(nullable = false)
     private Boolean festivalEventState;
@@ -46,7 +46,7 @@ public class FestivalEvent extends BaseTimeEntity {
     private Admin admin;
 
     @Builder
-    public FestivalEvent(String title, String subTitle, String content, int latitude,FestivalEventImage festivalEventImage, int longitude, Boolean festivalEventState, Admin admin) {
+    public FestivalEvent(String title, String subTitle, String content, float latitude,FestivalEventImage festivalEventImage, float longitude, Boolean festivalEventState, Admin admin) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;

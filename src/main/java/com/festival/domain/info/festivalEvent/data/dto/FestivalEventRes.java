@@ -24,15 +24,15 @@ public class FestivalEventRes {
 
     private List<String> subFilePaths;
 
-    private int latitude;
+    private float latitude;
 
-    private int longitude;
+    private float longitude;
 
     private Boolean state;
 
 
     @Builder
-    public FestivalEventRes(String title, String subTitle, String content, String mainFilePath, List<String> subFilePaths, int latitude, int longitude, Boolean state) {
+    public FestivalEventRes(String title, String subTitle, String content, String mainFilePath, List<String> subFilePaths, float latitude, float longitude, Boolean state) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;

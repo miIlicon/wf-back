@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    include: secret
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -9,7 +11,7 @@ spring:
     password: millicon!0303
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
 cloud:
   aws:
     s3:

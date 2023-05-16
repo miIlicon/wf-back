@@ -31,10 +31,10 @@ public class FleaMarket extends BaseTimeEntity {
     private FleaMarketImage fleaMarketImage;
 
     @Column(name = "latitude", nullable = false) // 위도
-    private int latitude;
+    private float latitude;
 
     @Column(name = "longitude", nullable = false) // 경도
-    private int longitude;
+    private float longitude;
 
     @Column(name = "flea_market_state", nullable = false)
     private Boolean fleaMarketState;
@@ -43,7 +43,7 @@ public class FleaMarket extends BaseTimeEntity {
     @JoinColumn(nullable = false)
     private Admin admin;
 
-    public FleaMarket(String title, String subTitle, String content, int latitude, int longitude, Boolean fleaMarketState) {
+    public FleaMarket(String title, String subTitle, String content, float latitude, float longitude, Boolean fleaMarketState) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
