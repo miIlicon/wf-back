@@ -64,7 +64,7 @@ public class FestivalEvent extends BaseTimeEntity {
                 .content(festivalEventReq.getContent())
                 .latitude(festivalEventReq.getLatitude())
                 .longitude(festivalEventReq.getLongitude())
-                .festivalEventState(festivalEventReq.getFestivalEventState())
+                .festivalEventState(festivalEventReq.getState())
                 .festivalEventImage(festivalEventImage)
                 .admin(admin)
                 .build();
@@ -74,7 +74,7 @@ public class FestivalEvent extends BaseTimeEntity {
         this.title = festivalEventReq.getTitle();
         this.subTitle = festivalEventReq.getSubTitle();
         this.content = festivalEventReq.getContent();
-        this.festivalEventState = festivalEventReq.getFestivalEventState();
+        this.festivalEventState = festivalEventReq.getState();
         this.latitude = festivalEventReq.getLatitude();
         this.longitude = festivalEventReq.getLongitude();
 

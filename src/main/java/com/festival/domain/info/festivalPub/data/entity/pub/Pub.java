@@ -58,7 +58,7 @@ public class Pub extends BaseTimeEntity {
         this.content = pubRequest.getContent();
         this.latitude = pubRequest.getLatitude();
         this.longitude = pubRequest.getLongitude();
-        this.pubState = pubRequest.getPubState();
+        this.pubState = pubRequest.getState();
     }
 
     public void connectAdmin(Admin admin) {
@@ -75,6 +75,6 @@ public class Pub extends BaseTimeEntity {
         this.content = pubRequest.getContent();
         this.latitude = pubRequest.getLatitude();
         this.longitude = pubRequest.getLongitude();
-        this.pubState = pubRequest.getPubState();
+        this.pubState = pubRequest.getState();
     }
 }

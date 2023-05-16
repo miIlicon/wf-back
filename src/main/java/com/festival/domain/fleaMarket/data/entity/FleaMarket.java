@@ -58,7 +58,7 @@ public class FleaMarket extends BaseTimeEntity {
         this.content = fleaMarketRequest.getContent();
         this.latitude = fleaMarketRequest.getLatitude();
         this.longitude = fleaMarketRequest.getLongitude();
-        this.fleaMarketState = fleaMarketRequest.getFleaMarketState();
+        this.fleaMarketState = fleaMarketRequest.getState();
     }
 
     public void connectAdmin(Admin admin) {
@@ -75,6 +75,6 @@ public class FleaMarket extends BaseTimeEntity {
         this.content = fleaMarketRequest.getContent();
         this.latitude = fleaMarketRequest.getLatitude();
         this.longitude = fleaMarketRequest.getLongitude();
-        this.fleaMarketState = fleaMarketRequest.getFleaMarketState();
+        this.fleaMarketState = fleaMarketRequest.getState();
     }
 }

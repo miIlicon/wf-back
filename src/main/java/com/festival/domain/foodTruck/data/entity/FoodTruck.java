@@ -57,7 +57,7 @@ public class FoodTruck extends BaseTimeEntity {
         this.content = foodTruckRequest.getContent();
         this.latitude = foodTruckRequest.getLatitude();
         this.longitude = foodTruckRequest.getLongitude();
-        this.foodTruckState = foodTruckRequest.getFoodTruckState();
+        this.foodTruckState = foodTruckRequest.getState();
     }
 
     public void connectAdmin(Admin admin) {
@@ -75,6 +75,6 @@ public class FoodTruck extends BaseTimeEntity {
         this.content = foodTruckRequest.getContent();
         this.latitude = foodTruckRequest.getLatitude();
         this.longitude = foodTruckRequest.getLongitude();
-        this.foodTruckState = foodTruckRequest.getFoodTruckState();
+        this.foodTruckState = foodTruckRequest.getState();
     }
 }
