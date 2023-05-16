@@ -85,10 +85,16 @@ task installReact(type: Exec) {
     inputs.dir "$frontendDir"
     group = BasePlugin.BUILD_GROUP
     if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        commandLine "npm.cmd", "install", "-g", "nvm"
+        commandLine "nvm", "install", "16.15.0"
+        commandLine "nvm", "use", "16.15.0"
         commandLine "npm.cmd", "audit", "fix"
-        commandLine 'npm.cmd', 'install' }
-    else {
-        commandLine "npm", "audit", "fix" commandLine 'npm', 'install'
+        commandLine 'npm.cmd', 'install'
+    } else {
+        commandLine "wget", "-qO-", "https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh", "|", "bash"
+        commandLine "/bin/bash", "-c", "source ~/.nvm/nvm.sh && nvm install 16.15.0 && nvm use 16.15.0"
+        commandLine "npm", "audit", "fix"
+        commandLine 'npm', 'install'
     }
 }
 
@@ -100,7 +106,7 @@ task buildReact(type: Exec) {
     if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
         commandLine "npm.cmd", "run-script", "build"
     } else {
-        commandLine "npm", "run-script", "build"
+        commandLine 'bash', '-c', 'source ~/.nvm/nvm.sh && nvm use 16.15.0 && npm run-script build'
     }
 }
 
@@ -108,4 +114,14 @@ task copyReactBuildFiles(type: Copy) {
     dependsOn "buildReact"
     from "$frontendDir/build"
     into "$projectDir/src/main/resources/static"
+}
+
+task runReactServer(type: Exec) {
+    dependsOn "copyReactBuildFiles"
+    workingDir "$frontendDir"
+    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        commandLine "npm.cmd", "start"
+    } else {
+        commandLine "npm", "start"
+    }
 }
