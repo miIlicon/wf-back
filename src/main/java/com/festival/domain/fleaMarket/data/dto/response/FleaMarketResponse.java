@@ -22,15 +22,15 @@ public class FleaMarketResponse {
     private String mainFilePath;
     private List<String> subFilePaths;
 
-    private int latitude;
-    private int longitude;
+    private float latitude;
+    private float longitude;
 
     private Boolean state;
 
     @Builder
     @QueryProjection
     public FleaMarketResponse(String title, String subTitle, String content,
-                              String mainFilePath, List<String> subFilePaths, int latitude, int longitude, Boolean state) {
+                              String mainFilePath, List<String> subFilePaths, float latitude, float longitude, Boolean state) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;

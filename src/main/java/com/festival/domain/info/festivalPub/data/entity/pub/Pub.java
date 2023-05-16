@@ -31,10 +31,10 @@ public class Pub extends BaseTimeEntity {
     private PubImage pubImage;
 
     @Column(name = "latitude", nullable = false) // 위도
-    private int latitude;
+    private float latitude;
 
     @Column(name = "longitude", nullable = false) // 경도
-    private int longitude;
+    private float longitude;
 
     @Column(name = "pub_state", nullable = false)
     private Boolean pubState;
@@ -43,7 +43,7 @@ public class Pub extends BaseTimeEntity {
     @JoinColumn(name = "admin_id", nullable = false)
     private Admin admin;
 
-    public Pub(String title, String subTitle, String content, int latitude, int longitude, Boolean pubState) {
+    public Pub(String title, String subTitle, String content, float latitude, float longitude, Boolean pubState) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;

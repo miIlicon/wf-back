@@ -30,10 +30,10 @@ public class FoodTruck extends BaseTimeEntity {
     private FoodTruckImage foodTruckImage;
 
     @Column(name = "latitude", nullable = false) // 위도
-    private int latitude;
+    private float latitude;
 
     @Column(name = "longitude", nullable = false) // 경도
-    private int longitude;
+    private float longitude;
 
     @Column(name = "pub_state", nullable = false)
     private Boolean foodTruckState;
@@ -42,7 +42,7 @@ public class FoodTruck extends BaseTimeEntity {
     @JoinColumn(name = "admin_id", nullable = false)
     private Admin admin;
 
-    public FoodTruck(String title, String subTitle, String content, int latitude, int longitude, Boolean foodTruckState) {
+    public FoodTruck(String title, String subTitle, String content, float latitude, float longitude, Boolean foodTruckState) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
