@@ -26,14 +26,14 @@ public class FleaMarketRequest {
     private int longitude;
 
     @NotNull(message = "상태를 입력해주세요.")
-    private Boolean fleaMarketState;
+    private Boolean state;
 
-    public FleaMarketRequest(String title, String subTitle, String content, int latitude, int longitude, Boolean fleeMarketState) {
+    public FleaMarketRequest(String title, String subTitle, String content, int latitude, int longitude, Boolean state) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.fleaMarketState = fleeMarketState;
+        this.state = state;
     }
 }

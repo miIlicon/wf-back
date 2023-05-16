@@ -26,13 +26,13 @@ public class FestivalEventReq {
     private int longitude;
 
     @NotNull(message = "상태를 입력해주세요.")
-    private Boolean festivalEventState;
-    public FestivalEventReq(String title, String subTitle, String content, MultipartFile mainFile, List<MultipartFile> subFiles, int latitude, int longitude, Boolean festivalEventState) {
+    private Boolean state;
+    public FestivalEventReq(String title, String subTitle, String content, MultipartFile mainFile, List<MultipartFile> subFiles, int latitude, int longitude, Boolean state) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.festivalEventState = festivalEventState;
+        this.state = state;
     }
 }

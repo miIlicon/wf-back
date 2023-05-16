@@ -28,11 +28,11 @@ public class FestivalEventRes {
 
     private int longitude;
 
-    private Boolean festivalEventState;
+    private Boolean state;
 
 
     @Builder
-    public FestivalEventRes(String title, String subTitle, String content, String mainFilePath, List<String> subFilePaths, int latitude, int longitude, Boolean festivalEventState) {
+    public FestivalEventRes(String title, String subTitle, String content, String mainFilePath, List<String> subFilePaths, int latitude, int longitude, Boolean state) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
@@ -40,7 +40,7 @@ public class FestivalEventRes {
         this.subFilePaths = subFilePaths;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.festivalEventState = festivalEventState;
+        this.state = state;
     }
     public static FestivalEventRes of(FestivalEvent festivalEvent, String filePath){
 
@@ -57,7 +57,7 @@ public class FestivalEventRes {
                 .subFilePaths(list)
                 .latitude(festivalEvent.getLatitude())
                 .longitude(festivalEvent.getLongitude())
-                .festivalEventState(festivalEvent.getFestivalEventState())
+                .state(festivalEvent.getFestivalEventState())
                 .build();
     }
 }

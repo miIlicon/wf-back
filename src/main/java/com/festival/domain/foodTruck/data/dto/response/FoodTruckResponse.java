@@ -23,12 +23,12 @@ public class FoodTruckResponse {
     private int latitude;
     private int longitude;
 
-    private Boolean foodTruckState;
+    private Boolean state;
 
     @Builder
     @QueryProjection
     public FoodTruckResponse(String title, String subTitle, String content,
-                       String mainFilePath, List<String> subFilePaths, int latitude, int longitude, Boolean foodTruckState) {
+                       String mainFilePath, List<String> subFilePaths, int latitude, int longitude, Boolean state) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
@@ -36,7 +36,7 @@ public class FoodTruckResponse {
         this.subFilePaths = subFilePaths;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.foodTruckState = foodTruckState;
+        this.state = state;
     }
 
     public static FoodTruckResponse of(final FoodTruck foodTruck, String filePath) {
@@ -54,7 +54,7 @@ public class FoodTruckResponse {
                 .subFilePaths(list)
                 .latitude(foodTruck.getLatitude())
                 .longitude(foodTruck.getLongitude())
-                .foodTruckState(foodTruck.getFoodTruckState())
+                .state(foodTruck.getFoodTruckState())
                 .build();
     }
 }

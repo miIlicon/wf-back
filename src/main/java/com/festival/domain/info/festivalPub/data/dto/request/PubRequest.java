@@ -30,14 +30,14 @@ public class PubRequest {
     private int longitude;
 
     @NotNull(message = "상태를 입력해주세요.")
-    private Boolean pubState;
+    private Boolean state;
 
-    public PubRequest(String title, String subTitle, String content, int latitude, int longitude, Boolean pubState) {
+    public PubRequest(String title, String subTitle, String content, int latitude, int longitude, Boolean state) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.pubState = pubState;
+        this.state = state;
     }
 }

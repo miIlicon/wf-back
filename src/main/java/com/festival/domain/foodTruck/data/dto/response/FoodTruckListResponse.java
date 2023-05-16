@@ -18,17 +18,17 @@ public class FoodTruckListResponse {
     private String title;
     private String subTitle;
     private String mainFilePath;
-    private Boolean foodTruckState;
+    private Boolean state;
 
     @Builder
     @QueryProjection
     public FoodTruckListResponse(Long id, String title, String subTitle,
-                                 String mainFilePath, Boolean foodTruckState) {
+                                 String mainFilePath, Boolean state) {
         this.id = id;
         this.title = title;
         this.subTitle = subTitle;
         this.mainFilePath = mainFilePath;
-        this.foodTruckState = foodTruckState;
+        this.state = state;
     }
 
     public static FoodTruckListResponse of(final FoodTruck foodTruck, String filePath) {
@@ -37,7 +37,7 @@ public class FoodTruckListResponse {
                 .title(foodTruck.getTitle())
                 .subTitle(foodTruck.getSubTitle())
                 .mainFilePath(filePath + foodTruck.getFoodTruckImage().getMainFileName())
-                .foodTruckState(foodTruck.getFoodTruckState())
+                .state(foodTruck.getFoodTruckState())
                 .build();
     }
 }

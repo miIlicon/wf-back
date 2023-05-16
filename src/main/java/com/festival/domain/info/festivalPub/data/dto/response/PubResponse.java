@@ -25,12 +25,12 @@ public class PubResponse {
     private int latitude;
     private int longitude;
 
-    private Boolean pubState;
+    private Boolean state;
 
     @Builder
     @QueryProjection
     public PubResponse(String title, String subTitle, String content,
-                       String mainFilePath, List<String> subFilePaths, int latitude, int longitude, Boolean pubState) {
+                       String mainFilePath, List<String> subFilePaths, int latitude, int longitude, Boolean state) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
@@ -38,7 +38,7 @@ public class PubResponse {
         this.subFilePaths = subFilePaths;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.pubState = pubState;
+        this.state = state;
     }
 
     public static PubResponse of(final Pub pub, String filePath) {
@@ -56,7 +56,7 @@ public class PubResponse {
                 .subFilePaths(list)
                 .latitude(pub.getLatitude())
                 .longitude(pub.getLongitude())
-                .pubState(pub.getPubState())
+                .state(pub.getPubState())
                 .build();
     }
 }
