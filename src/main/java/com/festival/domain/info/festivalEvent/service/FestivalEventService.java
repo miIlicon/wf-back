@@ -1,6 +1,5 @@
 package com.festival.domain.info.festivalEvent.service;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.festival.common.base.CommonIdResponse;
 import com.festival.common.utils.ImageServiceUtils;
 import com.festival.domain.admin.data.entity.Admin;
@@ -14,7 +13,6 @@ import com.festival.domain.info.festivalEvent.data.entity.FestivalEventImage;
 import com.festival.domain.info.festivalEvent.exception.FestivalEventNotFoundException;
 import com.festival.domain.info.festivalEvent.repository.FestivalEventImageRepository;
 import com.festival.domain.info.festivalEvent.repository.FestivalEventRepository;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -29,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,14 +37,8 @@ public class FestivalEventService {
     private final FestivalEventImageRepository festivalEventImageRepository;
 
     private final AdminRepository adminRepository;
-    private final ImageServiceUtils utils;
 
-    private final AmazonS3 amazonS3;
-
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
-    @Value("https://${cloud.aws.s3.bucket}.s3.ap-northeast-2.amazonaws.com/")
+    @Value("${file.path}")
     private String filePath;
 
     @Transactional
@@ -56,16 +47,17 @@ public class FestivalEventService {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Admin admin = adminRepository.findByUsername(name).orElseThrow(() -> new AdminNotFoundException("관리자를 찾을 수 없습니다."));
 
-        String mainFileName = utils.saveMainFile(mainFile);
-        List<String> subFileNames = utils.saveSubImages(subFiles);
+        String mainFileName = saveMainFile(mainFile); // 메인 파일 저장
+        List<String> subFileNames = saveSubFiles(subFiles); // 서브 파일 저장
 
+
+        // 파일명으로 Entity생성 후 저장
         FestivalEventImage festivalEventImage = FestivalEventImage.of(mainFileName, subFileNames);
         festivalEventImageRepository.save(festivalEventImage);
 
         FestivalEvent festivalEvent = FestivalEvent.of(festivalEventReq, festivalEventImage, admin);
         festivalEventRepository.save(festivalEvent);
 
-        festivalEventImage.connectFestivalEvent(festivalEvent);
 
         return new CommonIdResponse(festivalEvent.getId());
     }
@@ -88,13 +80,12 @@ public class FestivalEventService {
         FestivalEvent festivalEvent = festivalEventRepository.findById(festivalEventId).orElseThrow(() -> new FestivalEventNotFoundException("존재하지 않는 게시물입니다."));
         FestivalEventImage festivalEventImage = festivalEvent.getFestivalEventImage();
 
-        festivalEventImage.deleteOriginalFile(amazonS3, bucket);
-
-        String mainFileName = utils.saveMainFile(mainFile);
-        List<String> subFileNames = utils.saveSubImages(subFiles);
-
-        festivalEventImage.modify(mainFileName, subFileNames);
         festivalEvent.modify(festivalEventReq);
+        festivalEventImage.deleteOriginalFile(filePath);
+
+        String mainFileName = saveMainFile(mainFile); // 메인 파일 저장
+        List<String> subFileNames = saveSubFiles(subFiles); // 서브 파일 저장
+        festivalEventImage.modify(mainFileName, subFileNames);
 
         return new CommonIdResponse(festivalEventId);
     }
@@ -105,9 +96,25 @@ public class FestivalEventService {
         FestivalEvent festivalEvent = festivalEventRepository.findById(festivalEventId).orElseThrow(() -> new FestivalEventNotFoundException("이미 삭제된 게시물입니다."));
         FestivalEventImage festivalEventImage = festivalEvent.getFestivalEventImage();
 
-        festivalEventImage.deleteOriginalFile(amazonS3, bucket);
+        festivalEventImage.deleteOriginalFile(filePath);
         festivalEventRepository.delete(festivalEvent);
 
         return new CommonIdResponse(festivalEventId);
+    }
+
+    private String saveMainFile(MultipartFile mainFile) throws IOException {
+        String fileName = ImageServiceUtils.createStoreFileName(mainFile.getOriginalFilename());
+        mainFile.transferTo(new File(filePath + fileName));
+        return fileName;
+    }
+
+    private List<String> saveSubFiles(List<MultipartFile> subFiles) throws IOException {
+        List<String> subFileNames = new ArrayList<>();
+        for (MultipartFile subFile : subFiles) {
+            String fileName = ImageServiceUtils.createStoreFileName(subFile.getOriginalFilename());
+            subFileNames.add(fileName);
+            subFile.transferTo(new File(filePath + fileName));
+        }
+        return subFileNames;
     }
 }

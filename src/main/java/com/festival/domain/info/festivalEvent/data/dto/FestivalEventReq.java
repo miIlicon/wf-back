@@ -20,10 +20,10 @@ public class FestivalEventReq {
     private String content;
 
     @NotNull(message = "위치를 입력해주세요.")
-    private float latitude;
+    private Float latitude;
 
     @NotNull(message = "위치를 입력해주세요.")
-    private float longitude;
+    private Float longitude;
 
     @NotNull(message = "상태를 입력해주세요.")
     private Boolean state;

@@ -1,6 +1,5 @@
 package com.festival.domain.info.festivalPub.service;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.festival.common.base.CommonIdResponse;
 import com.festival.common.utils.ImageServiceUtils;
 import com.festival.common.vo.SearchCond;
@@ -27,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -41,14 +41,8 @@ public class PubService {
     private final PubImageRepository pubImageRepository;
 
     private final AdminRepository adminRepository;
-    private final ImageServiceUtils utils;
 
-    private final AmazonS3 amazonS3;
-
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
-    @Value("https://${cloud.aws.s3.bucket}.s3.ap-northeast-2.amazonaws.com/")
+    @Value("${file.path}")
     private String filePath;
 
     public CommonIdResponse create(PubRequest pubRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws IOException {
@@ -60,8 +54,8 @@ public class PubService {
         pub.connectAdmin(admin);
         pubRepository.save(pub);
 
-        String mainFileName = utils.saveMainFile(mainFile);
-        List<String> subFileNames = utils.saveSubImages(subFiles);
+        String mainFileName = saveMainFile(mainFile);
+        List<String> subFileNames = ImageServiceUtils.saveSubImages(filePath, subFiles);
 
         PubImage pubImage = new PubImage(pub);
         pubImage.connectFileNames(mainFileName, subFileNames);
@@ -80,14 +74,13 @@ public class PubService {
         Pub pub = pubRepository.findById(pubId).orElseThrow(() -> new PubNotFoundException("주점을 찾을 수 없습니다."));
 
         if (pub.getAdmin().equals(admin)) {
-
             PubImage pubImage = pub.getPubImage();
-            pubImage.deleteFile(amazonS3, bucket);
+            pubImage.modifyMainFileName(filePath, ImageServiceUtils.createStoreFileName(mainFile.getOriginalFilename()), mainFile);
 
-            String mainFileName = utils.saveMainFile(mainFile);
-            List<String> subFileNames = utils.saveSubImages(subFiles);
-
-            pubImage.connectFileNames(mainFileName, subFileNames);
+            if (!subFiles.isEmpty()) {
+                List<String> list = ImageServiceUtils.saveSubImages(filePath, subFiles);
+                pubImage.modifySubFileNames(filePath, list);
+            }
             pub.modify(pubRequest);
 
             return new CommonIdResponse(pub.getId());
@@ -104,9 +97,8 @@ public class PubService {
         Pub pub = pubRepository.findById(pubId).orElseThrow(() -> new PubNotFoundException("주점을 찾을 수 없습니다."));
 
         if (pub.getAdmin().equals(admin)) {
-            pub.getPubImage().deleteFile(amazonS3, bucket);
+            pub.getPubImage().deleteFile(filePath);
             pubRepository.delete(pub);
-
             return new CommonIdResponse(pub.getId());
         } else {
             throw new AdminNotMatchException("권한이 없습니다.");
@@ -126,5 +118,16 @@ public class PubService {
 
         Page<Pub> findPubs = pubRepository.findByIdPubs(cond, pageable);
         return findPubs.map(pub -> PubListResponse.of(pub, filePath));
+    }
+
+    private String saveMainFile(MultipartFile mainFile) throws IOException {
+        String mainFileName = ImageServiceUtils.createStoreFileName(mainFile.getOriginalFilename());
+        mainFile.transferTo(new File(filePath + mainFileName));
+        return mainFileName;
+    }
+
+    private void saveSubFiles(List<MultipartFile> subFiles, PubImage pubImage) throws IOException {
+        List<String> subFilePaths = ImageServiceUtils.saveSubImages(filePath, subFiles);
+        pubImage.saveSubFileNames(subFilePaths);
     }
 }

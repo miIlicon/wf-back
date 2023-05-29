@@ -42,7 +42,7 @@ public class FleaMarketController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/flea-market/{id}")
-    public ResponseEntity<FleaMarketResponse> deleteFleaMarket(@PathVariable("id") Long fleaMarketId) {
+    public ResponseEntity<CommonIdResponse> deleteFleaMarket(@PathVariable("id") Long fleaMarketId) {
         return ResponseEntity.ok().body(fleaMarketService.delete(fleaMarketId));
     }
 

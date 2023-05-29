@@ -1,21 +1,18 @@
 package com.festival.domain.admin.data.dto;
 
 
-import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
 
-@Getter
+@Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LoginReq {
 
-    @NotNull(message = "Id값을 입력해주세요")
-    String username;
+    @NotBlank(message = "id값을 입력해주세요.")
+    private String username;
 
-    @NotNull(message = "Password값을 입력해주세요")
-    String password;
+    @NotBlank(message = "password값을 입력해주세요.")
+    private String password;
 
     @Builder
     public LoginReq(String username, String password) {

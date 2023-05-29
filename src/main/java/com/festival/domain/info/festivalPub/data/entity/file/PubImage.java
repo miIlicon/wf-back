@@ -1,10 +1,12 @@
 package com.festival.domain.info.festivalPub.data.entity.file;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.festival.domain.info.festivalPub.data.entity.pub.Pub;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,14 +39,32 @@ public class PubImage {
         this.subFileNames = subFileNames;
     }
 
-    public void deleteFile(AmazonS3 amazonS3, String bucket) {
+    public void saveSubFileNames(List<String> subFileNames) {
+        this.subFileNames = subFileNames;
+    }
 
-        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, this.mainFileName);
-        amazonS3.deleteObject(deleteObjectRequest);
-
+    public void modifySubFileNames(String filePath, List<String> subFilePath) {
         for (String subFile : this.subFileNames) {
-            deleteObjectRequest = new DeleteObjectRequest(bucket, subFile);
-            amazonS3.deleteObject(deleteObjectRequest);
+            File file = new File(filePath + subFile);
+            file.delete();
         }
+        this.subFileNames = subFilePath;
+    }
+
+    public void modifyMainFileName(String filePath, String mainFilePath, MultipartFile mainFile) throws IOException {
+        File file = new File(filePath + this.mainFileName);
+        file.delete();
+
+        this.mainFileName = mainFilePath;
+        mainFile.transferTo(new File(filePath + mainFilePath));
+    }
+
+    public void deleteFile(String filePath) {
+        for (String subFile : this.subFileNames) {
+            File file = new File(filePath + subFile);
+            file.delete();
+        }
+        File file = new File(filePath + this.mainFileName);
+        file.delete();
     }
 }

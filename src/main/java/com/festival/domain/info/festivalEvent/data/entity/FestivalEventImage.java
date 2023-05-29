@@ -1,7 +1,5 @@
 package com.festival.domain.info.festivalEvent.data.entity;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,6 +35,7 @@ public class FestivalEventImage {
         this.mainFileName = mainFileName;
         this.subFileNames = subFileNames;
     }
+
     public static FestivalEventImage of(String mainFileName, List<String> subFileNames) throws IOException {
         return FestivalEventImage.builder()
                     .mainFileName(mainFileName)
@@ -49,13 +48,10 @@ public class FestivalEventImage {
         this.subFileNames = subFileNames;
     }
 
-    public void deleteOriginalFile(AmazonS3 amazonS3, String bucket) {
-        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, this.mainFileName);
-        amazonS3.deleteObject(deleteObjectRequest);
+    public void deleteOriginalFile(String filePath) {
+        new File(filePath + this.mainFileName).delete();
 
-        for (String subFile : this.subFileNames) {
-            deleteObjectRequest = new DeleteObjectRequest(bucket, subFile);
-            amazonS3.deleteObject(deleteObjectRequest);
-        }
+        for(String subFileName: this.subFileNames)
+            new File(filePath + subFileName).delete();
     }
 }
