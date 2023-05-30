@@ -68,50 +68,50 @@ tasks.named('test') {
 jar {
     enabled = true;
 }
-//
-//def frontendDir = "$projectDir/src/main/withfestival-front"
-//
-//sourceSets {
-//    main {
-//        resources { srcDirs = ["$projectDir/src/main/resources"]
-//        }
-//    }
-//}
-//
-//processResources { dependsOn "copyReactBuildFiles" }
-//
-//task installReact(type: Exec) {
-//    workingDir "$frontendDir"
-//    inputs.dir "$frontendDir"
-//    group = BasePlugin.BUILD_GROUP
-//    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-//        commandLine "npm.cmd", "install", "-g", "nvm"
-//        commandLine "nvm", "install", "16.15.0"
-//        commandLine "nvm", "use", "16.15.0"
-//        commandLine "npm.cmd", "audit", "fix"
-//        commandLine 'npm.cmd', 'install'
-//    } else {
-//        commandLine "wget", "-qO-", "https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh", "|", "bash"
-//        commandLine "/bin/bash", "-c", "source ~/.nvm/nvm.sh && nvm install 16.15.0 && nvm use 16.15.0"
-//        commandLine "npm", "audit", "fix"
-//        commandLine 'npm', 'install'
-//    }
-//}
-//
-//task buildReact(type: Exec) {
-//    dependsOn "installReact"
-//    workingDir "$frontendDir"
-//    inputs.dir "$frontendDir"
-//    group = BasePlugin.BUILD_GROUP
-//    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-//        commandLine "npm.cmd", "run-script", "build"
-//    } else {
-//        commandLine 'bash', '-c', 'source ~/.nvm/nvm.sh && nvm use 16.15.0 && npm run-script build'
-//    }
-//}
-//
-//task copyReactBuildFiles(type: Copy) {
-//    dependsOn "buildReact"
-//    from "$frontendDir/build"
-//    into "$projectDir/src/main/resources/static"
-//}
+
+def frontendDir = "$projectDir/src/main/withfestival-front"
+
+sourceSets {
+    main {
+        resources { srcDirs = ["$projectDir/src/main/resources"]
+        }
+    }
+}
+
+processResources { dependsOn "copyReactBuildFiles" }
+
+task installReact(type: Exec) {
+    workingDir "$frontendDir"
+    inputs.dir "$frontendDir"
+    group = BasePlugin.BUILD_GROUP
+    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        commandLine "npm.cmd", "install", "-g", "nvm"
+        commandLine "nvm", "install", "16.15.0"
+        commandLine "nvm", "use", "16.15.0"
+        commandLine "npm.cmd", "audit", "fix"
+        commandLine 'npm.cmd', 'install'
+    } else {
+        commandLine "wget", "-qO-", "https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh", "|", "bash"
+        commandLine "/bin/bash", "-c", "source ~/.nvm/nvm.sh && nvm install 16.15.0 && nvm use 16.15.0"
+        commandLine "npm", "audit", "fix"
+        commandLine 'npm', 'install'
+    }
+}
+
+task buildReact(type: Exec) {
+    dependsOn "installReact"
+    workingDir "$frontendDir"
+    inputs.dir "$frontendDir"
+    group = BasePlugin.BUILD_GROUP
+    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        commandLine "npm.cmd", "run-script", "build"
+    } else {
+        commandLine 'bash', '-c', 'source ~/.nvm/nvm.sh && nvm use 16.15.0 && npm run-script build'
+    }
+}
+
+task copyReactBuildFiles(type: Copy) {
+    dependsOn "buildReact"
+    from "$frontendDir/build"
+    into "$projectDir/src/main/resources/static"
+}
