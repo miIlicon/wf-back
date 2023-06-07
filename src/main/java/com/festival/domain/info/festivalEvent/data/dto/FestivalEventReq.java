@@ -27,6 +27,8 @@ public class FestivalEventReq {
 
     @NotNull(message = "상태를 입력해주세요.")
     private Boolean state;
+
+    @Builder
     public FestivalEventReq(String title, String subTitle, String content, MultipartFile mainFile, List<MultipartFile> subFiles, float latitude, float longitude, Boolean state) {
         this.title = title;
         this.subTitle = subTitle;
@@ -34,5 +36,16 @@ public class FestivalEventReq {
         this.latitude = latitude;
         this.longitude = longitude;
         this.state = state;
+    }
+
+    public static FestivalEventReq of(FestivalEventDto festivalEventDto){
+        return  FestivalEventReq.builder()
+                .title(festivalEventDto.getTitle())
+                .subTitle(festivalEventDto.getSubTitle())
+                .content(festivalEventDto.getContent())
+                .latitude(festivalEventDto.getLatitude())
+                .longitude(festivalEventDto.getLongitude())
+                .state(festivalEventDto.getState())
+                .build();
     }
 }

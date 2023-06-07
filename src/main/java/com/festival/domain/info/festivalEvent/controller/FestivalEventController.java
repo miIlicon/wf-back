@@ -2,6 +2,7 @@ package com.festival.domain.info.festivalEvent.controller;
 
 
 import com.festival.common.base.CommonIdResponse;
+import com.festival.domain.info.festivalEvent.data.dto.FestivalEventDto;
 import com.festival.domain.info.festivalEvent.data.dto.FestivalEventListRes;
 import com.festival.domain.info.festivalEvent.data.dto.FestivalEventReq;
 import com.festival.domain.info.festivalEvent.data.dto.FestivalEventRes;
@@ -27,12 +28,19 @@ public class FestivalEventController {
 
     private final FestivalEventService festivalEventService;
     @PostMapping("/festivalEvent")
-    public ResponseEntity<CommonIdResponse> createFestivalEvent(@RequestPart("dto") @Valid FestivalEventReq festivalEventReq, @RequestPart("main-file") @NotEmpty MultipartFile mainFile, @RequestPart("sub-file") List<MultipartFile> subFiles) throws IOException {
+    public ResponseEntity<CommonIdResponse> createFestivalEvent1(@RequestPart("dto") @Valid FestivalEventReq festivalEventReq, @RequestPart("main-file") @NotEmpty MultipartFile mainFile, @RequestPart("sub-file") List<MultipartFile> subFiles) throws IOException {
 
         CommonIdResponse commonIdResponse = festivalEventService.create(festivalEventReq, mainFile, subFiles);
 
         return ResponseEntity.ok().body(commonIdResponse);
     }
+    @PostMapping("/festivalEvent/integrated")
+    public ResponseEntity<CommonIdResponse> createFestivalEvent2(@Valid FestivalEventDto festivalEventDto) throws IOException {
+        CommonIdResponse commonIdResponse = festivalEventService.create(FestivalEventReq.of(festivalEventDto), festivalEventDto.getMainFile(), festivalEventDto.getSubFiles());
+
+        return ResponseEntity.ok().body(commonIdResponse);
+    }
+
     @GetMapping("/festivalEvent/{id}")
     public ResponseEntity<FestivalEventRes> findFestivalEvent(@PathVariable("id") Long festivalEventId){
         return ResponseEntity.ok().body(festivalEventService.find(festivalEventId));

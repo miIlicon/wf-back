@@ -26,4 +26,4 @@ logging.level:
   org.hibernate.SQL: debug
 
 file:
-  path: C:/Users/agsoo/file/`
+  path: C:/image/
