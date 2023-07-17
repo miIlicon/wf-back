@@ -17,5 +17,6 @@ AWS - EC2, S3, RDS
 
 PostgreSQL
 
-<img width="996" alt="image" src="https://github.com/miIlicon/WithFestival-BackEnd/assets/26915908/8585945c-3f4a-445d-9d8d-34ad09a786e6">
+<img width="1372" alt="image" src="https://github.com/miIlicon/WithFestival-BackEnd/assets/26915908/efa39770-869a-4d6b-bdf6-72351eb73ffe">
+
 
