@@ -1,5 +1,5 @@
-/*
 package com.festival.old.domain.info.festivalPub.repository;
+
 
 import com.festival.old.common.vo.SearchCond;
 import com.festival.old.domain.info.festivalPub.data.entity.pub.Pub;
@@ -13,10 +13,10 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
-import static old.domain.admin.data.entity.QAdmin.admin;
-import static old.domain.info.festivalPub.data.entity.file.QPubImage.pubImage;
-import static old.domain.info.festivalPub.data.entity.pub.QPub.pub;
 
+import static com.festival.old.domain.admin.data.entity.QAdmin.admin;
+import static com.festival.old.domain.info.festivalPub.data.entity.file.QPubImage.pubImage;
+import static com.festival.old.domain.info.festivalPub.data.entity.pub.QPub.pub;
 
 public class PubRepositoryImpl implements PubRepositoryCustom {
 
@@ -56,4 +56,3 @@ public class PubRepositoryImpl implements PubRepositoryCustom {
         return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
     }
 }
-*/
