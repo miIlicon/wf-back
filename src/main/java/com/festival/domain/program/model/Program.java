@@ -32,7 +32,17 @@ public class Program {
     private ItemType type;
 
     public enum ItemStatus {
-        OPERATE, TERMINATE
+        OPERATE("운영중"), TERMINATE("종료");
+
+        final private String itemStatus;
+
+        ItemStatus(String status) {
+            this.itemStatus = status;
+        }
+
+        public String getItemStatus() {
+            return itemStatus;
+        }
     }
 
     public enum ItemType {
