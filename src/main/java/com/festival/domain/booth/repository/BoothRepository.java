@@ -1,4 +1,7 @@
 package com.festival.domain.booth.repository;
 
-public class BoothRepository {
+import com.festival.domain.booth.model.Booth;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface BoothRepository extends JpaRepository<Booth, Long> {
 }
