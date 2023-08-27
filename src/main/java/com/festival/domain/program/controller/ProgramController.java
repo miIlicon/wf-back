@@ -2,17 +2,17 @@ package com.festival.domain.program.controller;
 
 
 import com.festival.domain.program.dto.ProgramListReq;
-import com.festival.domain.program.dto.ProgramListRes;
 import com.festival.domain.program.dto.ProgramReq;
 import com.festival.domain.program.dto.ProgramRes;
 import com.festival.domain.program.service.ProgramService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -38,7 +38,7 @@ public class ProgramController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Page<ProgramListRes>> getList(@RequestBody ProgramListReq programListReqDto, Pageable pageable) {
+    public ResponseEntity<List<ProgramRes>> getList(@RequestBody ProgramListReq programListReqDto, Pageable pageable) {
         return ResponseEntity.ok().body(programService.getProgramList(programListReqDto, pageable));
     }
 
