@@ -1,9 +1,13 @@
 package com.festival.domain.program.model;
 
 
+import com.festival.domain.program.dto.ProgramReq;
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class Program {
 
     @Id
@@ -26,26 +30,46 @@ public class Program {
     private float longitude;
 
     @Column(name = "status", nullable = false)
-    private ItemStatus status;
+    private ProgramStatus status;
 
     @Column(name = "type", nullable = false)
-    private ItemType type;
+    private ProgramType type;
 
-    public enum ItemStatus {
-        OPERATE("운영중"), TERMINATE("종료");
-
-        final private String itemStatus;
-
-        ItemStatus(String status) {
-            this.itemStatus = status;
-        }
-
-        public String getItemStatus() {
-            return itemStatus;
-        }
+    @Builder
+    public Program(Long id, String title, String subTitle, String content, float latitude, float longitude, ProgramStatus status, ProgramType type) {
+        this.id = id;
+        this.title = title;
+        this.subTitle = subTitle;
+        this.content = content;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.status = status;
+        this.type = type;
     }
 
-    public enum ItemType {
-        PROGRAM, GAME
+    public static Program of(ProgramReq programReq) {
+        return Program.builder()
+                .title(programReq.getTitle())
+                .subTitle(programReq.getSubTitle())
+                .content(programReq.getContent())
+                .latitude(programReq.getLatitude())
+                .longitude(programReq.getLongitude())
+                .status(ProgramStatus.handleStatus(programReq.getStatus()))
+                .type(ProgramType.handleType(programReq.getType()))
+                .build();
+    }
+
+    public void update(ProgramReq programReqDto) {
+        this.title = programReqDto.getTitle();
+        this.subTitle = programReqDto.getSubTitle();
+        this.content = programReqDto.getContent();
+        this.latitude = programReqDto.getLatitude();
+        this.longitude = programReqDto.getLongitude();
+        this.status = ProgramStatus.handleStatus(programReqDto.getStatus());
+        this.type = ProgramType.handleType(programReqDto.getType());
+    }
+
+    public void setStatus(ProgramStatus newStatus) {
+        this.status = newStatus;
     }
 }
