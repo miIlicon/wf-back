@@ -23,7 +23,7 @@ public class TimeTableRepositoryImpl implements TimeTableRepositoryCustom {
     }
 
     @Override
-    public List<TimeTableRes> getList(TimeTableSearchCond timeTableSearchCond, Pageable pageable) {
+    public List<TimeTableRes> getList(TimeTableSearchCond timeTableSearchCond) {
         return queryFactory
                 .select(new QTimeTableRes(
                         timeTable.title
@@ -33,8 +33,6 @@ public class TimeTableRepositoryImpl implements TimeTableRepositoryCustom {
                         isWithinPeriod(timeTableSearchCond.getStartTime(), timeTableSearchCond.getEndTime()),
                         StatusEq(timeTableSearchCond.getStatus())
                 )
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
                 .fetch();
     }
 

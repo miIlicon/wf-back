@@ -46,10 +46,9 @@ public class TimeTableService {
     public List<TimeTableRes> getList(TimeTableDateReq timeTableDateReq) {
         TimeTableSearchCond timeTableSearchCond = new TimeTableSearchCond(
                 timeTableDateReq.getStartTime(), timeTableDateReq.getEndTime(),
-                timeTableDateReq.getStatus(), timeTableDateReq.getOffset()
+                timeTableDateReq.getStatus()
         );
-        Pageable pageable = PageRequest.of(timeTableDateReq.getOffset(), 3);
-        return timeTableRepository.getList(timeTableSearchCond, pageable);
+        return timeTableRepository.getList(timeTableSearchCond);
     }
 
 }

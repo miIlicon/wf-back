@@ -10,12 +10,10 @@ public class TimeTableSearchCond {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String status;
-    private int offset;
 
-    public TimeTableSearchCond(LocalDateTime startTime, LocalDateTime endTime, String status, int offset) {
+    public TimeTableSearchCond(LocalDateTime startTime, LocalDateTime endTime, String status) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
-        this.offset = offset;
     }
 }
