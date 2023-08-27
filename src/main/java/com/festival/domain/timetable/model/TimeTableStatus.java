@@ -15,11 +15,10 @@ public enum TimeTableStatus {
     }
 
     public static TimeTableStatus checkStatus(String status) {
-        for (TimeTableStatus timeTableStatus : TimeTableStatus.values()) {
-            if (timeTableStatus.value.equals(status)) {
-                return timeTableStatus;
-            }
-        }
-        return null;
+        return switch (status) {
+            case "운영중" -> TimeTableStatus.OPERATE;
+            case "종료" -> TimeTableStatus.TERMINATE;
+            default -> null;
+        };
     }
 }
