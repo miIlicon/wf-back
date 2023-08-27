@@ -1,5 +1,6 @@
 package com.festival.domain.program.dto;
 
+import com.festival.domain.program.model.Program;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 
@@ -22,5 +23,17 @@ public class ProgramRes {
         this.longitude = longitude;
         this.status = status;
         this.type = type;
+    }
+
+    public static ProgramRes of(Program program) {
+        return ProgramRes.builder()
+                .title(program.getTitle())
+                .subTitle(program.getSubTitle())
+                .content(program.getContent())
+                .type(program.getType().toString())
+                .status(program.getStatus().toString())
+                .longitude(program.getLongitude())
+                .latitude(program.getLatitude())
+                .build();
     }
 }

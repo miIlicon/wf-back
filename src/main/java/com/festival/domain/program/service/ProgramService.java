@@ -36,20 +36,15 @@ public class ProgramService {
 
     public ProgramRes getProgram(Long programId) {
         Program program = programRepository.findById(programId).orElseThrow();
-        return ProgramRes.builder()
-                .title(program.getTitle())
-                .subTitle(program.getSubTitle())
-                .content(program.getContent())
-                .type(program.getType().toString())
-                .status(program.getStatus().toString())
-                .longitude(program.getLongitude())
-                .latitude(program.getLatitude())
-                .build();
+        return ProgramRes.of(program);
 
     }
 
     public List<ProgramRes> getProgramList(ProgramListReq programListReqDto, Pageable pageable) {
-        return programCustomRepository.getList(new ProgramSearchCond(programListReqDto.getStatus(), programListReqDto.getType()), pageable);
+        return programCustomRepository.getList(ProgramSearchCond.builder()
+                .status(programListReqDto.getStatus())
+                .type(programListReqDto.getType())
+                .build(), pageable);
 
     }
 
