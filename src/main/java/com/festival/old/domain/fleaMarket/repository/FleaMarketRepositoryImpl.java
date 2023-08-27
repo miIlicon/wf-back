@@ -1,4 +1,3 @@
-/*
 package com.festival.old.domain.fleaMarket.repository;
 
 import com.festival.old.common.vo.SearchCond;
@@ -13,9 +12,9 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
-import static com.festival.domain.admin.data.entity.QAdmin.*;
-import static com.festival.domain.fleaMarket.data.entity.QFleaMarket.*;
-import static com.festival.domain.fleaMarket.data.entity.QFleaMarketImage.*;
+import static com.festival.old.domain.admin.data.entity.QAdmin.admin;
+import static com.festival.old.domain.fleaMarket.data.entity.QFleaMarket.fleaMarket;
+import static com.festival.old.domain.fleaMarket.data.entity.QFleaMarketImage.fleaMarketImage;
 
 public class FleaMarketRepositoryImpl implements FleaMarketRepositoryCustom {
 
@@ -55,4 +54,3 @@ public class FleaMarketRepositoryImpl implements FleaMarketRepositoryCustom {
         return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
     }
 }
-*/

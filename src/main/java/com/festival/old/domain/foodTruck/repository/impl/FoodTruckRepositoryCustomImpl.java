@@ -1,4 +1,3 @@
-/*
 package com.festival.old.domain.foodTruck.repository.impl;
 
 import com.festival.old.common.vo.SearchCond;
@@ -14,10 +13,9 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
-import static com.festival.domain.admin.data.entity.QAdmin.admin;
-import static com.festival.domain.foodTruck.data.entity.QFoodTruck.foodTruck;
-import static com.festival.domain.foodTruck.data.entity.QFoodTruckImage.foodTruckImage;
-import static com.festival.domain.info.festivalPub.data.entity.pub.QPub.pub;
+import static com.festival.old.domain.admin.data.entity.QAdmin.admin;
+import static com.festival.old.domain.foodTruck.data.entity.QFoodTruck.foodTruck;
+import static com.festival.old.domain.foodTruck.data.entity.QFoodTruckImage.foodTruckImage;
 
 public class FoodTruckRepositoryCustomImpl implements FoodTruckRepositoryCustom {
     private final JPAQueryFactory queryFactory;
@@ -56,4 +54,3 @@ public class FoodTruckRepositoryCustomImpl implements FoodTruckRepositoryCustom 
         return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
     }
 }
-*/
