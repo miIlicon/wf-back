@@ -1,6 +1,5 @@
 package com.festival.domain.foodTruck.service.impl;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.festival.common.base.CommonIdResponse;
 import com.festival.common.utils.ImageServiceUtils;
 import com.festival.common.vo.SearchCond;
@@ -40,17 +39,10 @@ public class FoodTruckServiceImpl implements FoodTruckService {
     private final FoodTruckRepository foodTruckRepository;
     private final FoodTruckImageRepository foodTruckImageRepository;
 
-    private final ImageServiceUtils utils;
     private final AdminRepository adminRepository;
 
-    private final AmazonS3 amazonS3;
-
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
-    @Value("https://${cloud.aws.s3.bucket}.s3.ap-northeast-2.amazonaws.com/")
+    @Value("${file.path}")
     private String filePath;
-
 
     @Override
     public CommonIdResponse createFoodTruck(FoodTruckRequest foodTruckRequest, MultipartFile mainFile, List<MultipartFile> subFiles) throws Exception {
@@ -67,13 +59,11 @@ public class FoodTruckServiceImpl implements FoodTruckService {
             foodTruck.connectAdmin(admin);
             foodTruckRepository.save(foodTruck);
 
-            String mainFileName = utils.saveMainFile(mainFile);
-            List<String> subFileNames = utils.saveSubImages(subFiles);
-
+            String mainFileName = saveMainFile(mainFile);
             FoodTruckImage foodTruckImage = new FoodTruckImage(mainFileName, foodTruck);
-            foodTruckImage.connectFileNames(mainFileName, subFileNames);
-
             foodTruckImageRepository.save(foodTruckImage);
+
+            saveSubFiles(subFiles, foodTruckImage);
             foodTruck.connectFoodTruckImage(foodTruckImage);
 
             return new CommonIdResponse(foodTruck.getId());
@@ -112,13 +102,14 @@ public class FoodTruckServiceImpl implements FoodTruckService {
         if (foodTruck.getAdmin().equals(admin)) {
 
             FoodTruckImage foodTruckImage = foodTruck.getFoodTruckImage();
-            foodTruckImage.deleteFile(amazonS3, bucket);
+            foodTruckImage.modifyMainFileName(filePath, ImageServiceUtils.createStoreFileName(mainFile.getOriginalFilename()), mainFile);
 
-            String mainFileName = utils.saveMainFile(mainFile);
-            List<String> subFileNames = utils.saveSubImages(subFiles);
-
-            foodTruckImage.connectFileNames(mainFileName, subFileNames);
+            if (!subFiles.isEmpty()) {
+                List<String> list = ImageServiceUtils.saveSubImages(filePath, subFiles);
+                foodTruckImage.modifySubFileNames(filePath, list);
+            }
             foodTruck.modify(foodTruckRequest);
+
 
             return new CommonIdResponse(foodTruck.getId());
         } else {
@@ -135,11 +126,23 @@ public class FoodTruckServiceImpl implements FoodTruckService {
         FoodTruck foodTruck = foodTruckRepository.findById(foodTruckId).orElseThrow(() -> new IllegalArgumentException("해당 푸드트럭 게시글이 존재하지 않습니다."));
 
         if (foodTruck.getAdmin().equals(admin)) {
-            foodTruck.getFoodTruckImage().deleteFile(amazonS3, bucket);
+            foodTruck.getFoodTruckImage().deleteFile(filePath);
             foodTruckRepository.delete(foodTruck);
+
             return new CommonIdResponse(foodTruck.getId());
         } else {
             throw new AdminNotMatchException("권한이 없습니다.");
         }
+    }
+
+    private String saveMainFile(MultipartFile mainFile) throws IOException {
+        String mainFileName = ImageServiceUtils.createStoreFileName(mainFile.getOriginalFilename());
+        mainFile.transferTo(new File(filePath + mainFileName));
+        return mainFileName;
+    }
+
+    private void saveSubFiles(List<MultipartFile> subFiles, FoodTruckImage foodTruckImage) throws IOException {
+        List<String> subFilePaths = ImageServiceUtils.saveSubImages(filePath, subFiles);
+        foodTruckImage.saveSubFileNames(subFilePaths);
     }
 }

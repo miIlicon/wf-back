@@ -1,7 +1,6 @@
-package com.festival.domain.info.festivalPub.data.dto.request;
+package com.festival.domain.info.festivalEvent.data.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -12,8 +11,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PubRequest {
-
+public class FestivalEventDto {
     @NotBlank(message = "제목을 입력해주세요.")
     private String title;
 
@@ -32,12 +30,7 @@ public class PubRequest {
     @NotNull(message = "상태를 입력해주세요.")
     private Boolean state;
 
-    public PubRequest(String title, String subTitle, String content, float latitude, float longitude, Boolean state) {
-        this.title = title;
-        this.subTitle = subTitle;
-        this.content = content;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.state = state;
-    }
+    private MultipartFile mainFile;
+
+    private List<MultipartFile> subFiles;
 }
