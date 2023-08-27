@@ -1,11 +1,15 @@
 package com.festival.domain.program.dto;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 public class ProgramRes {
     private Long id;
+    private String title;
+    private String subTitle;
+    private String content;
+    private Float latitude;
+    private Float longitude;
+    private String status;
+    private String type;
 }
