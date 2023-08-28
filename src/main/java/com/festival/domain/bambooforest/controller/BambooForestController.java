@@ -29,6 +29,6 @@ public class BambooForestController {
 
     @GetMapping("/list")
     public ResponseEntity<Page<BamBooForestRes>> getList(String status, Pageable pageable) {
-        return ResponseEntity.ok().body(bambooForestService.getList(status, pageable));
+        return ResponseEntity.ok().body(bambooForestService.getBamBooForestList(status, pageable));
     }
 }
