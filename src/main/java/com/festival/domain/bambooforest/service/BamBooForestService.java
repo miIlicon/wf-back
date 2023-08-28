@@ -32,7 +32,7 @@ public class BamBooForestService {
         bamBooForest.changeStatus(BamBooForestStatus.TERMINATE);
     }
 
-    public Page<BamBooForestRes> getList(String status, Pageable pageable) {
+    public Page<BamBooForestRes> getBamBooForestList(String status, Pageable pageable) {
         BamBooForestSearchCond bamBooForestSearchCond = BamBooForestSearchCond.builder()
                 .status(status)
                 .pageable(pageable)

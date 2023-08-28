@@ -10,6 +10,8 @@ import lombok.Setter;
 @Setter
 public class BoothRes {
 
+    private Long id;
+
     private String title;
 
     private String subTitle;
@@ -26,7 +28,8 @@ public class BoothRes {
 
     @Builder
     @QueryProjection
-    public BoothRes(String title, String subTitle, String content, float latitude, float longitude, String status, String type) {
+    public BoothRes(Long id, String title, String subTitle, String content, float latitude, float longitude, String status, String type) {
+        this.id = id;
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
