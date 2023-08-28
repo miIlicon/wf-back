@@ -3,6 +3,7 @@ package com.festival.domain.bambooforest.controller;
 import com.festival.domain.bambooforest.dto.BamBooForestCreateReq;
 import com.festival.domain.bambooforest.dto.BamBooForestRes;
 import com.festival.domain.bambooforest.service.BamBooForestService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +18,7 @@ public class BambooForestController {
     private final BamBooForestService bambooForestService;
 
     @PostMapping
-    public ResponseEntity<Long> createBamBooForest(@RequestBody BamBooForestCreateReq bamBooForestCreateReq) {
+    public ResponseEntity<Long> createBamBooForest(@RequestBody @Valid BamBooForestCreateReq bamBooForestCreateReq) {
         return ResponseEntity.ok().body(bambooForestService.create(bamBooForestCreateReq));
     }
 
