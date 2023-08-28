@@ -4,7 +4,6 @@ import com.festival.domain.booth.controller.dto.BoothListReq;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.booth.controller.dto.BoothRes;
 import com.festival.domain.booth.model.Booth;
-import com.festival.domain.booth.repository.BoothCustomRepository;
 import com.festival.domain.booth.repository.BoothRepository;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import java.util.List;
 public class BoothService {
 
     private BoothRepository boothRepository;
-    private BoothCustomRepository boothCustomRepository;
 
     public Long createBooth(BoothReq boothReq) {
         return boothRepository.save(Booth.of(boothReq)).getId();
@@ -42,7 +40,7 @@ public class BoothService {
     }
 
     public List<BoothRes> getBoothList(BoothListReq boothListReq, Pageable pageable) {
-        boothCustomRepository.getList(BoothListSearchCond.builder()
+        boothRepository.getList(BoothListSearchCond.builder()
                 .status(boothListReq.getStatus())
                 .type(boothListReq.getType()).build(), pageable);
 

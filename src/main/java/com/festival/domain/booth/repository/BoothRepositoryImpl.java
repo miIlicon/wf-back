@@ -7,24 +7,27 @@ import com.festival.domain.booth.model.BoothType;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
-
 
 import java.util.List;
 
 import static com.festival.domain.booth.model.QBooth.booth;
 
-@RequiredArgsConstructor
-@Repository
-public class BoothCustomRepository {
+
+public class BoothRepositoryImpl implements BoothRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
+    public BoothRepositoryImpl(EntityManager em) {
+        this.queryFactory = new JPAQueryFactory(em);
+    }
+
     public List<BoothRes> getList(BoothListSearchCond boothListSearchCond, Pageable pageable) {
         return queryFactory.select(new QBoothRes(
-                        booth.title,
+                null,
+                booth.title,
                 booth.subTitle,
                 booth.content,
                 booth.latitude,
@@ -40,7 +43,7 @@ public class BoothCustomRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-
+        
     }
 
     private static BooleanExpression eqType(String type) {
