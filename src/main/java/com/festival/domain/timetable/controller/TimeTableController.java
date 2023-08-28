@@ -4,6 +4,7 @@ import com.festival.domain.timetable.dto.TimeTableCreateReq;
 import com.festival.domain.timetable.dto.TimeTableDateReq;
 import com.festival.domain.timetable.dto.TimeTableRes;
 import com.festival.domain.timetable.service.TimeTableService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,13 +19,13 @@ public class TimeTableController {
     private final TimeTableService timeTableService;
 
     @PostMapping
-    public ResponseEntity<Long> createTimeTable(@RequestBody TimeTableCreateReq timeTableCreateReq) {
+    public ResponseEntity<Long> createTimeTable(@RequestBody @Valid TimeTableCreateReq timeTableCreateReq) {
         return ResponseEntity.ok().body(timeTableService.create(timeTableCreateReq));
     }
 
     @PutMapping("/{timeTableId}")
     public ResponseEntity<Long> updateTimeTable(@PathVariable Long timeTableId,
-                                                @RequestBody TimeTableCreateReq timeTableCreateReq) {
+                                                @RequestBody @Valid TimeTableCreateReq timeTableCreateReq) {
         return ResponseEntity.ok().body(timeTableService.update(timeTableId, timeTableCreateReq));
     }
 
@@ -35,7 +36,7 @@ public class TimeTableController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TimeTableRes>> getTimeTables(@RequestBody TimeTableDateReq timeTableDateReq) {
+    public ResponseEntity<List<TimeTableRes>> getTimeTables(@RequestBody @Valid TimeTableDateReq timeTableDateReq) {
         return ResponseEntity.ok().body(timeTableService.getList(timeTableDateReq));
     }
 }

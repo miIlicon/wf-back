@@ -38,7 +38,7 @@ public class ProgramController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<ProgramRes>> getList(@RequestBody ProgramListReq programListReqDto, Pageable pageable) {
+    public ResponseEntity<List<ProgramRes>> getList(@RequestBody @Valid ProgramListReq programListReqDto, Pageable pageable) {
         return ResponseEntity.ok().body(programService.getProgramList(programListReqDto, pageable));
     }
 
