@@ -2,6 +2,7 @@ package com.festival.domain.guide.model;
 
 import com.festival.common.base.BaseEntity;
 import com.festival.domain.guide.dto.GuideReq;
+import com.festival.domain.image.model.Image;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -24,6 +25,9 @@ public class Guide extends BaseEntity {
     private GuideType guideType;
 
     private GuideStatus guideStatus;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Image image;
 
     @Builder
     private Guide(String title, String content, GuideType guideType, GuideStatus guideStatus) {
@@ -48,7 +52,9 @@ public class Guide extends BaseEntity {
         this.guideType = settingType(guideReq.getType());
 
     }
-
+    public void setImage(Image image){
+        this.image = image;
+    }
     public void changeStatus(GuideStatus status) {
         this.guideStatus = status;
     }
