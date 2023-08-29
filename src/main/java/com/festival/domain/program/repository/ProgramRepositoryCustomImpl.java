@@ -12,11 +12,11 @@ import java.util.List;
 
 import static com.festival.domain.program.model.QProgram.program;
 
-public class ProgramCustomRepositoryImpl implements ProgramCustomRepository {
+public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
 
     private JPAQueryFactory queryFactory;
 
-    public ProgramCustomRepositoryImpl(EntityManager entityManager) {
+    public ProgramRepositoryCustomImpl(EntityManager entityManager) {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 

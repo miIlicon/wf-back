@@ -5,7 +5,7 @@ import com.festival.domain.program.dto.ProgramReq;
 import com.festival.domain.program.dto.ProgramRes;
 import com.festival.domain.program.model.Program;
 import com.festival.domain.program.model.ProgramStatus;
-import com.festival.domain.program.repository.ProgramCustomRepository;
+import com.festival.domain.program.repository.ProgramRepositoryCustom;
 import com.festival.domain.program.repository.ProgramRepository;
 import com.festival.domain.program.service.vo.ProgramSearchCond;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,6 @@ import java.util.List;
 @Service
 public class ProgramService {
     private final ProgramRepository programRepository;
-    private final ProgramCustomRepository programCustomRepository;
 
     @Transactional
     public Long createProgram(ProgramReq programReqDto) {
@@ -41,7 +40,7 @@ public class ProgramService {
     }
 
     public List<ProgramRes> getProgramList(ProgramListReq programListReqDto, Pageable pageable) {
-        return programCustomRepository.getList(ProgramSearchCond.builder()
+        return programRepository.getList(ProgramSearchCond.builder()
                 .status(programListReqDto.getStatus())
                 .type(programListReqDto.getType())
                 .build(), pageable);
