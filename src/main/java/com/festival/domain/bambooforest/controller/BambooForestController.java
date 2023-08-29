@@ -18,7 +18,7 @@ public class BambooForestController {
     private final BamBooForestService bambooForestService;
 
     @PostMapping
-    public ResponseEntity<Long> createBamBooForest(@RequestBody @Valid BamBooForestCreateReq bamBooForestCreateReq) {
+    public ResponseEntity<Long> createBamBooForest(@Valid BamBooForestCreateReq bamBooForestCreateReq) {
         return ResponseEntity.ok().body(bambooForestService.create(bamBooForestCreateReq));
     }
 

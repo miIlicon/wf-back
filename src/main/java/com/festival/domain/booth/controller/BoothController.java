@@ -26,7 +26,7 @@ public class BoothController {
         return ResponseEntity.ok().body(boothService.createBooth(boothReq));
     }
     @PutMapping("/{boothId}")
-    public ResponseEntity<Long> update(@RequestBody @Valid BoothReq boothReq, @PathVariable("boothId") Long id)
+    public ResponseEntity<Long> update(@Valid BoothReq boothReq, @PathVariable("boothId") Long id)
     {
         return ResponseEntity.ok().body(boothService.updateBooth(boothReq, id));
     }

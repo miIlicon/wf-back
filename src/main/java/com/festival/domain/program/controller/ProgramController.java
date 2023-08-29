@@ -23,12 +23,12 @@ public class ProgramController {
 
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody @Valid ProgramReq programReqDto) {
+    public ResponseEntity<Long> create(@Valid ProgramReq programReqDto) {
         return ResponseEntity.ok().body(programService.createProgram(programReqDto));
     }
 
     @PutMapping("/{programId}")
-    public ResponseEntity<Long> update(@PathVariable Long programId, @RequestBody @Valid ProgramReq programReqDto) {
+    public ResponseEntity<Long> update(@PathVariable Long programId, @Valid ProgramReq programReqDto) {
         return ResponseEntity.ok().body(programService.updateProgram(programId, programReqDto));
     }
 
@@ -38,7 +38,7 @@ public class ProgramController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<ProgramRes>> getList(@RequestBody @Valid ProgramListReq programListReqDto, Pageable pageable) {
+    public ResponseEntity<List<ProgramRes>> getList(@Valid ProgramListReq programListReqDto, Pageable pageable) {
         return ResponseEntity.ok().body(programService.getProgramList(programListReqDto, pageable));
     }
 
