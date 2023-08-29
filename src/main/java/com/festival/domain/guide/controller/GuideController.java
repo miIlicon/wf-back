@@ -19,13 +19,13 @@ public class GuideController {
     private final GuideService guideService;
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody @Valid GuideReq guideReq){
+    public ResponseEntity<Long> create(@Valid GuideReq guideReq){
         Long id = guideService.createGuide(guideReq);
         return ResponseEntity.ok().body(id);
     }
 
     @PutMapping("/{guideId}")
-    public ResponseEntity<Long> update(@PathVariable Long guideId, @RequestBody @Valid GuideReq guideReq){
+    public ResponseEntity<Long> update(@PathVariable Long guideId, @Valid GuideReq guideReq){
         return ResponseEntity.ok().body(guideService.updateGuide(guideId, guideReq));
     }
 

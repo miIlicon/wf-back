@@ -19,13 +19,13 @@ public class TimeTableController {
     private final TimeTableService timeTableService;
 
     @PostMapping
-    public ResponseEntity<Long> createTimeTable(@RequestBody @Valid TimeTableCreateReq timeTableCreateReq) {
+    public ResponseEntity<Long> createTimeTable(@Valid TimeTableCreateReq timeTableCreateReq) {
         return ResponseEntity.ok().body(timeTableService.create(timeTableCreateReq));
     }
 
     @PutMapping("/{timeTableId}")
     public ResponseEntity<Long> updateTimeTable(@PathVariable Long timeTableId,
-                                                @RequestBody @Valid TimeTableCreateReq timeTableCreateReq) {
+                                                @Valid TimeTableCreateReq timeTableCreateReq) {
         return ResponseEntity.ok().body(timeTableService.update(timeTableId, timeTableCreateReq));
     }
 
@@ -36,7 +36,7 @@ public class TimeTableController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TimeTableRes>> getTimeTables(@RequestBody @Valid TimeTableDateReq timeTableDateReq) {
+    public ResponseEntity<List<TimeTableRes>> getTimeTables(@Valid TimeTableDateReq timeTableDateReq) {
         return ResponseEntity.ok().body(timeTableService.getList(timeTableDateReq));
     }
 }
