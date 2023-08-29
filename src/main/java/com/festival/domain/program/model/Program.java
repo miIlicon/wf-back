@@ -1,6 +1,7 @@
 package com.festival.domain.program.model;
 
 
+import com.festival.domain.image.model.Image;
 import com.festival.domain.program.dto.ProgramReq;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -35,6 +36,8 @@ public class Program {
     @Column(name = "type", nullable = false)
     private ProgramType type;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Image image;
     @Builder
     public Program(Long id, String title, String subTitle, String content, float latitude, float longitude, ProgramStatus status, ProgramType type) {
         this.id = id;
@@ -71,5 +74,9 @@ public class Program {
 
     public void setStatus(ProgramStatus newStatus) {
         this.status = newStatus;
+    }
+
+    public void setImage(Image uploadImage) {
+        this.image = uploadImage;
     }
 }

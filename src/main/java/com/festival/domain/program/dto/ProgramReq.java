@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,6 +33,12 @@ public class ProgramReq {
 
     @NotNull(message = "타입을 입력해주세요.")
     private String type;
+
+    @NotNull(message = "썸네일 이미지를 선택해주세요")
+    private MultipartFile mainFile;
+
+    @NotNull(message = "서브 이미지를 선택해주세요")
+    private List<MultipartFile> subFiles;
 
     public ProgramReq(String title, String subTitle, String content, float latitude, float longitude, String status) {
         this.title = title;
