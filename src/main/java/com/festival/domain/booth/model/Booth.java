@@ -41,13 +41,8 @@ public class Booth{
     @Enumerated(EnumType.STRING)
     private BoothType type;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Image image;
-
-    private String mainFilePath;
-
-    @ElementCollection
-    private List<String> subFilePaths;
 
 
 
@@ -72,6 +67,9 @@ public class Booth{
                 .longitude(boothReq.getLongitude())
                 .status(BoothStatus.handleStatus(boothReq.getStatus()))
                 .type(BoothType.handleType(boothReq.getType())).build();
+    }
+    public void setImage(Image image){
+        this.image = image;
     }
 
     public void update(BoothReq boothReq){

@@ -5,6 +5,7 @@ import com.festival.domain.booth.controller.dto.QBoothRes;
 import com.festival.domain.booth.model.Booth;
 import com.festival.domain.booth.model.BoothStatus;
 import com.festival.domain.booth.model.BoothType;
+import com.festival.domain.booth.model.QBooth;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -25,9 +26,8 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-/*    public List<Booth> getList(BoothListSearchCond boothListSearchCond, Pageable pageable) {
-        return queryFactory.selectFrom()
-                .from(booth)
+    public List<Booth> getList(BoothListSearchCond boothListSearchCond, Pageable pageable) {
+        return queryFactory.selectFrom(booth)
                 .join(booth.image).fetchJoin()
                 .where(
                         eqStatus(boothListSearchCond.getStatus()),
@@ -37,7 +37,7 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
         
-    }*/
+    }
 
     private static BooleanExpression eqType(String type) {
         return type == null ? null : booth.type.eq(BoothType.valueOf(type));

@@ -39,8 +39,8 @@ public class BoothController {
     public ResponseEntity<BoothRes> get(@PathVariable("boothId") Long id){
         return ResponseEntity.ok().body(boothService.getBooth(id));
     }
-/*    @GetMapping("/list")
+    @GetMapping("/list")
     public ResponseEntity<List<BoothRes>> list(@Valid BoothListReq boothListReq, Pageable pageable){
         return ResponseEntity.ok().body(boothService.getBoothList(boothListReq, pageable));
-    }*/
+    }
 }

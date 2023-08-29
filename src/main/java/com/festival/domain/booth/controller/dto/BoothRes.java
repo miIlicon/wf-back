@@ -62,7 +62,7 @@ public class BoothRes {
                 .longitude(booth.getLongitude())
                 .status(booth.getStatus().getValue())
                 .type(booth.getType().getValue())
-                .mainFilePath(booth.getMainFilePath())
-                .subFilePaths(booth.getSubFilePaths()).build();
+                .mainFilePath(booth.getImage().getMainFilePath())
+                .subFilePaths(booth.getImage().getSubFilePaths()).build();
     }
 }

@@ -7,6 +7,7 @@ import com.festival.domain.booth.controller.dto.BoothRes;
 import com.festival.domain.booth.model.Booth;
 import com.festival.domain.booth.repository.BoothRepository;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
+import com.festival.domain.image.model.Image;
 import com.festival.domain.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class BoothService {
 
     public Long createBooth(BoothReq boothReq) {
         Booth booth = Booth.of(boothReq);
-        imageService.uploadImage(boothReq.getMainFile(), boothReq.getSubFiles(), boothReq.getType());
+        booth.setImage(imageService.uploadImage(boothReq.getMainFile(), boothReq.getSubFiles(), boothReq.getType()));
         return boothRepository.save(booth).getId();
     }
 
@@ -39,8 +41,7 @@ public class BoothService {
          * @Todo
          *  delete로직 작성해야함
          */
-        imageService.uploadImage(boothReq.getMainFile(), boothReq.getSubFiles(), boothReq.getType());
-        booth.update(boothReq);
+        booth.setImage(imageService.uploadImage(boothReq.getMainFile(), boothReq.getSubFiles(), boothReq.getType()));
         return id;
     }
 
@@ -53,11 +54,10 @@ public class BoothService {
         return BoothRes.of(boothRepository.findById(id).orElse(null));
     }
 
-/*    public List<BoothRes> getBoothList(BoothListReq boothListReq, Pageable pageable) {
-        boothRepository.getList(BoothListSearchCond.builder()
+    public List<BoothRes> getBoothList(BoothListReq boothListReq, Pageable pageable) {
+        List<Booth> list = boothRepository.getList(BoothListSearchCond.builder()
                 .status(boothListReq.getStatus())
                 .type(boothListReq.getType()).build(), pageable);
-
-        return null;
-    }*/
+        return list.stream().map(BoothRes::of).collect(Collectors.toList());
+    }
 }
