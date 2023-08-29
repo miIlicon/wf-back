@@ -22,7 +22,7 @@ public class BoothController {
     private final BoothService boothService;
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody @Valid BoothReq boothReq){
+    public ResponseEntity<Long> create(@Valid BoothReq boothReq){
         return ResponseEntity.ok().body(boothService.createBooth(boothReq));
     }
     @PutMapping("/{boothId}")
@@ -39,8 +39,8 @@ public class BoothController {
     public ResponseEntity<BoothRes> get(@PathVariable("boothId") Long id){
         return ResponseEntity.ok().body(boothService.getBooth(id));
     }
-    @GetMapping("/list")
-    public ResponseEntity<List<BoothRes>> list(@RequestBody @Valid BoothListReq boothListReq, Pageable pageable){
+/*    @GetMapping("/list")
+    public ResponseEntity<List<BoothRes>> list(@Valid BoothListReq boothListReq, Pageable pageable){
         return ResponseEntity.ok().body(boothService.getBoothList(boothListReq, pageable));
-    }
+    }*/
 }

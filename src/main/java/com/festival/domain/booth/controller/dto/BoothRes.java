@@ -2,12 +2,18 @@ package com.festival.domain.booth.controller.dto;
 
 import com.festival.domain.booth.model.Booth;
 import com.querydsl.core.annotations.QueryProjection;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class BoothRes {
 
     private Long id;
@@ -26,9 +32,12 @@ public class BoothRes {
 
     private String type;
 
+    private String mainFilePath;
+
+    private List<String> subFilePaths;
     @Builder
     @QueryProjection
-    public BoothRes(Long id, String title, String subTitle, String content, float latitude, float longitude, String status, String type) {
+    public BoothRes(Long id, String title, String subTitle, String content, float latitude, float longitude, String status, String type, String mainFilePath, List<String> subFilePaths) {
         this.id = id;
         this.title = title;
         this.subTitle = subTitle;
@@ -37,6 +46,8 @@ public class BoothRes {
         this.longitude = longitude;
         this.status = status;
         this.type = type;
+        this.mainFilePath = mainFilePath;
+        this.subFilePaths = subFilePaths;
     }
 
 
@@ -50,6 +61,8 @@ public class BoothRes {
                 .latitude(booth.getLatitude())
                 .longitude(booth.getLongitude())
                 .status(booth.getStatus().getValue())
-                .type(booth.getType().getValue()).build();
+                .type(booth.getType().getValue())
+                .mainFilePath(booth.getMainFilePath())
+                .subFilePaths(booth.getSubFilePaths()).build();
     }
 }

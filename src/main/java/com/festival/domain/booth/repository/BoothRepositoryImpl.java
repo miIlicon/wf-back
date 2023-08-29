@@ -2,6 +2,7 @@ package com.festival.domain.booth.repository;
 
 import com.festival.domain.booth.controller.dto.BoothRes;
 import com.festival.domain.booth.controller.dto.QBoothRes;
+import com.festival.domain.booth.model.Booth;
 import com.festival.domain.booth.model.BoothStatus;
 import com.festival.domain.booth.model.BoothType;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
@@ -24,18 +25,10 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public List<BoothRes> getList(BoothListSearchCond boothListSearchCond, Pageable pageable) {
-        return queryFactory.select(new QBoothRes(
-                null,
-                booth.title,
-                booth.subTitle,
-                booth.content,
-                booth.latitude,
-                booth.longitude,
-                booth.status.stringValue(),
-                booth.type.stringValue()
-                ))
+/*    public List<Booth> getList(BoothListSearchCond boothListSearchCond, Pageable pageable) {
+        return queryFactory.selectFrom()
                 .from(booth)
+                .join(booth.image).fetchJoin()
                 .where(
                         eqStatus(boothListSearchCond.getStatus()),
                         eqType(boothListSearchCond.getType())
@@ -44,7 +37,7 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
         
-    }
+    }*/
 
     private static BooleanExpression eqType(String type) {
         return type == null ? null : booth.type.eq(BoothType.valueOf(type));

@@ -1,14 +1,17 @@
 package com.festival.domain.booth.model;
 
 import com.festival.domain.booth.controller.dto.BoothReq;
+import com.festival.domain.image.model.Image;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
-@NoArgsConstructor
 @Getter
+@NoArgsConstructor
 public class Booth{
 
     @Id
@@ -37,6 +40,15 @@ public class Booth{
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private BoothType type;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private Image image;
+
+    private String mainFilePath;
+
+    @ElementCollection
+    private List<String> subFilePaths;
+
 
 
     @Builder
@@ -75,6 +87,4 @@ public class Booth{
     {
         this.status = BoothStatus.TERMINATE;
     }
-
-
 }
