@@ -16,7 +16,7 @@ public enum GuideType {
     public static GuideType checkType(String type) {
         return switch (type) {
             case "Q&A" -> GuideType.QNA;
-            case "notice" -> GuideType.NOTICE;
+            case "NOTICE" -> GuideType.NOTICE;
             default -> null;
         };
     }

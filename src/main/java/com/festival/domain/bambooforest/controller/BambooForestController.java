@@ -1,5 +1,6 @@
 package com.festival.domain.bambooforest.controller;
 
+import com.festival.common.util.ValidationUtils;
 import com.festival.domain.bambooforest.dto.BamBooForestCreateReq;
 import com.festival.domain.bambooforest.dto.BamBooForestRes;
 import com.festival.domain.bambooforest.service.BamBooForestService;
@@ -16,9 +17,13 @@ import org.springframework.web.bind.annotation.*;
 public class BambooForestController {
 
     private final BamBooForestService bambooForestService;
+    private final ValidationUtils validationUtils;
 
     @PostMapping
-    public ResponseEntity<Long> createBamBooForest(@RequestBody @Valid BamBooForestCreateReq bamBooForestCreateReq) {
+    public ResponseEntity<Long> createBamBooForest(@RequestBody @Valid BamBooForestCreateReq bamBooForestCreateReq) throws Exception {
+        if (!validationUtils.isBamBooForestValid(bamBooForestCreateReq)) {
+            throw new Exception();
+        }
         return ResponseEntity.ok().body(bambooForestService.create(bamBooForestCreateReq));
     }
 

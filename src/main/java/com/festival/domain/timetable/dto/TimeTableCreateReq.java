@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 public class TimeTableCreateReq {
-
     @NotNull(message = "시작 시간을 입력 해주세요.")
     private LocalDateTime startTime;
 

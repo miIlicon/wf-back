@@ -1,6 +1,7 @@
 package com.festival.domain.program.controller;
 
 
+import com.festival.common.util.ValidationUtils;
 import com.festival.domain.program.dto.ProgramListReq;
 import com.festival.domain.program.dto.ProgramReq;
 import com.festival.domain.program.dto.ProgramRes;
@@ -20,15 +21,22 @@ import java.util.List;
 @RequestMapping("/api/v2/program")
 public class ProgramController {
     private final ProgramService programService;
+    private final ValidationUtils validationUtils;
 
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody @Valid ProgramReq programReqDto) {
+    public ResponseEntity<Long> create(@RequestBody @Valid ProgramReq programReqDto) throws Exception {
+        if (!validationUtils.isProgramValid(programReqDto)) {
+            throw new Exception();
+        }
         return ResponseEntity.ok().body(programService.createProgram(programReqDto));
     }
 
     @PutMapping("/{programId}")
-    public ResponseEntity<Long> update(@PathVariable Long programId, @RequestBody @Valid ProgramReq programReqDto) {
+    public ResponseEntity<Long> update(@PathVariable Long programId, @RequestBody @Valid ProgramReq programReqDto) throws Exception {
+        if (!validationUtils.isProgramValid(programReqDto)) {
+            throw new Exception();
+        }
         return ResponseEntity.ok().body(programService.updateProgram(programId, programReqDto));
     }
 
