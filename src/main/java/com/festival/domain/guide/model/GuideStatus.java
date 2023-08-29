@@ -15,8 +15,8 @@ public enum GuideStatus {
 
     public static GuideStatus checkStatus(String status) {
         return switch (status) {
-            case "운영중" -> GuideStatus.OPERATE;
-            case "종료" -> GuideStatus.TERMINATE;
+            case "OPERATE" -> GuideStatus.OPERATE;
+            case "TERMINATE" -> GuideStatus.TERMINATE;
             default -> null;
         };
     }

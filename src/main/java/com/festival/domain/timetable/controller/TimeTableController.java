@@ -1,5 +1,6 @@
 package com.festival.domain.timetable.controller;
 
+import com.festival.common.util.ValidationUtils;
 import com.festival.domain.timetable.dto.TimeTableCreateReq;
 import com.festival.domain.timetable.dto.TimeTableDateReq;
 import com.festival.domain.timetable.dto.TimeTableRes;
@@ -17,15 +18,22 @@ import java.util.List;
 public class TimeTableController {
 
     private final TimeTableService timeTableService;
+    private final ValidationUtils validationUtils;
 
     @PostMapping
-    public ResponseEntity<Long> createTimeTable(@Valid TimeTableCreateReq timeTableCreateReq) {
+    public ResponseEntity<Long> createTimeTable(@Valid TimeTableCreateReq timeTableCreateReq) throws Exception {
+        if (!validationUtils.isTimeTableValid(timeTableCreateReq)) {
+            throw new Exception();
+        }
         return ResponseEntity.ok().body(timeTableService.create(timeTableCreateReq));
     }
 
     @PutMapping("/{timeTableId}")
     public ResponseEntity<Long> updateTimeTable(@PathVariable Long timeTableId,
-                                                @Valid TimeTableCreateReq timeTableCreateReq) {
+                                                @Valid TimeTableCreateReq timeTableCreateReq) throws Exception {
+        if (!validationUtils.isTimeTableValid(timeTableCreateReq)) {
+            throw new Exception();
+        }
         return ResponseEntity.ok().body(timeTableService.update(timeTableId, timeTableCreateReq));
     }
 
