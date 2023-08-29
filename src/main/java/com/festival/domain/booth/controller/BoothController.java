@@ -25,7 +25,7 @@ public class BoothController {
     private final ValidationUtils validationUtils;
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody @Valid BoothReq boothReq) throws Exception {
+    public ResponseEntity<Long> create(@Valid BoothReq boothReq) throws Exception {
         if (!validationUtils.isBoothValid(boothReq)) {
             throw new Exception();
         }
@@ -33,7 +33,7 @@ public class BoothController {
     }
 
     @PutMapping("/{boothId}")
-    public ResponseEntity<Long> update(@RequestBody @Valid BoothReq boothReq, @PathVariable("boothId") Long id) throws Exception {
+    public ResponseEntity<Long> update(@Valid BoothReq boothReq, @PathVariable("boothId") Long id) throws Exception {
         if (!validationUtils.isBoothValid(boothReq)) {
             throw new Exception();
         }
@@ -52,7 +52,7 @@ public class BoothController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<BoothRes>> list(@RequestBody @Valid BoothListReq boothListReq, Pageable pageable) {
+    public ResponseEntity<List<BoothRes>> list(@Valid BoothListReq boothListReq, Pageable pageable) {
         return ResponseEntity.ok().body(boothService.getBoothList(boothListReq, pageable));
     }
 }

@@ -21,7 +21,7 @@ public class TimeTableController {
     private final ValidationUtils validationUtils;
 
     @PostMapping
-    public ResponseEntity<Long> createTimeTable(@RequestBody @Valid TimeTableCreateReq timeTableCreateReq) throws Exception {
+    public ResponseEntity<Long> createTimeTable(@Valid TimeTableCreateReq timeTableCreateReq) throws Exception {
         if (!validationUtils.isTimeTableValid(timeTableCreateReq)) {
             throw new Exception();
         }
@@ -30,7 +30,7 @@ public class TimeTableController {
 
     @PutMapping("/{timeTableId}")
     public ResponseEntity<Long> updateTimeTable(@PathVariable Long timeTableId,
-                                                @RequestBody @Valid TimeTableCreateReq timeTableCreateReq) throws Exception {
+                                                @Valid TimeTableCreateReq timeTableCreateReq) throws Exception {
         if (!validationUtils.isTimeTableValid(timeTableCreateReq)) {
             throw new Exception();
         }
@@ -44,7 +44,7 @@ public class TimeTableController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TimeTableRes>> getTimeTables(@RequestBody @Valid TimeTableDateReq timeTableDateReq) {
+    public ResponseEntity<List<TimeTableRes>> getTimeTables(@Valid TimeTableDateReq timeTableDateReq) {
         return ResponseEntity.ok().body(timeTableService.getList(timeTableDateReq));
     }
 }

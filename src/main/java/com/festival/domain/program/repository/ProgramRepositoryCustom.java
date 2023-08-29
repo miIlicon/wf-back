@@ -6,6 +6,6 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface ProgramCustomRepository {
+public interface ProgramRepositoryCustom {
     List<ProgramRes> getList(ProgramSearchCond programSearchCond, Pageable pageable);
 }

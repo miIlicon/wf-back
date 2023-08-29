@@ -20,7 +20,7 @@ public class BambooForestController {
     private final ValidationUtils validationUtils;
 
     @PostMapping
-    public ResponseEntity<Long> createBamBooForest(@RequestBody @Valid BamBooForestCreateReq bamBooForestCreateReq) throws Exception {
+    public ResponseEntity<Long> createBamBooForest(@Valid BamBooForestCreateReq bamBooForestCreateReq) throws Exception {
         if (!validationUtils.isBamBooForestValid(bamBooForestCreateReq)) {
             throw new Exception();
         }

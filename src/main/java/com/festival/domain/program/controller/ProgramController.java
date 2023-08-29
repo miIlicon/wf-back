@@ -25,7 +25,7 @@ public class ProgramController {
 
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody @Valid ProgramReq programReqDto) throws Exception {
+    public ResponseEntity<Long> create(@Valid ProgramReq programReqDto) throws Exception {
         if (!validationUtils.isProgramValid(programReqDto)) {
             throw new Exception();
         }
@@ -33,7 +33,7 @@ public class ProgramController {
     }
 
     @PutMapping("/{programId}")
-    public ResponseEntity<Long> update(@PathVariable Long programId, @RequestBody @Valid ProgramReq programReqDto) throws Exception {
+    public ResponseEntity<Long> update(@PathVariable Long programId, @Valid ProgramReq programReqDto) throws Exception {
         if (!validationUtils.isProgramValid(programReqDto)) {
             throw new Exception();
         }
@@ -46,7 +46,7 @@ public class ProgramController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<ProgramRes>> getList(@RequestBody @Valid ProgramListReq programListReqDto, Pageable pageable) {
+    public ResponseEntity<List<ProgramRes>> getList(@Valid ProgramListReq programListReqDto, Pageable pageable) {
         return ResponseEntity.ok().body(programService.getProgramList(programListReqDto, pageable));
     }
 

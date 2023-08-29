@@ -21,7 +21,7 @@ public class GuideController {
     private final ValidationUtils validationUtils;
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody @Valid GuideReq guideReq) throws Exception {
+    public ResponseEntity<Long> create(@Valid GuideReq guideReq) throws Exception {
         if (!validationUtils.isGuideValid(guideReq)) {
             throw new Exception();
         }
@@ -30,7 +30,7 @@ public class GuideController {
     }
 
     @PutMapping("/{guideId}")
-    public ResponseEntity<Long> update(@PathVariable Long guideId, @RequestBody @Valid GuideReq guideReq) throws Exception {
+    public ResponseEntity<Long> update(@PathVariable Long guideId, @Valid GuideReq guideReq) throws Exception {
         if (!validationUtils.isGuideValid(guideReq)) {
             throw new Exception();
         }
