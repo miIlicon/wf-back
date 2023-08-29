@@ -61,7 +61,7 @@ public class ImageUtils {
                 .collect(Collectors.toList());
     }
 
-    private String createFileName(String originalFilename, String kind) {
+    public String createFileName(String originalFilename, String kind) {
         String ext = originalFilename.substring(originalFilename.lastIndexOf("."));
         return kind + "_" + UUID.randomUUID() + ext;
     }
