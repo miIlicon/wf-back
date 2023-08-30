@@ -21,12 +21,12 @@ repositories {
 dependencies {
     // Spring
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.8'
 
     // DB
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'org.postgresql:postgresql'
 
@@ -48,9 +48,9 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 
     // Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
 
     // Jwt
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
@@ -70,50 +70,50 @@ tasks.named('test') {
 jar {
     enabled = true;
 }
-
-def frontendDir = "$projectDir/src/main/withfestival-front"
-
-sourceSets {
-    main {
-        resources { srcDirs = ["$projectDir/src/main/resources"]
-        }
-    }
-}
-
-processResources { dependsOn "copyReactBuildFiles" }
-
-task installReact(type: Exec) {
-    workingDir "$frontendDir"
-    inputs.dir "$frontendDir"
-    group = BasePlugin.BUILD_GROUP
-    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-        commandLine "npm.cmd", "install", "-g", "nvm"
-        commandLine "nvm", "install", "16.15.0"
-        commandLine "nvm", "use", "16.15.0"
-        commandLine "npm.cmd", "audit", "fix"
-        commandLine 'npm.cmd', 'install'
-    } else {
-        commandLine "wget", "-qO-", "https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh", "|", "bash"
-        commandLine "/bin/bash", "-c", "source ~/.nvm/nvm.sh && nvm install 16.15.0 && nvm use 16.15.0"
-        commandLine "npm", "audit", "fix"
-        commandLine 'npm', 'install'
-    }
-}
-
-task buildReact(type: Exec) {
-    dependsOn "installReact"
-    workingDir "$frontendDir"
-    inputs.dir "$frontendDir"
-    group = BasePlugin.BUILD_GROUP
-    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-        commandLine "npm.cmd", "run-script", "build"
-    } else {
-        commandLine 'bash', '-c', 'source ~/.nvm/nvm.sh && nvm use 16.15.0 && npm run-script build'
-    }
-}
-
-task copyReactBuildFiles(type: Copy) {
-    dependsOn "buildReact"
-    from "$frontendDir/build"
-    into "$projectDir/src/main/resources/static"
-}
+//
+//def frontendDir = "$projectDir/src/main/withfestival-front"
+//
+//sourceSets {
+//    main {
+//        resources { srcDirs = ["$projectDir/src/main/resources"]
+//        }
+//    }
+//}
+//
+//processResources { dependsOn "copyReactBuildFiles" }
+//
+//task installReact(type: Exec) {
+//    workingDir "$frontendDir"
+//    inputs.dir "$frontendDir"
+//    group = BasePlugin.BUILD_GROUP
+//    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+//        commandLine "npm.cmd", "install", "-g", "nvm"
+//        commandLine "nvm", "install", "16.15.0"
+//        commandLine "nvm", "use", "16.15.0"
+//        commandLine "npm.cmd", "audit", "fix"
+//        commandLine 'npm.cmd', 'install'
+//    } else {
+//        commandLine "wget", "-qO-", "https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh", "|", "bash"
+//        commandLine "/bin/bash", "-c", "source ~/.nvm/nvm.sh && nvm install 16.15.0 && nvm use 16.15.0"
+//        commandLine "npm", "audit", "fix"
+//        commandLine 'npm', 'install'
+//    }
+//}
+//
+//task buildReact(type: Exec) {
+//    dependsOn "installReact"
+//    workingDir "$frontendDir"
+//    inputs.dir "$frontendDir"
+//    group = BasePlugin.BUILD_GROUP
+//    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+//        commandLine "npm.cmd", "run-script", "build"
+//    } else {
+//        commandLine 'bash', '-c', 'source ~/.nvm/nvm.sh && nvm use 16.15.0 && npm run-script build'
+//    }
+//}
+//
+//task copyReactBuildFiles(type: Copy) {
+//    dependsOn "buildReact"
+//    from "$frontendDir/build"
+//    into "$projectDir/src/main/resources/static"
+//}

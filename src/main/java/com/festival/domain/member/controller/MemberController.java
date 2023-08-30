@@ -1,10 +1,13 @@
 package com.festival.domain.member.controller;
 
-import com.festival.domain.member.dto.MemberReq;
+import com.festival.common.security.dto.JwtTokenRes;
+import com.festival.common.security.dto.MemberLoginReq;
+import com.festival.domain.member.dto.MemberJoinReq;
 import com.festival.domain.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,8 +18,14 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/join")
-    public ResponseEntity<Void> join(@Valid MemberReq memberReq) {
-        memberService.join(memberReq);
+    public ResponseEntity<Void> join(@Valid MemberJoinReq memberJoinReq) {
+        memberService.join(memberJoinReq);
         return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("isAnonymous()")
+    @PostMapping("/login")
+    public ResponseEntity<JwtTokenRes> login(@Valid MemberLoginReq loginReq) {
+        return ResponseEntity.ok().body(memberService.login(loginReq));
     }
 }
