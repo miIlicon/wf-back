@@ -1,15 +1,6 @@
-#server:
-#  port: 443
-#  ssl:
-#    enabled: true
-#    key-store: src/main/resources/bootsecurity.p12
-#    key-store-password: 123456
-#    key-store-type: PKCS12
-#    key-alias: bootsecurity
-
 spring:
   datasource:
-    url: jdbc:h2:mem:test
+    url: jdbc:h2:mem:dev
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -20,13 +11,11 @@ spring:
     hibernate:
       ddl-auto: create
     properties:
+      show_sql: false
       hibernate:
-        #        show_sql: true
         format_sql: true
         use_sql_comments: true
 
 logging.level:
   org.hibernate.SQL: debug
-
-file:
-  path: C:/image/
+  org.hibernate.type: trace
