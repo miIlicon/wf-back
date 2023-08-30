@@ -39,7 +39,7 @@ public class MemberService {
     }
 
     public JwtTokenRes login(MemberLoginReq loginReq) {
-        Authentication authenticate = createAuthenticate(loginReq);
+        Authentication authenticate = attemptAuthenticate(loginReq);
         List<String> roles = settingStringRoles(loginReq.getLoginId());
         return jwtTokenProvider.createToken(authenticate, roles);
     }
@@ -54,7 +54,7 @@ public class MemberService {
         return member.getMemberRoles().stream().map(MemberRole::getValue).collect(Collectors.toList());
     }
 
-    private Authentication createAuthenticate(MemberLoginReq loginReq) {
+    private Authentication attemptAuthenticate(MemberLoginReq loginReq) {
         return authenticationManagerBuilder.getObject().authenticate(createAuthenticationToken(loginReq));
     }
 
