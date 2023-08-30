@@ -1,13 +1,14 @@
 package com.festival.domain.guide.service;
 
+import com.festival.common.exception.ErrorCode;
+import com.festival.common.exception.custom_exception.ForbiddenException;
+import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.domain.guide.dto.GuideReq;
 import com.festival.domain.guide.dto.GuideRes;
 import com.festival.domain.guide.model.Guide;
 import com.festival.domain.guide.repository.GuideRepository;
-import com.festival.domain.image.model.Image;
 import com.festival.domain.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,21 +34,26 @@ public class GuideService {
     }
 
     @Transactional
-    public Long updateGuide(Long id, GuideReq guideReq) {
-        Guide guide = guideRepository.findById(id).orElseThrow();
+    public Long updateGuide(Long id, GuideReq guideReq, String username) {
+        Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_GUIDE));
+        if (guide.getLastModifiedBy().equals(username))
+            throw new ForbiddenException(ErrorCode.FORBIDDEN_UPDATE);
+
         guide.update(guideReq);
         guide.setImage(imageService.uploadImage(guideReq.getMainFile(), guideReq.getSubFiles(), guideReq.getType()));
         return guide.getId();
     }
 
     @Transactional
-    public void deleteGuide(Long id) {
-        Guide guide = guideRepository.findById(id).orElseThrow();
+    public void deleteGuide(Long id, String username) {
+        Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_GUIDE));
+        if (guide.getLastModifiedBy().equals(username))
+            throw new ForbiddenException(ErrorCode.FORBIDDEN_DELETE);
         guide.changeStatus(TERMINATE);
     }
 
     public GuideRes getGuide(Long id){
-        Guide guide = guideRepository.findById(id).orElseThrow();
+        Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_GUIDE));
         return GuideRes.of(guide);
     }
 

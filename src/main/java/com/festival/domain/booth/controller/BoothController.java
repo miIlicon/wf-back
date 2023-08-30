@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +27,7 @@ public class BoothController {
     private final BoothService boothService;
     private final ValidationUtils validationUtils;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public ResponseEntity<Long> create(@Valid BoothReq boothReq) throws Exception {
         if (!validationUtils.isBoothValid(boothReq)) {
@@ -32,27 +36,31 @@ public class BoothController {
         return ResponseEntity.ok().body(boothService.createBooth(boothReq));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{boothId}")
-    public ResponseEntity<Long> update(@Valid BoothReq boothReq, @PathVariable("boothId") Long id) throws Exception {
+    public ResponseEntity<Long> update(@Valid BoothReq boothReq, @PathVariable("boothId") Long id, @AuthenticationPrincipal User user) throws Exception {
         if (!validationUtils.isBoothValid(boothReq)) {
             throw new Exception();
         }
-        return ResponseEntity.ok().body(boothService.updateBooth(boothReq, id));
+        return ResponseEntity.ok().body(boothService.updateBooth(boothReq, id, user.getUsername()));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{boothId}")
-    public ResponseEntity<Void> delete(@PathVariable("boothId") Long id) {
-        boothService.deleteBooth(id);
+    public ResponseEntity<Void> delete(@PathVariable("boothId") Long id, @AuthenticationPrincipal User user) {
+        boothService.deleteBooth(id, user.getUsername());
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/{boothId}")
-    public ResponseEntity<BoothRes> get(@PathVariable("boothId") Long id) {
+    public ResponseEntity<BoothRes> getBooth(@PathVariable("boothId") Long id) {
         return ResponseEntity.ok().body(boothService.getBooth(id));
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/list")
-    public ResponseEntity<List<BoothRes>> list(@Valid BoothListReq boothListReq, Pageable pageable) {
+    public ResponseEntity<List<BoothRes>> getlist(@Valid BoothListReq boothListReq, Pageable pageable) {
         return ResponseEntity.ok().body(boothService.getBoothList(boothListReq, pageable));
     }
 }

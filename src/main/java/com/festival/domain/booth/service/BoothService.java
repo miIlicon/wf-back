@@ -1,19 +1,19 @@
 package com.festival.domain.booth.service;
 
-import com.festival.common.util.ImageUtils;
+import com.festival.common.exception.ErrorCode;
+import com.festival.common.exception.custom_exception.ForbiddenException;
+import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.domain.booth.controller.dto.BoothListReq;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.booth.controller.dto.BoothRes;
 import com.festival.domain.booth.model.Booth;
 import com.festival.domain.booth.repository.BoothRepository;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
-import com.festival.domain.image.model.Image;
 import com.festival.domain.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.List;
@@ -35,8 +35,10 @@ public class BoothService {
 
 
 
-    public Long updateBooth(BoothReq boothReq, Long id) {
-        Booth booth = boothRepository.findById(id).orElse(null);
+    public Long updateBooth(BoothReq boothReq, Long id, String username) {
+        Booth booth = boothRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOTH));
+        if(!booth.getLastModifiedBy().equals(username))
+            throw new ForbiddenException(ErrorCode.FORBIDDEN_UPDATE);
         /**
          * @Todo
          *  delete로직 작성해야함
@@ -45,13 +47,15 @@ public class BoothService {
         return id;
     }
 
-    public void deleteBooth(Long id) {
-        Booth booth = boothRepository.findById(id).orElse(null);
+    public void deleteBooth(Long id, String username) {
+        Booth booth = boothRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOTH));
+        if(!booth.getLastModifiedBy().equals(username))
+            throw new ForbiddenException(ErrorCode.FORBIDDEN_DELETE);
         booth.delete();
     }
 
     public BoothRes getBooth(Long id) {
-        return BoothRes.of(boothRepository.findById(id).orElse(null));
+        return BoothRes.of(boothRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOTH)));
     }
 
     public List<BoothRes> getBoothList(BoothListReq boothListReq, Pageable pageable) {

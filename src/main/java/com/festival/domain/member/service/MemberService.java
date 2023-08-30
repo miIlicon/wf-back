@@ -1,5 +1,7 @@
 package com.festival.domain.member.service;
 
+import com.festival.common.exception.ErrorCode;
+import com.festival.common.exception.custom_exception.DuplicationException;
 import com.festival.common.security.JwtTokenProvider;
 import com.festival.common.security.dto.JwtTokenRes;
 import com.festival.common.security.dto.MemberLoginReq;
@@ -32,7 +34,7 @@ public class MemberService {
     @Transactional
     public void join(MemberJoinReq memberJoinReq) {
         if (isLoginIdSave(memberJoinReq.getLoginId())) {
-            throw new IllegalArgumentException("이미 존재하는 회원입니다.");
+            throw new DuplicationException(ErrorCode.DUPLICATION_ID);
         }
         Member member = Member.of(memberJoinReq, passwordEncoder.encode(memberJoinReq.getPassword()));
         Member savedMember = memberRepository.save(member);
