@@ -1,5 +1,6 @@
 package com.festival.domain.booth.model;
 
+import com.festival.common.base.BaseEntity;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.image.model.Image;
 import jakarta.persistence.*;
@@ -12,7 +13,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Booth{
+public class Booth extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

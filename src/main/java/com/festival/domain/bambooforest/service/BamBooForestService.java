@@ -1,5 +1,7 @@
 package com.festival.domain.bambooforest.service;
 
+import com.festival.common.exception.ErrorCode;
+import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.domain.bambooforest.dto.BamBooForestCreateReq;
 import com.festival.domain.bambooforest.dto.BamBooForestRes;
 import com.festival.domain.bambooforest.model.BamBooForest;
@@ -11,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -27,8 +31,11 @@ public class BamBooForestService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id, String username) {
         BamBooForest bamBooForest = bamBooForestRepository.findById(id).orElseThrow();
+        if (Objects.equals(bamBooForest.getLastModifiedBy(), username))
+            throw new ForbiddenException(ErrorCode.FORBIDDEN_DELETE);
+
         bamBooForest.changeStatus(BamBooForestStatus.TERMINATE);
     }
 

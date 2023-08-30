@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,16 +35,16 @@ public class GuideController {
     }
 
     @PutMapping("/{guideId}")
-    public ResponseEntity<Long> update(@PathVariable Long guideId, @Valid GuideReq guideReq) throws Exception {
+    public ResponseEntity<Long> update(@PathVariable Long guideId, @Valid GuideReq guideReq, @AuthenticationPrincipal User user) throws Exception {
         if (!validationUtils.isGuideValid(guideReq)) {
             throw new Exception();
         }
-        return ResponseEntity.ok().body(guideService.updateGuide(guideId, guideReq));
+        return ResponseEntity.ok().body(guideService.updateGuide(guideId, guideReq, user.getUsername()));
     }
 
     @DeleteMapping("/{guideId}")
-    public ResponseEntity<Void> delete(@PathVariable Long guideId) {
-        guideService.deleteGuide(guideId);
+    public ResponseEntity<Void> delete(@PathVariable Long guideId,  @AuthenticationPrincipal User user) {
+        guideService.deleteGuide(guideId, user.getUsername());
         return ResponseEntity.ok().build();
     }
 

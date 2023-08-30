@@ -1,5 +1,8 @@
 package com.festival.domain.timetable.service;
 
+import com.festival.common.exception.ErrorCode;
+import com.festival.common.exception.custom_exception.ForbiddenException;
+import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.domain.timetable.dto.TimeTableCreateReq;
 import com.festival.domain.timetable.dto.TimeTableDateReq;
 import com.festival.domain.timetable.dto.TimeTableRes;
@@ -31,15 +34,21 @@ public class TimeTableService {
     }
 
     @Transactional
-    public Long update(Long timeTableId, TimeTableCreateReq timeTableCreateReq) {
-        TimeTable timeTable = timeTableRepository.findById(timeTableId).orElseThrow();
+    public Long update(Long timeTableId, TimeTableCreateReq timeTableCreateReq, String username) {
+        TimeTable timeTable = timeTableRepository.findById(timeTableId).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_TIMETABLE));
+        if (timeTable.getLastModifiedBy().equals(username)) {
+            throw new ForbiddenException(ErrorCode.FORBIDDEN_UPDATE);
+        }
         timeTable.update(timeTableCreateReq);
         return timeTable.getId();
     }
 
     @Transactional
-    public void delete(Long id) {
-        TimeTable timeTable = timeTableRepository.findById(id).orElseThrow();
+    public void delete(Long id, String username) {
+        TimeTable timeTable = timeTableRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_TIMETABLE));
+        if (timeTable.getLastModifiedBy().equals(username)) {
+            throw new ForbiddenException(ErrorCode.FORBIDDEN_DELETE);
+        }
         timeTable.changeStatus(TERMINATE);
     }
 

@@ -1,5 +1,8 @@
 package com.festival.domain.program.service;
 
+import com.festival.common.exception.ErrorCode;
+import com.festival.common.exception.custom_exception.ForbiddenException;
+import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.program.dto.ProgramListReq;
 import com.festival.domain.program.dto.ProgramReq;
@@ -32,17 +35,23 @@ public class ProgramService {
     }
 
     @Transactional
-    public Long updateProgram(Long programId, ProgramReq programReq) {
-        Program program = programRepository.findById(programId).orElseThrow();
+    public Long updateProgram(Long programId, ProgramReq programReq, String username) {
+        Program program = programRepository.findById(programId).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_PROGRAM));
+        if (program.getLastModifiedBy().equals(username)) {
+            throw new ForbiddenException(ErrorCode.FORBIDDEN_UPDATE);
+        }
         program.setImage(imageService.uploadImage(programReq.getMainFile(), programReq.getSubFiles(), programReq.getType()));
         program.update(programReq);
         return programId;
     }
 
-    public ProgramRes getProgram(Long programId) {
-        Program program = programRepository.findById(programId).orElseThrow();
-        return ProgramRes.of(program);
-
+    @Transactional
+    public void delete(Long programId, String username) {
+        Program program = programRepository.findById(programId).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_PROGRAM));
+        if (program.getLastModifiedBy().equals(username)) {
+            throw new ForbiddenException(ErrorCode.FORBIDDEN_DELETE);
+        }
+        program.setStatus(ProgramStatus.TERMINATE);
     }
 
     public List<ProgramRes> getProgramList(ProgramListReq programListReqDto, Pageable pageable) {
@@ -54,10 +63,13 @@ public class ProgramService {
 
     }
 
-    @Transactional
-    public void delete(Long programId) {
-        Program program = programRepository.findById(programId).orElseThrow();
-        program.setStatus(ProgramStatus.TERMINATE);
+    public List<ProgramRes> getProgramList(ProgramListReq programListReqDto, Pageable pageable) {
+        List<Program> programList = programRepository.getList(ProgramSearchCond.builder()
+                .status(programListReqDto.getStatus())
+                .type(programListReqDto.getType())
+                .build(), pageable);
+        return programList.stream().map(ProgramRes::of).collect(Collectors.toList());
+
     }
 
 

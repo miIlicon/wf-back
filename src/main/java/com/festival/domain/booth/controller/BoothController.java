@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,16 +36,16 @@ public class BoothController {
     }
 
     @PutMapping("/{boothId}")
-    public ResponseEntity<Long> update(@Valid BoothReq boothReq, @PathVariable("boothId") Long id) throws Exception {
+    public ResponseEntity<Long> update(@Valid BoothReq boothReq, @PathVariable("boothId") Long id, @AuthenticationPrincipal User user) throws Exception {
         if (!validationUtils.isBoothValid(boothReq)) {
             throw new Exception();
         }
-        return ResponseEntity.ok().body(boothService.updateBooth(boothReq, id));
+        return ResponseEntity.ok().body(boothService.updateBooth(boothReq, id, user.getUsername()));
     }
 
     @DeleteMapping("/{boothId}")
-    public ResponseEntity<Void> delete(@PathVariable("boothId") Long id) {
-        boothService.deleteBooth(id);
+    public ResponseEntity<Void> delete(@PathVariable("boothId") Long id, @AuthenticationPrincipal User user) {
+        boothService.deleteBooth(id, user.getUsername());
         return ResponseEntity.ok().build();
     }
 

@@ -6,9 +6,12 @@ import com.festival.domain.bambooforest.dto.BamBooForestRes;
 import com.festival.domain.bambooforest.service.BamBooForestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -28,8 +31,8 @@ public class BambooForestController {
     }
 
     @DeleteMapping("/{bamBooForestId}")
-    public ResponseEntity<Void> deleteBamBooForest(@PathVariable Long bamBooForestId) {
-        bambooForestService.delete(bamBooForestId);
+    public ResponseEntity<Void> deleteBamBooForest(@PathVariable Long bamBooForestId, @AuthenticationPrincipal User user) {
+        bambooForestService.delete(bamBooForestId, user.getUsername());
         return ResponseEntity.ok().build();
     }
 
