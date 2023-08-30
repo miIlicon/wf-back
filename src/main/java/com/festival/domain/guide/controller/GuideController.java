@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/guide")
@@ -49,7 +51,7 @@ public class GuideController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Page<GuideRes>> getList(@NotNull(message = "상태값을 입력해주세요") String status, Pageable pageable) {
+    public ResponseEntity<List<GuideRes>> getList(@NotNull(message = "상태값을 입력해주세요") String status, Pageable pageable) {
         return ResponseEntity.ok().body(guideService.getGuideList(status, pageable));
     }
 

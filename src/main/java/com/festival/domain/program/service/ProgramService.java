@@ -1,5 +1,6 @@
 package com.festival.domain.program.service;
 
+import com.festival.domain.image.service.ImageService;
 import com.festival.domain.program.dto.ProgramListReq;
 import com.festival.domain.program.dto.ProgramReq;
 import com.festival.domain.program.dto.ProgramRes;
@@ -14,22 +15,27 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class ProgramService {
     private final ProgramRepository programRepository;
+    private final ImageService imageService;
 
     @Transactional
-    public Long createProgram(ProgramReq programReqDto) {
-        Program savedProgram = programRepository.save(Program.of(programReqDto));
-        return savedProgram.getId();
+    public Long createProgram(ProgramReq programReq) {
+        Program program = Program.of(programReq);
+        program.setImage(imageService.uploadImage(programReq.getMainFile(), programReq.getSubFiles(), programReq.getType()));
+        return programRepository.save(program).getId();
     }
 
-    public Long updateProgram(Long programId, ProgramReq programReqDto) {
+    @Transactional
+    public Long updateProgram(Long programId, ProgramReq programReq) {
         Program program = programRepository.findById(programId).orElseThrow();
-        program.update(programReqDto);
+        program.setImage(imageService.uploadImage(programReq.getMainFile(), programReq.getSubFiles(), programReq.getType()));
+        program.update(programReq);
         return programId;
     }
 
@@ -40,10 +46,11 @@ public class ProgramService {
     }
 
     public List<ProgramRes> getProgramList(ProgramListReq programListReqDto, Pageable pageable) {
-        return programRepository.getList(ProgramSearchCond.builder()
+        List<Program> programList = programRepository.getList(ProgramSearchCond.builder()
                 .status(programListReqDto.getStatus())
                 .type(programListReqDto.getType())
                 .build(), pageable);
+        return programList.stream().map(ProgramRes::of).collect(Collectors.toList());
 
     }
 
