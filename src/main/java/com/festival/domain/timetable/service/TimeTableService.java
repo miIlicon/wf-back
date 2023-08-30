@@ -12,10 +12,12 @@ import com.festival.domain.timetable.repository.TimeTableRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.festival.domain.timetable.model.TimeTableStatus.TERMINATE;
 

@@ -17,6 +17,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    @PreAuthorize("isAnonymous()")
     @PostMapping("/join")
     public ResponseEntity<Void> join(@Valid MemberJoinReq memberJoinReq) {
         memberService.join(memberJoinReq);

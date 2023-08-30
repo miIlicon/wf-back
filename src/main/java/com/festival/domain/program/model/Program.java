@@ -1,15 +1,19 @@
 package com.festival.domain.program.model;
 
 
+import com.festival.common.base.BaseEntity;
 import com.festival.domain.image.model.Image;
 import com.festival.domain.program.dto.ProgramReq;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Program {
+public class Program extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,8 +42,9 @@ public class Program {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Image image;
+
     @Builder
-    public Program(Long id, String title, String subTitle, String content, float latitude, float longitude, ProgramStatus status, ProgramType type) {
+    private Program(Long id, String title, String subTitle, String content, float latitude, float longitude, ProgramStatus status, ProgramType type) {
         this.id = id;
         this.title = title;
         this.subTitle = subTitle;

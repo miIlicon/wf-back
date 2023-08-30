@@ -1,5 +1,6 @@
 package com.festival.domain.timetable.model;
 
+import com.festival.common.base.BaseEntity;
 import com.festival.domain.timetable.dto.TimeTableCreateReq;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class TimeTable {
+public class TimeTable extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

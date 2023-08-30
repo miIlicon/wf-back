@@ -25,6 +25,7 @@ public class GuideController {
     private final GuideService guideService;
     private final ValidationUtils validationUtils;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public ResponseEntity<Long> create(@Valid GuideReq guideReq) throws Exception {
         if (!validationUtils.isGuideValid(guideReq)) {
@@ -34,6 +35,7 @@ public class GuideController {
         return ResponseEntity.ok().body(id);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{guideId}")
     public ResponseEntity<Long> update(@PathVariable Long guideId, @Valid GuideReq guideReq, @AuthenticationPrincipal User user) throws Exception {
         if (!validationUtils.isGuideValid(guideReq)) {
@@ -42,17 +44,20 @@ public class GuideController {
         return ResponseEntity.ok().body(guideService.updateGuide(guideId, guideReq, user.getUsername()));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{guideId}")
     public ResponseEntity<Void> delete(@PathVariable Long guideId,  @AuthenticationPrincipal User user) {
         guideService.deleteGuide(guideId, user.getUsername());
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/{guideId}")
-    public ResponseEntity<GuideRes> get(@PathVariable Long guideId) {
+    public ResponseEntity<GuideRes> getGuide(@PathVariable Long guideId) {
         return ResponseEntity.ok().body(guideService.getGuide(guideId));
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/list")
     public ResponseEntity<List<GuideRes>> getList(@NotNull(message = "상태값을 입력해주세요") String status, Pageable pageable) {
         return ResponseEntity.ok().body(guideService.getGuideList(status, pageable));

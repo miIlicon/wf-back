@@ -1,7 +1,6 @@
 package com.festival.domain.image.service;
 
 import com.festival.common.util.ImageUtils;
-import com.festival.domain.booth.model.Booth;
 import com.festival.domain.image.model.Image;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

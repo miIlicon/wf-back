@@ -54,12 +54,9 @@ public class ProgramService {
         program.setStatus(ProgramStatus.TERMINATE);
     }
 
-    public List<ProgramRes> getProgramList(ProgramListReq programListReqDto, Pageable pageable) {
-        List<Program> programList = programRepository.getList(ProgramSearchCond.builder()
-                .status(programListReqDto.getStatus())
-                .type(programListReqDto.getType())
-                .build(), pageable);
-        return programList.stream().map(ProgramRes::of).collect(Collectors.toList());
+    public ProgramRes getProgram(Long programId) {
+        Program program = programRepository.findById(programId).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_PROGRAM));
+        return ProgramRes.of(program);
 
     }
 
@@ -71,6 +68,4 @@ public class ProgramService {
         return programList.stream().map(ProgramRes::of).collect(Collectors.toList());
 
     }
-
-
 }
