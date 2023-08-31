@@ -3,6 +3,7 @@ package com.festival.domain.bambooforest.controller;
 import com.festival.ControllerTestSupport;
 import com.festival.domain.bambooforest.dto.BamBooForestCreateReq;
 import com.festival.domain.bambooforest.model.BamBooForest;
+import com.festival.domain.bambooforest.model.BamBooForestStatus;
 import com.festival.domain.bambooforest.repository.BamBooForestRepository;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.member.repository.MemberRepository;
@@ -12,17 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static com.festival.domain.member.model.MemberRole.ADMIN;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class BambooForestControllerTest extends ControllerTestSupport {
 
@@ -67,16 +68,20 @@ class BambooForestControllerTest extends ControllerTestSupport {
         BamBooForest bamBooForest = BamBooForest.of(request);
         BamBooForest savedBamBooForest = bamBooForestRepository.saveAndFlush(bamBooForest);
 
-        //when //then
+        //when
         mockMvc.perform(
                         delete("/api/v2/bambooforest/" + savedBamBooForest.getId())
                                 .contentType(APPLICATION_FORM_URLENCODED)
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
+
+        //then
+        BamBooForest findBambooForest = bamBooForestRepository.findById(savedBamBooForest.getId()).get();
+        assertThat(findBambooForest.getBamBooForestStatus()).isEqualTo(BamBooForestStatus.TERMINATE);
     }
 
-    @DisplayName("대나무숲의 게시물은 10개씩 표시된다. 데이터는 페이지 처리된다.")
+    @DisplayName("대나무숲의 게시물은 10개씩 표시된다. 데이터는 페이지 처리된다. 테스트 시에는 5개의 데이터를 생성하여 테스트한다.")
     @Test
     void getListBamBooForest() throws Exception {
         //given
@@ -114,7 +119,8 @@ class BambooForestControllerTest extends ControllerTestSupport {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON));
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("$.content", hasSize(5)));;
     }
 
     private static BamBooForestCreateReq createBamBooForestReq(String bambooForestContent, String mail, String operate) {
