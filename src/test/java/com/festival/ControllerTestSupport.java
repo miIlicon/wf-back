@@ -11,11 +11,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 @ActiveProfiles("test")
-@Import(SecurityConfig.class)
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
-public class ControllerTestSupport {
+public abstract class ControllerTestSupport {
 
     @Autowired
     protected MockMvc mockMvc;
