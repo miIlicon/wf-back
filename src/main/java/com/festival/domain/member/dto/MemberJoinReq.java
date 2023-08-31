@@ -2,9 +2,10 @@ package com.festival.domain.member.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 
-@Getter
+@Data
 public class MemberJoinReq {
 
     @NotBlank(message = "로그인 아이디를 입력 해주세요.")

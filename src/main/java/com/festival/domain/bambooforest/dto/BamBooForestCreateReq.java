@@ -1,10 +1,10 @@
 package com.festival.domain.bambooforest.dto;
 
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @NoArgsConstructor
 public class BamBooForestCreateReq {
 
