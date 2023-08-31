@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,11 +39,12 @@ public class BoothController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{boothId}")
-    public ResponseEntity<Long> update(@Valid BoothReq boothReq, @PathVariable("boothId") Long id, @AuthenticationPrincipal User user) throws Exception {
+    public ResponseEntity<Long> update(@Valid BoothReq boothReq, @PathVariable("boothId") Long id) throws Exception {
         if (!validationUtils.isBoothValid(boothReq)) {
             throw new Exception();
         }
-        return ResponseEntity.ok().body(boothService.updateBooth(boothReq, id, user.getUsername()));
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok().body(boothService.updateBooth(boothReq, id, username));
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
