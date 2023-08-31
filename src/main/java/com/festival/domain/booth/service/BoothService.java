@@ -30,6 +30,7 @@ public class BoothService {
     public Long createBooth(BoothReq boothReq) {
         Booth booth = Booth.of(boothReq);
         booth.setImage(imageService.uploadImage(boothReq.getMainFile(), boothReq.getSubFiles(), boothReq.getType()));
+
         return boothRepository.save(booth).getId();
     }
 
@@ -37,12 +38,15 @@ public class BoothService {
 
     public Long updateBooth(BoothReq boothReq, Long id, String username) {
         Booth booth = boothRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOTH));
+
         if(!booth.getLastModifiedBy().equals(username))
             throw new ForbiddenException(ErrorCode.FORBIDDEN_UPDATE);
+
         /**
          * @Todo
          *  delete로직 작성해야함
          */
+        booth.update(boothReq);
         booth.setImage(imageService.uploadImage(boothReq.getMainFile(), boothReq.getSubFiles(), boothReq.getType()));
         return id;
     }
