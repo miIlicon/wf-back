@@ -6,12 +6,11 @@ import com.festival.domain.bambooforest.dto.BamBooForestRes;
 import com.festival.domain.bambooforest.service.BamBooForestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -33,14 +32,18 @@ public class BambooForestController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{bamBooForestId}")
-    public ResponseEntity<Void> deleteBamBooForest(@PathVariable Long bamBooForestId, @AuthenticationPrincipal User user) {
-        bambooForestService.delete(bamBooForestId, user.getUsername());
+    public ResponseEntity<Void> deleteBamBooForest(@PathVariable Long bamBooForestId) {
+        bambooForestService.delete(bamBooForestId, takeAuthenticationName());
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("permitAll()")
     @GetMapping("/list")
-    public ResponseEntity<Page<BamBooForestRes>> getList(String status, Pageable pageable) {
+    public ResponseEntity<Page<BamBooForestRes>> getListBamBooForest(String status, Pageable pageable) {
         return ResponseEntity.ok().body(bambooForestService.getBamBooForestList(status, pageable));
+    }
+
+    private static String takeAuthenticationName() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }

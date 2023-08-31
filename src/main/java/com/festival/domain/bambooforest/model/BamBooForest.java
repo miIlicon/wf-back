@@ -21,6 +21,7 @@ public class BamBooForest extends BaseEntity {
 
     private String contact;
 
+    @Enumerated(EnumType.STRING)
     private BamBooForestStatus bamBooForestStatus;
 
     @Builder
