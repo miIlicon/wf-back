@@ -36,9 +36,11 @@ public class Program extends BaseEntity {
     private float longitude;
 
     @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
     private ProgramStatus status;
 
     @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
     private ProgramType type;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

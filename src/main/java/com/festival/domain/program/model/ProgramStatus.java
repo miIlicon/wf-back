@@ -1,5 +1,8 @@
 package com.festival.domain.program.model;
 
+import lombok.Getter;
+
+@Getter
 public enum ProgramStatus {
     OPERATE("운영중"), TERMINATE("종료");
 

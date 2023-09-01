@@ -1,6 +1,10 @@
 package com.festival.domain.program.service;
 
 
+import com.festival.common.exception.ErrorCode;
+import com.festival.common.exception.custom_exception.AlreadyDeleteException;
+import com.festival.common.exception.custom_exception.ForbiddenException;
+import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.domain.booth.controller.dto.BoothListReq;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.booth.controller.dto.BoothRes;
@@ -15,10 +19,13 @@ import com.festival.domain.member.fixture.MemberFixture;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.member.repository.MemberRepository;
 import com.festival.domain.member.service.MemberService;
+import com.festival.domain.program.dto.ProgramListReq;
 import com.festival.domain.program.dto.ProgramReq;
+import com.festival.domain.program.dto.ProgramRes;
 import com.festival.domain.program.fixture.ProgramFixture;
 import com.festival.domain.program.model.Program;
 import com.festival.domain.program.repository.ProgramRepository;
+import com.festival.domain.program.service.vo.ProgramSearchCond;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,8 +41,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import static com.festival.domain.member.fixture.MemberFixture.member;
+
+import static com.festival.domain.program.model.ProgramStatus.TERMINATE;
 import static com.festival.domain.util.TestImageUtils.generateMockImageFile;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willReturn;
@@ -105,15 +114,15 @@ class ProgramServiceTest {
                     .build();
 
             Program program = ProgramFixture.EVENT;
-            Member member = MemberFixture.member;
+            Member member1 = MemberFixture.member1;
 
-            program.connectMember(member);
+            program.connectMember(member1);
             ReflectionTestUtils.setField(program, "id",1L);
 
             given(programRepository.findById(1L))
                     .willReturn(Optional.of(program));
             given(memberService.getAuthenticationMember())
-                    .willReturn(member);
+                    .willReturn(member1);
 
 
             //when
@@ -123,89 +132,139 @@ class ProgramServiceTest {
             Assertions.assertThat(programId).isEqualTo(1L);
         }
 
-        /*
-        @DisplayName("존재하지 않는 부스를 업데이트하면 NotFoundException을 반환한다.")
+
+        @DisplayName("존재하지 않는 프로그램을 업데이트하면 NotFoundException을 반환한다.")
         @Test
-        void updateNonExistsBooth() throws IOException {
+        void updateNonExistsProgram() throws IOException {
     
             //given
-            BoothReq boothReq = BoothReq.builder()
-                    .title("변경된 제목")
-                    .subTitle("변경된 부제목")
+            ProgramReq programUpdateReq = ProgramReq.builder()
+                    .title("프로그램 게시물 제목")
+                    .subTitle("프로그램 게시물 부제목")
                     .status("OPERATE")
-                    .content("변경된 내용")
+                    .content("프로그램 게시물 내용")
                     .longitude(50)
                     .latitude(50)
                     .mainFile(generateMockImageFile("mainFile"))
                     .subFiles(List.of(generateMockImageFile("subFile1"), generateMockImageFile("subFile1")))
-                    .type("FOOD_TRUCK")
+                    .type("EVENT")
                     .build();
+
     
-    
-            given(boothRepository.findById(1L))
-                    .willThrow(new NotFoundException(NOT_FOUND_BOOTH));
-    
-            //when & then
-            assertThatThrownBy(() -> boothService.updateBooth(boothReq,1L, "username"))
-                    .isInstanceOf(NotFoundException.class)
-                    .extracting("errorCode")
-                    .isEqualTo(NOT_FOUND_BOOTH);
-        }
-    
-        @DisplayName("존재하지 않는 부스를 삭제하면 NotFoundException를 반환한다.")
-        @Test
-        void updateBooth() throws IOException {
-    
-            //given
-            given(boothRepository.findById(1L))
-                    .willThrow(new NotFoundException(NOT_FOUND_BOOTH));
-    
+            given(programRepository.findById(1L))
+                    .willReturn(Optional.empty());
     
             //when & then
-            assertThatThrownBy(() -> boothService.deleteBooth(1L, "username"))
+            assertThatThrownBy(() -> programService.updateProgram(1L, programUpdateReq))
                     .isInstanceOf(NotFoundException.class)
                     .extracting("errorCode")
-                    .isEqualTo(NOT_FOUND_BOOTH);
+                    .isEqualTo(ErrorCode.NOT_FOUND_PROGRAM);
         }
 
-    @DisplayName("아이디에 맞는 부스를 반환한다.")
+    @DisplayName("삭제된 프로그램을 업데이트하면 AleadyDeletedException을 반환한다.")
     @Test
-    void getBooth(){
+    void updateDeletedProgram() throws IOException {
+
         //given
-        Booth foodTruck = BoothFixture.FOOD_TRUCK;
-        ReflectionTestUtils.setField(foodTruck, "image", ImageFixture.image);
+        ProgramReq programUpdateReq = ProgramReq.builder()
+                .title("프로그램 게시물 제목")
+                .subTitle("프로그램 게시물 부제목")
+                .status("OPERATE")
+                .content("프로그램 게시물 내용")
+                .longitude(50)
+                .latitude(50)
+                .mainFile(generateMockImageFile("mainFile"))
+                .subFiles(List.of(generateMockImageFile("subFile1"), generateMockImageFile("subFile1")))
+                .type("EVENT")
+                .build();
+
+        Program program = ProgramFixture.EVENT;
+        ReflectionTestUtils.setField(program, "status",TERMINATE);
 
         given(programRepository.findById(1L))
-                .willReturn(Optional.of(foodTruck));
-        //when
-        BoothRes boothRes = boothService.getBooth(1L);
+                .willReturn(Optional.of(program));
 
-        //then
-        Assertions.assertThat(boothRes).usingRecursiveComparison()
-                .isEqualTo(BoothRes.of(foodTruck));
+        //when & then
+        assertThatThrownBy(() -> programService.updateProgram(1L, programUpdateReq))
+                .isInstanceOf(AlreadyDeleteException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.ALREADY_DELETED);
+    }
+    @DisplayName("자신의 게시물이 아닌 프로그램을 업데이트하면 ForbiddenException을 반환한다.")
+    @Test
+    void updateNotMineProgram() throws IOException {
+
+        //given
+        ProgramReq programUpdateReq = ProgramReq.builder()
+                .title("프로그램 게시물 제목")
+                .subTitle("프로그램 게시물 부제목")
+                .status("OPERATE")
+                .content("프로그램 게시물 내용")
+                .longitude(50)
+                .latitude(50)
+                .mainFile(generateMockImageFile("mainFile"))
+                .subFiles(List.of(generateMockImageFile("subFile1"), generateMockImageFile("subFile1")))
+                .type("EVENT")
+                .build();
+        Program program = ProgramFixture.EVENT;
+        program.connectMember(MemberFixture.member1);
+        Member member2 = MemberFixture.member2;
+
+
+        given(programRepository.findById(1L))
+                .willReturn(Optional.of(program));
+        given(memberService.getAuthenticationMember())
+                .willReturn(member2);
+
+        //when & then
+        assertThatThrownBy(() -> programService.updateProgram(1L, programUpdateReq))
+                .isInstanceOf(ForbiddenException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.FORBIDDEN_UPDATE);
     }
 
-    @DisplayName("조건에 맞는 부스 리스트 반환한다.")
+
+    @DisplayName("아이디에 맞는 프로그램을 반환한다.")
+    @Test
+    void getProgram(){
+        //given
+        Program event = ProgramFixture.EVENT;
+        ReflectionTestUtils.setField(event, "image", ImageFixture.image);
+
+        given(programRepository.findById(1L))
+                .willReturn(Optional.of(event));
+        //when
+        ProgramRes programRes = programService.getProgram(1L);
+
+        //then
+        Assertions.assertThat(programRes).usingRecursiveComparison()
+                .isEqualTo(ProgramRes.of(event));
+    }
+
+    @DisplayName("조건에 맞는 프로그램 리스트 반환한다.")
     @Test
     void getBoothList(){
         //given
-        Booth pub = BoothFixture.PUB;
-        ReflectionTestUtils.setField(pub, "image", ImageFixture.image);
+        Program event = ProgramFixture.EVENT;
+        ReflectionTestUtils.setField(event, "image", ImageFixture.image);
+        Program game = ProgramFixture.GAME;
+        ReflectionTestUtils.setField(game, "image", ImageFixture.image);
 
-        given(boothRepository.getList(any(BoothListSearchCond.class), any(Pageable.class)))
-                .willReturn(List.of(pub));
+
+        given(programRepository.getList(any(ProgramSearchCond.class), any(Pageable.class)))
+                .willReturn(List.of(event, game));
         //when
 
-        BoothListReq boothListReq = BoothListReq.builder()
-                .type("PUB")
+        ProgramListReq programListReq = ProgramListReq.builder()
                 .status("OPERATE")
+                .type("EVENT")
                 .build();
-        Pageable pageable =  PageRequest.of(0, 3);
 
-        List<BoothRes> boothRes = boothService.getBoothList(boothListReq, pageable);
+
+        List<ProgramRes> programList = programService.getProgramList(programListReq, PageRequest.of(0, 3));
 
         //then
-        Assertions.assertThat(boothRes).hasSize(1);
+        Assertions.assertThat(programList).hasSize(2);
     }
-        */
+
 }

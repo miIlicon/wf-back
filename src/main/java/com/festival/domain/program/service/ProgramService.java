@@ -1,6 +1,7 @@
 package com.festival.domain.program.service;
 
 import com.festival.common.exception.ErrorCode;
+import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.BadRequestException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
@@ -27,8 +28,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.festival.common.exception.ErrorCode.ALREADY_DELETED;
-import static com.festival.common.exception.ErrorCode.NOT_FOUND_GUIDE;
+import static com.festival.common.exception.ErrorCode.*;
 import static com.festival.domain.guide.model.GuideStatus.TERMINATE;
 
 @Transactional(readOnly = true)
@@ -84,10 +84,12 @@ public class ProgramService {
     }
     private Program checkingDeletedStatus(Optional<Program> program) {
         if (program.isEmpty()) {
-            throw new NotFoundException(NOT_FOUND_GUIDE);
+            throw new NotFoundException(NOT_FOUND_PROGRAM);
         }
-        if (program.get().getStatus().equals(TERMINATE)) {
-            throw new BadRequestException(ALREADY_DELETED);
+        ProgramStatus status = program.get().getStatus();
+
+        if (program.get().getStatus() == ProgramStatus.TERMINATE) {
+            throw new AlreadyDeleteException(ALREADY_DELETED);
         }
         return program.get();
     }
