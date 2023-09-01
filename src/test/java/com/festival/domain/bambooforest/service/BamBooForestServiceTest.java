@@ -15,6 +15,7 @@ import com.festival.domain.booth.service.vo.BoothListSearchCond;
 import com.festival.domain.image.fixture.ImageFixture;
 import com.festival.domain.member.fixture.MemberFixture;
 import com.festival.domain.member.repository.MemberRepository;
+import com.festival.domain.member.service.MemberService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -80,8 +81,8 @@ class BamBooForestServiceTest {
         //given
         given(bamBooForestRepository.findById(1L))
                 .willReturn(Optional.of(bamBooForest));
-        given(memberRepository.findByUsername("user"))
-                .willReturn(Optional.of(MemberFixture.member));
+        given(memberRepository.findByUsername(any(String.class)))
+                .willReturn(Optional.of(MemberFixture.member1));
 
         //when
         bamBooForestService.delete(1L);
@@ -100,7 +101,7 @@ class BamBooForestServiceTest {
 
 
         //when & then
-        assertThatThrownBy(() -> bamBooForestService.delete(1L, "username"))
+        assertThatThrownBy(() -> bamBooForestService.delete(1L))
                 .isInstanceOf(NotFoundException.class)
                 .extracting("errorCode")
                 .isEqualTo(NOT_FOUND_BAMBOO);
