@@ -50,12 +50,7 @@ public class GuideService {
             throw new ForbiddenException(FORBIDDEN_UPDATE);
         }
         guide.update(guideReq);
-        if (guide.getImage() != null) {
-            imageService.deleteImage(guide.getImage());
-        }
-        if (guideReq.getMainFile() != null || guideReq.getSubFiles() != null) {
-            guide.setImage(imageService.createImage(guideReq.getMainFile(), guideReq.getSubFiles(), guideReq.getType()));
-        }
+        settingImage(guideReq, guide);
         return guide.getId();
     }
 
@@ -77,6 +72,15 @@ public class GuideService {
     public List<GuideRes> getGuideList(String status, Pageable pageable) {
         List<Guide> guideList = guideRepository.getList(status, pageable);
         return guideList.stream().map(GuideRes::of).collect(Collectors.toList());
+    }
+
+    private void settingImage(GuideReq guideReq, Guide guide) {
+        if (guide.getImage() != null) {
+            imageService.deleteImage(guide.getImage());
+        }
+        if (guideReq.getMainFile() != null || guideReq.getSubFiles() != null) {
+            guide.setImage(imageService.createImage(guideReq.getMainFile(), guideReq.getSubFiles(), guideReq.getType()));
+        }
     }
 
     private Guide checkingDeletedStatus(Optional<Guide> guide) {
