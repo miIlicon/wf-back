@@ -60,7 +60,7 @@ public class ValidationUtils {
     public boolean isGuideValid(GuideReq guide) throws Exception {
         checkStrLength(guide.getTitle(), 1, 20);
         checkStrLength(guide.getContent(), 1, 300);
-        String[] typeList = {"Q&A", "NOTICE"};
+        String[] typeList = {"QNA", "NOTICE"};
         checkTypeItem(typeList, guide.getType());
         checkStatus(guide.getStatus());
         return true;

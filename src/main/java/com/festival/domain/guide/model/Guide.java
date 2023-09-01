@@ -3,6 +3,7 @@ package com.festival.domain.guide.model;
 import com.festival.common.base.BaseEntity;
 import com.festival.domain.guide.dto.GuideReq;
 import com.festival.domain.image.model.Image;
+import com.festival.domain.member.model.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -25,6 +26,10 @@ public class Guide extends BaseEntity {
     private GuideType guideType;
 
     private GuideStatus guideStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Image image;
@@ -50,11 +55,16 @@ public class Guide extends BaseEntity {
         this.title = guideReq.getTitle();
         this.content = guideReq.getContent();
         this.guideType = settingType(guideReq.getType());
-
     }
+
     public void setImage(Image image){
         this.image = image;
     }
+
+    public void connectMember(Member member) {
+        this.member = member;
+    }
+
     public void changeStatus(GuideStatus status) {
         this.guideStatus = status;
     }

@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberLoginReq {
 
-    private String loginId;
+    private String username;
     private String password;
 
-    public MemberLoginReq(String loginId, String password) {
-        this.loginId = loginId;
+    public MemberLoginReq(String username, String password) {
+        this.username = username;
         this.password = password;
     }
 }

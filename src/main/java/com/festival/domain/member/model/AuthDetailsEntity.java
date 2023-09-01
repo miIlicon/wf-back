@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public abstract class AuthDetailsEntity implements UserDetails {
 
     @Column(unique = true, nullable = false)
-    protected String loginId;
+    protected String username;
 
     @Column(nullable = false)
     protected String password;
@@ -39,7 +39,7 @@ public abstract class AuthDetailsEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return loginId;
+        return username;
     }
 
     @Override

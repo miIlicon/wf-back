@@ -6,7 +6,7 @@ import com.festival.domain.member.model.MemberRole;
 public class MemberFixture {
 
     public static Member member = Member.builder()
-            .loginId("user")
+            .username("user")
             .password("1234")
             .memberRole(MemberRole.ADMIN)
             .build();

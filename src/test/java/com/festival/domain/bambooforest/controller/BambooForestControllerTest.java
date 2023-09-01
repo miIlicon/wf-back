@@ -1,12 +1,12 @@
 package com.festival.domain.bambooforest.controller;
 
-import com.festival.ControllerTestSupport;
 import com.festival.domain.bambooforest.dto.BamBooForestCreateReq;
 import com.festival.domain.bambooforest.model.BamBooForest;
 import com.festival.domain.bambooforest.model.BamBooForestStatus;
 import com.festival.domain.bambooforest.repository.BamBooForestRepository;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.member.repository.MemberRepository;
+import com.festival.domain.util.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +58,7 @@ class BambooForestControllerTest extends ControllerTestSupport {
     void deleteBamBooForest() throws Exception {
         //given
         Member member = Member.builder()
-                .loginId("testUser")
+                .username("testUser")
                 .password("12345")
                 .memberRole(ADMIN)
                 .build();

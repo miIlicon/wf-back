@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class GuideController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
-    public ResponseEntity<Long> create(@Valid GuideReq guideReq) throws Exception {
+    public ResponseEntity<Long> createGuide(@Valid GuideReq guideReq) throws Exception {
         if (!validationUtils.isGuideValid(guideReq)) {
             throw new Exception();
         }
@@ -37,17 +38,17 @@ public class GuideController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{guideId}")
-    public ResponseEntity<Long> update(@PathVariable Long guideId, @Valid GuideReq guideReq, @AuthenticationPrincipal User user) throws Exception {
+    public ResponseEntity<Long> updateGuide(@PathVariable Long guideId, @Valid GuideReq guideReq) throws Exception {
         if (!validationUtils.isGuideValid(guideReq)) {
             throw new Exception();
         }
-        return ResponseEntity.ok().body(guideService.updateGuide(guideId, guideReq, user.getUsername()));
+        return ResponseEntity.ok().body(guideService.updateGuide(guideId, guideReq));
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{guideId}")
-    public ResponseEntity<Void> delete(@PathVariable Long guideId,  @AuthenticationPrincipal User user) {
-        guideService.deleteGuide(guideId, user.getUsername());
+    public ResponseEntity<Void> deleteGuide(@PathVariable Long guideId) {
+        guideService.deleteGuide(guideId);
         return ResponseEntity.ok().build();
     }
 
@@ -59,8 +60,7 @@ public class GuideController {
 
     @PreAuthorize("permitAll()")
     @GetMapping("/list")
-    public ResponseEntity<List<GuideRes>> getList(@NotNull(message = "상태값을 입력해주세요") String status, Pageable pageable) {
+    public ResponseEntity<List<GuideRes>> getGuideList(@NotNull(message = "상태값을 입력해주세요") String status, Pageable pageable) {
         return ResponseEntity.ok().body(guideService.getGuideList(status, pageable));
     }
-
 }
