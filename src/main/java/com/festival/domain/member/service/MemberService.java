@@ -50,7 +50,7 @@ public class MemberService {
         return jwtTokenProvider.createToken(authenticate, roles);
     }
 
-    public Member getMember() {
+    public Member getAuthenticationMember() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return memberRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(NOT_FOUND_MEMBER));
     }

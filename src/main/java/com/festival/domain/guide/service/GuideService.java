@@ -37,14 +37,14 @@ public class GuideService {
     public Long createGuide(GuideReq guideReq) {
         Guide guide = Guide.of(guideReq);
         guide.setImage(imageService.createImage(guideReq.getMainFile(), guideReq.getSubFiles(), guideReq.getType()));
-        guide.connectMember(memberService.getMember());
+        guide.connectMember(memberService.getAuthenticationMember());
         return guideRepository.save(guide).getId();
     }
 
     @Transactional
     public Long updateGuide(Long id, GuideReq guideReq) {
         Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_GUIDE));
-        Member findMember = memberService.getMember();
+        Member findMember = memberService.getAuthenticationMember();
         if (!SecurityUtils.checkingRole(findMember.getUsername(), guide.getMember().getUsername(), findMember.getMemberRoles())) {
             throw new ForbiddenException(FORBIDDEN_UPDATE);
         }
@@ -58,7 +58,7 @@ public class GuideService {
     @Transactional
     public void deleteGuide(Long id) {
         Guide guide = checkingDeletedStatus(guideRepository.findById(id));
-        Member findMember = memberService.getMember();
+        Member findMember = memberService.getAuthenticationMember();
         if (!SecurityUtils.checkingRole(findMember.getUsername(), guide.getMember().getUsername(), findMember.getMemberRoles())) {
             throw new ForbiddenException(FORBIDDEN_DELETE);
         }

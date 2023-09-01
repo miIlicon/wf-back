@@ -84,7 +84,7 @@ class BamBooForestServiceTest {
                 .willReturn(Optional.of(MemberFixture.member));
 
         //when
-        bamBooForestService.delete(1L, "user");
+        bamBooForestService.delete(1L);
 
 
         //then

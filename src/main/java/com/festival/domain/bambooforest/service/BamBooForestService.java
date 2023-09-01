@@ -39,7 +39,7 @@ public class BamBooForestService {
     @Transactional
     public void delete(Long id) {
         BamBooForest findBamBooForest = bamBooForestRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BAMBOO));
-        Member accessUser = memberService.getMember();
+        Member accessUser = memberService.getAuthenticationMember();
         if (!checkingAdmin(accessUser.getMemberRoles())) {
             throw new ForbiddenException(FORBIDDEN_DELETE);
         }
