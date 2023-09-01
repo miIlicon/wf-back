@@ -32,7 +32,7 @@ public class GuideController {
         if (!validationUtils.isGuideValid(guideReq)) {
             throw new Exception();
         }
-        Long id = guideService.createGuide(guideReq, takeAuthenticationName());
+        Long id = guideService.createGuide(guideReq);
         return ResponseEntity.ok().body(id);
     }
 
@@ -42,13 +42,13 @@ public class GuideController {
         if (!validationUtils.isGuideValid(guideReq)) {
             throw new Exception();
         }
-        return ResponseEntity.ok().body(guideService.updateGuide(guideId, guideReq, takeAuthenticationName()));
+        return ResponseEntity.ok().body(guideService.updateGuide(guideId, guideReq));
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{guideId}")
     public ResponseEntity<Void> deleteGuide(@PathVariable Long guideId) {
-        guideService.deleteGuide(guideId, takeAuthenticationName());
+        guideService.deleteGuide(guideId);
         return ResponseEntity.ok().build();
     }
 
@@ -62,9 +62,5 @@ public class GuideController {
     @GetMapping("/list")
     public ResponseEntity<List<GuideRes>> getListGuide(@NotNull(message = "상태값을 입력해주세요") String status, Pageable pageable) {
         return ResponseEntity.ok().body(guideService.getGuideList(status, pageable));
-    }
-
-    private static String takeAuthenticationName() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }
