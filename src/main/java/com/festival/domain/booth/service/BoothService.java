@@ -29,7 +29,7 @@ public class BoothService {
 
     public Long createBooth(BoothReq boothReq) {
         Booth booth = Booth.of(boothReq);
-        booth.setImage(imageService.uploadImage(boothReq.getMainFile(), boothReq.getSubFiles(), boothReq.getType()));
+        booth.setImage(imageService.createImage(boothReq.getMainFile(), boothReq.getSubFiles(), boothReq.getType()));
 
         return boothRepository.save(booth).getId();
     }
@@ -47,7 +47,7 @@ public class BoothService {
          *  delete로직 작성해야함
          */
         booth.update(boothReq);
-        booth.setImage(imageService.uploadImage(boothReq.getMainFile(), boothReq.getSubFiles(), boothReq.getType()));
+        booth.setImage(imageService.createImage(boothReq.getMainFile(), boothReq.getSubFiles(), boothReq.getType()));
         return id;
     }
 

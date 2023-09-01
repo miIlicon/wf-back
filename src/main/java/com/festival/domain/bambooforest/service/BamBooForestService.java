@@ -9,19 +9,16 @@ import com.festival.domain.bambooforest.model.BamBooForestStatus;
 import com.festival.domain.bambooforest.repository.BamBooForestRepository;
 import com.festival.domain.bambooforest.service.vo.BamBooForestSearchCond;
 import com.festival.domain.member.model.Member;
-import com.festival.domain.member.model.MemberRole;
-import com.festival.domain.member.repository.MemberRepository;
+import com.festival.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static com.festival.common.exception.ErrorCode.*;
+import static com.festival.common.exception.ErrorCode.FORBIDDEN_DELETE;
+import static com.festival.common.exception.ErrorCode.NOT_FOUND_BAMBOO;
 import static com.festival.common.util.SecurityUtils.checkingAdmin;
-import static com.festival.common.util.SecurityUtils.checkingRole;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -29,7 +26,8 @@ import static com.festival.common.util.SecurityUtils.checkingRole;
 public class BamBooForestService {
 
     private final BamBooForestRepository bamBooForestRepository;
-    private final MemberRepository memberRepository;
+
+    private final MemberService memberService;
 
     @Transactional
     public Long create(BamBooForestCreateReq bambooForestCreateReq) {
@@ -41,7 +39,7 @@ public class BamBooForestService {
     @Transactional
     public void delete(Long id, String accessUsername) {
         BamBooForest findBamBooForest = bamBooForestRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BAMBOO));
-        Member accessUser = memberRepository.findByLoginId(accessUsername).orElseThrow(() -> new NotFoundException(NOT_FOUND_MEMBER));
+        Member accessUser = memberService.getMember(accessUsername);
         if (!checkingAdmin(accessUser.getMemberRoles())) {
             throw new ForbiddenException(FORBIDDEN_DELETE);
         }

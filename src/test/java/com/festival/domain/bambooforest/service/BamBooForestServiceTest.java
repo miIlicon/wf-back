@@ -80,7 +80,7 @@ class BamBooForestServiceTest {
         //given
         given(bamBooForestRepository.findById(1L))
                 .willReturn(Optional.of(bamBooForest));
-        given(memberRepository.findByLoginId("user"))
+        given(memberRepository.findByUsername("user"))
                 .willReturn(Optional.of(MemberFixture.member));
 
         //when
