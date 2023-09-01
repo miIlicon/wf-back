@@ -6,9 +6,9 @@ import java.util.List;
 
 public class SecurityUtils {
     public static boolean checkingRole(String accessorUsername, String ownerUsername, List<MemberRole> accessorRoles) {
-        return accessorRoles.contains(MemberRole.ADMIN) || accessorUsername.equals(ownerUsername);
+        return checkingAdmin(accessorRoles) || accessorUsername.equals(ownerUsername);
     }
-    public static boolean checkingRole(List<MemberRole> memberRoles) {
+    public static boolean checkingAdmin(List<MemberRole> memberRoles) {
         return memberRoles.contains(MemberRole.ADMIN);
     }
 }

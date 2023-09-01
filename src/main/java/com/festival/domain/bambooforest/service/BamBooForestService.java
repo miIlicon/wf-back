@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.festival.common.exception.ErrorCode.*;
+import static com.festival.common.util.SecurityUtils.checkingAdmin;
 import static com.festival.common.util.SecurityUtils.checkingRole;
 
 @Transactional(readOnly = true)
@@ -41,7 +42,7 @@ public class BamBooForestService {
     public void delete(Long id, String accessUsername) {
         BamBooForest findBamBooForest = bamBooForestRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BAMBOO));
         Member accessUser = memberRepository.findByLoginId(accessUsername).orElseThrow(() -> new NotFoundException(NOT_FOUND_MEMBER));
-        if (!checkingRole(accessUser.getMemberRoles())) {
+        if (!checkingAdmin(accessUser.getMemberRoles())) {
             throw new ForbiddenException(FORBIDDEN_DELETE);
         }
         findBamBooForest.changeStatus(BamBooForestStatus.TERMINATE);
