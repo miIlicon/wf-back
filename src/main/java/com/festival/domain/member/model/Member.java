@@ -43,6 +43,6 @@ public class Member extends AuthDetailsEntity {
     }
 
     private static MemberRole settingMemberRole(String memberRole) {
-        return MemberRole.checkRole(memberRole);
+        return MemberRole.checkMemberRole(memberRole);
     }
 }

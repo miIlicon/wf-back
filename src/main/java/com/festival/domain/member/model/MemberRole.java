@@ -12,7 +12,7 @@ public enum MemberRole {
         this.value = value;
     }
 
-    public static MemberRole checkRole(String role) {
+    public static MemberRole checkMemberRole(String role) {
         return switch (role) {
             case "ADMIN" -> ADMIN;
             default -> null;
