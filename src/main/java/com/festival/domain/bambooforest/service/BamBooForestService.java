@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.festival.common.exception.ErrorCode.*;
+import static com.festival.common.util.SecurityUtils.checkingRole;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -37,10 +38,10 @@ public class BamBooForestService {
     }
 
     @Transactional
-    public void delete(Long id, String username) {
+    public void delete(Long id, String accessUsername) {
         BamBooForest findBamBooForest = bamBooForestRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BAMBOO));
-        Member findMember = memberRepository.findByLoginId(username).orElseThrow(() -> new NotFoundException(NOT_FOUND_MEMBER));
-        if (!checkingRole(findMember.getMemberRoles())) {
+        Member accessUser = memberRepository.findByLoginId(accessUsername).orElseThrow(() -> new NotFoundException(NOT_FOUND_MEMBER));
+        if (!checkingRole(accessUser.getMemberRoles())) {
             throw new ForbiddenException(FORBIDDEN_DELETE);
         }
         findBamBooForest.changeStatus(BamBooForestStatus.TERMINATE);
@@ -54,7 +55,5 @@ public class BamBooForestService {
         return bamBooForestRepository.getList(bamBooForestSearchCond);
     }
 
-    private static boolean checkingRole(List<MemberRole> memberRoles) {
-        return memberRoles.contains(MemberRole.ADMIN);
-    }
+
 }
