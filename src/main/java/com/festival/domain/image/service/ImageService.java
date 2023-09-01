@@ -1,7 +1,5 @@
 package com.festival.domain.image.service;
 
-import com.festival.common.exception.ErrorCode;
-import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.common.util.ImageUtils;
 import com.festival.domain.image.model.Image;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.festival.common.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -62,5 +58,9 @@ public class ImageService {
 
     private String createImage(MultipartFile mainFile, String kind) {
         return imageUtils.createFileName(mainFile.getOriginalFilename(), kind);
+    }
+
+    public void deleteImage(Image image) {
+        imageUtils.deleteFile(image);
     }
 }
