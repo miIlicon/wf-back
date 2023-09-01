@@ -19,15 +19,15 @@ public class Member extends AuthDetailsEntity {
     private Long id;
 
     @Builder
-    private Member(String loginId, String password, MemberRole memberRole) {
-        this.loginId = loginId;
+    private Member(String username, String password, MemberRole memberRole) {
+        this.username = username;
         this.password = password;
         this.memberRoles.add(memberRole);
     }
 
     public static Member of(MemberJoinReq memberJoinReq, String password) {
         Member member = new Member();
-        member.loginId = memberJoinReq.getLoginId();
+        member.username = memberJoinReq.getUsername();
         member.password = password;
         member.memberRoles.add(settingMemberRole(memberJoinReq.getMemberRole()));
         return member;
@@ -35,7 +35,7 @@ public class Member extends AuthDetailsEntity {
 
 
     public void update(MemberJoinReq memberJoinReq) {
-        this.loginId = memberJoinReq.getLoginId();
+        this.username = memberJoinReq.getUsername();
         this.password = memberJoinReq.getPassword();
         if(!this.memberRoles.contains(settingMemberRole(memberJoinReq.getMemberRole()))) {
             this.memberRoles.add(settingMemberRole(memberJoinReq.getMemberRole()));
