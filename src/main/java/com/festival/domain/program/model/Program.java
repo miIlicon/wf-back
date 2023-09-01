@@ -3,6 +3,7 @@ package com.festival.domain.program.model;
 
 import com.festival.common.base.BaseEntity;
 import com.festival.domain.image.model.Image;
+import com.festival.domain.member.model.Member;
 import com.festival.domain.program.dto.ProgramReq;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -42,6 +43,9 @@ public class Program extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Image image;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Member member;
 
     @Builder
     private Program(Long id, String title, String subTitle, String content, float latitude, float longitude, ProgramStatus status, ProgramType type) {
