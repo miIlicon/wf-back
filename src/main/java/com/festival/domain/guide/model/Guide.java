@@ -25,6 +25,7 @@ public class Guide extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private GuideType guideType;
 
+    @Enumerated(EnumType.STRING)
     private GuideStatus guideStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)

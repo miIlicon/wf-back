@@ -2,10 +2,8 @@ package com.festival.common.util;
 
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
+import com.festival.domain.image.model.Image;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,5 +61,19 @@ public class ImageUtils {
     public String createFileName(String originalFilename, String kind) {
         String ext = originalFilename.substring(originalFilename.lastIndexOf("."));
         return kind + "_" + UUID.randomUUID() + ext;
+    }
+
+    public void deleteFile(Image image){
+        DeleteObjectRequest deleteObjectRequest;
+        if (image.getMainFilePath() != null) {
+            deleteObjectRequest = new DeleteObjectRequest(bucketName, image.getMainFilePath());
+            amazonS3.deleteObject(deleteObjectRequest);
+        }
+        if (image.getSubFilePaths() != null) {
+            for (String subFile : image.getSubFilePaths()) {
+                deleteObjectRequest = new DeleteObjectRequest(bucketName, subFile);
+                amazonS3.deleteObject(deleteObjectRequest);
+            }
+        }
     }
 }
