@@ -60,7 +60,7 @@ public class GuideController {
 
     @PreAuthorize("permitAll()")
     @GetMapping("/list")
-    public ResponseEntity<List<GuideRes>> getListGuide(@NotNull(message = "상태값을 입력해주세요") String status, Pageable pageable) {
+    public ResponseEntity<List<GuideRes>> getGuideList(@NotNull(message = "상태값을 입력해주세요") String status, Pageable pageable) {
         return ResponseEntity.ok().body(guideService.getGuideList(status, pageable));
     }
 }
