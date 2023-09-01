@@ -88,4 +88,7 @@ public class Program extends BaseEntity {
     public void setImage(Image uploadImage) {
         this.image = uploadImage;
     }
+    public void connectMember(Member member){
+        this.member = member;
+    }
 }

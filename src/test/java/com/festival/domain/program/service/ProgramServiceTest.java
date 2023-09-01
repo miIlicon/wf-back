@@ -11,6 +11,10 @@ import com.festival.domain.booth.service.BoothService;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
 import com.festival.domain.image.fixture.ImageFixture;
 import com.festival.domain.image.service.ImageService;
+import com.festival.domain.member.fixture.MemberFixture;
+import com.festival.domain.member.model.Member;
+import com.festival.domain.member.repository.MemberRepository;
+import com.festival.domain.member.service.MemberService;
 import com.festival.domain.program.dto.ProgramReq;
 import com.festival.domain.program.fixture.ProgramFixture;
 import com.festival.domain.program.model.Program;
@@ -30,6 +34,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import static com.festival.domain.member.fixture.MemberFixture.member;
 import static com.festival.domain.util.TestImageUtils.generateMockImageFile;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -42,10 +47,15 @@ class ProgramServiceTest {
     private ProgramService programService;
 
     @Mock
+    private MemberService memberService;
+
+    @Mock
     private ProgramRepository programRepository;
 
     @Mock
     private ImageService imageService;
+    @Mock
+    private MemberRepository memberRepository;
 
 
     @DisplayName("축제 프로그램을 생성한 후 programId를 반환한다.")
@@ -95,13 +105,19 @@ class ProgramServiceTest {
                     .build();
 
             Program program = ProgramFixture.EVENT;
+            Member member = MemberFixture.member;
+
+            program.connectMember(member);
             ReflectionTestUtils.setField(program, "id",1L);
 
             given(programRepository.findById(1L))
                     .willReturn(Optional.of(program));
+            given(memberService.getAuthenticationMember())
+                    .willReturn(member);
+
 
             //when
-            Long programId = programService.updateProgram(1L, programReq, "user");
+            Long programId = programService.updateProgram(1L, programReq);
 
             //then
             Assertions.assertThat(programId).isEqualTo(1L);

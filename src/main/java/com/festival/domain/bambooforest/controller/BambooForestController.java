@@ -33,7 +33,7 @@ public class BambooForestController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{bamBooForestId}")
     public ResponseEntity<Void> deleteBamBooForest(@PathVariable Long bamBooForestId) {
-        bambooForestService.delete(bamBooForestId, takeAuthenticationName());
+        bambooForestService.delete(bamBooForestId);
         return ResponseEntity.ok().build();
     }
 
@@ -41,9 +41,5 @@ public class BambooForestController {
     @GetMapping("/list")
     public ResponseEntity<Page<BamBooForestRes>> getListBamBooForest(String status, Pageable pageable) {
         return ResponseEntity.ok().body(bambooForestService.getBamBooForestList(status, pageable));
-    }
-
-    private static String takeAuthenticationName() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }

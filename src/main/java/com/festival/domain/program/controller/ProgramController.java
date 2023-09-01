@@ -38,19 +38,17 @@ public class ProgramController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{programId}")
     public ResponseEntity<Long> update(@PathVariable Long programId,
-                                       @Valid ProgramReq programReqDto,
-                                       @AuthenticationPrincipal User user) throws Exception {
+                                       @Valid ProgramReq programReqDto) throws Exception {
         if (!validationUtils.isProgramValid(programReqDto)) {
             throw new Exception();
         }
-        return ResponseEntity.ok().body(programService.updateProgram(programId, programReqDto, user.getUsername()));
+        return ResponseEntity.ok().body(programService.updateProgram(programId, programReqDto));
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{programId}")
-    public ResponseEntity<Void> delete(@PathVariable Long programId,
-                                       @AuthenticationPrincipal User user) {
-        programService.delete(programId, user.getUsername());
+    public ResponseEntity<Void> delete(@PathVariable Long programId) {
+        programService.delete(programId);
         return ResponseEntity.ok().build();
     }
 
