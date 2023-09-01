@@ -25,6 +25,8 @@ public class GuideRepositoryImpl implements GuideRepositoryCustom {
                 .where(
                         statusEq(status)
                 )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
     }
 
