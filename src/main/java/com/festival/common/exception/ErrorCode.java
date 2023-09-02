@@ -1,7 +1,9 @@
 package com.festival.common.exception;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@Getter
 public enum ErrorCode {
     // 400
     ALREADY_DELETED("이미 삭제된 글입니다.", HttpStatus.BAD_REQUEST),
