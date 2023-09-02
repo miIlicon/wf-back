@@ -4,7 +4,7 @@ import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
-import com.festival.domain.bambooforest.dto.BamBooForestCreateReq;
+import com.festival.domain.bambooforest.dto.BamBooForestReq;
 import com.festival.domain.bambooforest.dto.BamBooForestRes;
 import com.festival.domain.bambooforest.model.BamBooForest;
 import com.festival.domain.bambooforest.repository.BamBooForestRepository;
@@ -33,14 +33,14 @@ public class BamBooForestService {
     private final MemberService memberService;
 
     @Transactional
-    public Long create(BamBooForestCreateReq bambooForestCreateReq) {
-        BamBooForest bamBooForest = BamBooForest.of(bambooForestCreateReq);
+    public Long createBamBooForest(BamBooForestReq bambooForestReq) {
+        BamBooForest bamBooForest = BamBooForest.of(bambooForestReq);
         BamBooForest savedBamBooForest = bamBooForestRepository.save(bamBooForest);
         return savedBamBooForest.getId();
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void deleteBamBooForest(Long id) {
         BamBooForest findBamBooForest = checkingDeletedStatus(bamBooForestRepository.findById(id));
 
         Member accessUser = memberService.getAuthenticationMember();

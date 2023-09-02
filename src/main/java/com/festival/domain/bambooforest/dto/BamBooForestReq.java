@@ -6,14 +6,14 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class BamBooForestCreateReq {
+public class BamBooForestReq {
 
     private String content;
     private String contact;
     private String status;
 
     @Builder
-    public BamBooForestCreateReq(String content, String contact, String status) {
+    public BamBooForestReq(String content, String contact, String status) {
         this.content = content;
         this.contact = contact;
         this.status = status;

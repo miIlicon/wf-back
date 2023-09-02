@@ -1,6 +1,6 @@
 package com.festival.common.util;
 
-import com.festival.domain.bambooforest.dto.BamBooForestCreateReq;
+import com.festival.domain.bambooforest.dto.BamBooForestReq;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.guide.dto.GuideReq;
 import com.festival.domain.program.dto.ProgramReq;
@@ -98,7 +98,7 @@ public class ValidationUtils {
         return true;
     }
 
-    public boolean isBamBooForestValid(BamBooForestCreateReq bamBooForest) throws Exception {
+    public boolean isBamBooForestValid(BamBooForestReq bamBooForest) throws Exception {
         checkStrLength(bamBooForest.getContent(), 1, 200);
         checkItemPattern(bamBooForest.getContact(), EMAIL_REGEX);
         checkStatus(bamBooForest.getStatus());
