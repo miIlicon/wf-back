@@ -7,8 +7,8 @@ import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.common.util.SecurityUtils;
 import com.festival.domain.member.service.MemberService;
-import com.festival.domain.timetable.dto.TimeTableReq;
 import com.festival.domain.timetable.dto.TimeTableDateReq;
+import com.festival.domain.timetable.dto.TimeTableReq;
 import com.festival.domain.timetable.dto.TimeTableRes;
 import com.festival.domain.timetable.dto.TimeTableSearchCond;
 import com.festival.domain.timetable.model.TimeTable;
@@ -33,7 +33,7 @@ public class TimeTableService {
     private final MemberService memberService;
 
     @Transactional
-    public Long create(TimeTableReq timeTableReq) {
+    public Long createTimeTable(TimeTableReq timeTableReq) {
         TimeTable timeTable = TimeTable.of(timeTableReq);
         timeTable.connectMember(memberService.getAuthenticationMember());
         TimeTable savedTimeTable = timeTableRepository.save(timeTable);
@@ -41,7 +41,7 @@ public class TimeTableService {
     }
 
     @Transactional
-    public Long update(Long timeTableId, TimeTableReq timeTableReq) {
+    public Long updateTimeTable(Long timeTableId, TimeTableReq timeTableReq) {
         TimeTable timeTable = checkingDeletedStatus(timeTableRepository.findById(timeTableId));
 
         if(!SecurityUtils.checkingAdminRole(memberService.getAuthenticationMember().getMemberRoles())) {
@@ -52,7 +52,7 @@ public class TimeTableService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void deleteTimeTable(Long id) {
         TimeTable timeTable = checkingDeletedStatus(timeTableRepository.findById(id));
         if(!SecurityUtils.checkingAdminRole(memberService.getAuthenticationMember().getMemberRoles())) {
             throw new ForbiddenException(ErrorCode.FORBIDDEN_DELETE);
@@ -60,13 +60,14 @@ public class TimeTableService {
         timeTable.changeStatus(OperateStatus.TERMINATE);
     }
 
-    public List<TimeTableRes> getList(TimeTableDateReq timeTableDateReq) {
+    public List<TimeTableRes> getTimeTableList(TimeTableDateReq timeTableDateReq) {
         TimeTableSearchCond timeTableSearchCond = new TimeTableSearchCond(
                 timeTableDateReq.getStartTime(), timeTableDateReq.getEndTime(),
                 timeTableDateReq.getStatus()
         );
         return timeTableRepository.getList(timeTableSearchCond);
     }
+
     private TimeTable checkingDeletedStatus(Optional<TimeTable> timeTable) {
         if (timeTable.isEmpty()) {
             throw new NotFoundException(NOT_FOUND_TIMETABLE);
@@ -77,4 +78,5 @@ public class TimeTableService {
         }
         return timeTable.get();
     }
+
 }

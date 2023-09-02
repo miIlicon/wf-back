@@ -27,7 +27,7 @@ public class TimeTableController {
         if (!validationUtils.isTimeTableValid(timeTableReq)) {
             throw new Exception();
         }
-        return ResponseEntity.ok().body(timeTableService.create(timeTableReq));
+        return ResponseEntity.ok().body(timeTableService.createTimeTable(timeTableReq));
     }
 
     @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
@@ -37,19 +37,19 @@ public class TimeTableController {
         if (!validationUtils.isTimeTableValid(timeTableReq)) {
             throw new Exception();
         }
-        return ResponseEntity.ok().body(timeTableService.update(timeTableId, timeTableReq));
+        return ResponseEntity.ok().body(timeTableService.updateTimeTable(timeTableId, timeTableReq));
     }
 
     @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @DeleteMapping("/{timeTableId}")
     public ResponseEntity<Void> deleteTimeTable(@PathVariable Long timeTableId) {
-        timeTableService.delete(timeTableId);
+        timeTableService.deleteTimeTable(timeTableId);
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
-    @GetMapping
+    @GetMapping("/list")
     public ResponseEntity<List<TimeTableRes>> getTimeTables(@Valid TimeTableDateReq timeTableDateReq) {
-        return ResponseEntity.ok().body(timeTableService.getList(timeTableDateReq));
+        return ResponseEntity.ok().body(timeTableService.getTimeTableList(timeTableDateReq));
     }
 }

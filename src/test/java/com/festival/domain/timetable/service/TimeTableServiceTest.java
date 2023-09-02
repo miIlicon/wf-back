@@ -56,7 +56,7 @@ class TimeTableServiceTest {
                 .willReturn(getTimeTable());
 
         //when
-        Long timeTableId = timeTableService.create(timeTableReq);
+        Long timeTableId = timeTableService.createTimeTable(timeTableReq);
 
         //then
         Assertions.assertThat(timeTableId).isEqualTo(1L);
@@ -74,7 +74,7 @@ class TimeTableServiceTest {
                 .willReturn(MemberFixture.ADMIN);
 
         //when
-        Long timeTableId = timeTableService.update(1L, timeTableUpdateReqReq);
+        Long timeTableId = timeTableService.updateTimeTable(1L, timeTableUpdateReqReq);
 
         //then
         Assertions.assertThat(timeTableId).isEqualTo(1L);
@@ -93,7 +93,7 @@ class TimeTableServiceTest {
                 .willReturn(MemberFixture.MANAGER1);
 
         //when & then
-        assertThatThrownBy(() -> timeTableService.update(1L, timeTableUpdateReqReq))
+        assertThatThrownBy(() -> timeTableService.updateTimeTable(1L, timeTableUpdateReqReq))
                 .isInstanceOf(ForbiddenException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.FORBIDDEN_UPDATE);
@@ -112,7 +112,7 @@ class TimeTableServiceTest {
 
 
         //when & then
-        assertThatThrownBy(() -> timeTableService.update(1L, timeTableUpdateReqReq))
+        assertThatThrownBy(() -> timeTableService.updateTimeTable(1L, timeTableUpdateReqReq))
                 .isInstanceOf(NotFoundException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.NOT_FOUND_TIMETABLE);
@@ -128,7 +128,7 @@ class TimeTableServiceTest {
 
 
         //when & then
-        assertThatThrownBy(() -> timeTableService.update(1L, timeTableUpdateReqReq))
+        assertThatThrownBy(() -> timeTableService.updateTimeTable(1L, timeTableUpdateReqReq))
                 .isInstanceOf(AlreadyDeleteException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.ALREADY_DELETED);
@@ -143,7 +143,7 @@ class TimeTableServiceTest {
                 .willReturn(MemberFixture.ADMIN);
 
         //when & then
-        timeTableService.delete(1L);
+        timeTableService.deleteTimeTable(1L);
 
     }
     @DisplayName("권한 없는 사용자가 타임테이블을 삭제 ForbiddenException을 반환한다.")
@@ -156,7 +156,7 @@ class TimeTableServiceTest {
                 .willReturn(MemberFixture.MANAGER1);
 
         //when & then
-        assertThatThrownBy(() -> timeTableService.delete(1L))
+        assertThatThrownBy(() -> timeTableService.deleteTimeTable(1L))
                 .isInstanceOf(ForbiddenException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.FORBIDDEN_DELETE);
@@ -173,7 +173,7 @@ class TimeTableServiceTest {
                 .willReturn(Optional.empty());
 
         //when & then
-        assertThatThrownBy(() -> timeTableService.delete(1L))
+        assertThatThrownBy(() -> timeTableService.deleteTimeTable(1L))
                 .isInstanceOf(NotFoundException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.NOT_FOUND_TIMETABLE);
@@ -188,7 +188,7 @@ class TimeTableServiceTest {
 
 
         //when & then
-        assertThatThrownBy(() -> timeTableService.delete(1L))
+        assertThatThrownBy(() -> timeTableService.deleteTimeTable(1L))
                 .isInstanceOf(AlreadyDeleteException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.ALREADY_DELETED);
