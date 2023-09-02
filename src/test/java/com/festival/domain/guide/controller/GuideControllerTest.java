@@ -1,5 +1,6 @@
 package com.festival.domain.guide.controller;
 
+import com.festival.common.base.OperateStatus;
 import com.festival.domain.guide.dto.GuideReq;
 import com.festival.domain.guide.dto.GuideRes;
 import com.festival.domain.guide.model.Guide;
@@ -22,8 +23,6 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 
-import static com.festival.domain.guide.model.GuideStatus.OPERATE;
-import static com.festival.domain.guide.model.GuideStatus.TERMINATE;
 import static com.festival.domain.guide.model.GuideType.NOTICE;
 import static com.festival.domain.guide.model.GuideType.QNA;
 import static com.festival.domain.member.model.MemberRole.ADMIN;
@@ -104,7 +103,7 @@ class GuideControllerTest extends ControllerTestSupport {
         Guide findGuide = guideRepository.findById(id).get();
         assertThat(findGuide).isNotNull()
                 .extracting("title", "content", "guideType", "guideStatus")
-                .contains("title", "content", QNA, OPERATE);
+                .contains("title", "content", QNA, OperateStatus.OPERATE);
     }
 
     @WithMockUser(username = "testUser", roles = "ADMIN")
@@ -139,7 +138,7 @@ class GuideControllerTest extends ControllerTestSupport {
         Guide findGuide = guideRepository.findById(savedGuide.getId()).get();
         assertThat(findGuide).isNotNull()
                 .extracting("title", "content", "guideType", "guideStatus")
-                .contains("updateTitle", "updateContent", NOTICE, OPERATE);
+                .contains("updateTitle", "updateContent", NOTICE, OperateStatus.OPERATE);
     }
 
     @WithMockUser(username = "testUser", roles = "ADMIN")
@@ -161,7 +160,7 @@ class GuideControllerTest extends ControllerTestSupport {
 
         //then
         Guide findGuide = guideRepository.findById(savedGuide.getId()).get();
-        assertThat(findGuide.getGuideStatus()).isEqualTo(TERMINATE);
+        assertThat(findGuide.getStatus()).isEqualTo(OperateStatus.TERMINATE);
     }
 
     @WithMockUser(username = "differentUser", roles = "ADMIN")

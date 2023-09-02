@@ -31,6 +31,6 @@ public class GuideRepositoryImpl implements GuideRepositoryCustom {
     }
 
     private static BooleanExpression statusEq(String status) {
-        return status == null ? null : guide.guideStatus.stringValue().eq(status);
+        return status == null ? null : guide.status.stringValue().eq(status);
     }
 }

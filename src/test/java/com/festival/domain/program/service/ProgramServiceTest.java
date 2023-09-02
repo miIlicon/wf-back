@@ -1,18 +1,11 @@
 package com.festival.domain.program.service;
 
 
+import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
-import com.festival.domain.booth.controller.dto.BoothListReq;
-import com.festival.domain.booth.controller.dto.BoothReq;
-import com.festival.domain.booth.controller.dto.BoothRes;
-import com.festival.domain.booth.fixture.BoothFixture;
-import com.festival.domain.booth.model.Booth;
-import com.festival.domain.booth.repository.BoothRepository;
-import com.festival.domain.booth.service.BoothService;
-import com.festival.domain.booth.service.vo.BoothListSearchCond;
 import com.festival.domain.image.fixture.ImageFixture;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.fixture.MemberFixture;
@@ -41,13 +34,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-
-import static com.festival.domain.program.model.ProgramStatus.TERMINATE;
 import static com.festival.domain.util.TestImageUtils.generateMockImageFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willReturn;
 
 @ExtendWith(MockitoExtension.class)
 class ProgramServiceTest {
@@ -179,7 +169,7 @@ class ProgramServiceTest {
                 .build();
 
         Program program = ProgramFixture.EVENT;
-        ReflectionTestUtils.setField(program, "status",TERMINATE);
+        ReflectionTestUtils.setField(program, "status", OperateStatus.TERMINATE);
 
         given(programRepository.findById(1L))
                 .willReturn(Optional.of(program));

@@ -7,12 +7,11 @@ import com.festival.domain.timetable.repository.TimeTableRepositoryCustom;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.festival.domain.timetable.model.QTimeTable.*;
+import static com.festival.domain.timetable.model.QTimeTable.timeTable;
 
 public class TimeTableRepositoryImpl implements TimeTableRepositoryCustom {
 
@@ -45,6 +44,6 @@ public class TimeTableRepositoryImpl implements TimeTableRepositoryCustom {
     }
 
     private static BooleanExpression StatusEq(String status) {
-        return status == null ? null : timeTable.timeTableStatus.stringValue().eq(status);
+        return status == null ? null : timeTable.status.stringValue().eq(status);
     }
 }

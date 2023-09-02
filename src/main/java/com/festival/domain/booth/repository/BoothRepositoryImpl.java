@@ -1,16 +1,11 @@
 package com.festival.domain.booth.repository;
 
-import com.festival.domain.booth.controller.dto.BoothRes;
-import com.festival.domain.booth.controller.dto.QBoothRes;
 import com.festival.domain.booth.model.Booth;
-import com.festival.domain.booth.model.BoothStatus;
 import com.festival.domain.booth.model.BoothType;
-import com.festival.domain.booth.model.QBooth;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -44,6 +39,6 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
     }
 
     private static BooleanExpression eqStatus(String status) {
-        return status == null ? null : booth.status.eq(BoothStatus.valueOf(status));
+        return status == null ? null : booth.status.stringValue().eq(status);
     }
 }
