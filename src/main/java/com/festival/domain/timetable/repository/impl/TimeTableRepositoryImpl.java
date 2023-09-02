@@ -39,8 +39,8 @@ public class TimeTableRepositoryImpl implements TimeTableRepositoryCustom {
         if (startTime == null || endTime == null) {
             return null;
         }
-        return timeTable.startTime.after(startTime)
-                .and(timeTable.endTime.before(endTime));
+        return timeTable.startTime.goe(startTime)
+                .and(timeTable.endTime.loe(endTime));
     }
 
     private static BooleanExpression StatusEq(String status) {
