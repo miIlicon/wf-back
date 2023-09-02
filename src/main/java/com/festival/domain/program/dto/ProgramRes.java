@@ -2,10 +2,17 @@ package com.festival.domain.program.dto;
 
 import com.festival.domain.program.model.Program;
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProgramRes {
     private String title;
     private String subTitle;
@@ -16,19 +23,6 @@ public class ProgramRes {
     private String type;
     private String mainFilePath;
     private List<String> subFilePaths;
-
-    @Builder
-    public ProgramRes(String title, String subTitle, String content, Float latitude, Float longitude, String status, String type, String mainFilePath, List<String> subFilePaths) {
-        this.title = title;
-        this.subTitle = subTitle;
-        this.content = content;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.status = status;
-        this.type = type;
-        this.mainFilePath = mainFilePath;
-        this.subFilePaths = subFilePaths;
-    }
 
     public static ProgramRes of(Program program) {
         return ProgramRes.builder()

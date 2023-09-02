@@ -1,16 +1,21 @@
 package com.festival.domain.program.model;
 
+import lombok.Getter;
+
+@Getter
 public enum ProgramType {
-    EVENT("이벤트"), GAME("경기");
 
-    private final String itemType;
+    EVENT("EVENT"),
+    GAME("GAME");
 
-    ProgramType(String type) {
-        this.itemType = type;
+    private final String value;
+
+    ProgramType(String value) {
+        this.value = value;
     }
 
-    public static ProgramType handleType(String type) {
-        return switch (type) {
+    public static ProgramType handleType(String value) {
+        return switch (value) {
             case "EVENT" -> EVENT;
             case "GAME" -> GAME;
             default -> null;

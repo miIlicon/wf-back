@@ -30,7 +30,9 @@ import static com.festival.common.exception.ErrorCode.*;
 @RequiredArgsConstructor
 @Service
 public class ProgramService {
+
     private final ProgramRepository programRepository;
+
     private final ImageService imageService;
     private final MemberService memberService;
 
@@ -75,10 +77,11 @@ public class ProgramService {
     }
 
     public List<ProgramRes> getProgramList(ProgramListReq programListReqDto, Pageable pageable) {
-        List<Program> programList = programRepository.getList(ProgramSearchCond.builder()
+        ProgramSearchCond programSearchCond = ProgramSearchCond.builder()
                 .status(programListReqDto.getStatus())
                 .type(programListReqDto.getType())
-                .build(), pageable);
+                .build();
+        List<Program> programList = programRepository.getList(programSearchCond, pageable);
         return programList.stream().map(ProgramRes::of).collect(Collectors.toList());
     }
 
