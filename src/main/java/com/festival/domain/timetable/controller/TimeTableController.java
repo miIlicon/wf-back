@@ -1,8 +1,8 @@
 package com.festival.domain.timetable.controller;
 
 import com.festival.common.util.ValidationUtils;
-import com.festival.domain.timetable.dto.TimeTableReq;
 import com.festival.domain.timetable.dto.TimeTableDateReq;
+import com.festival.domain.timetable.dto.TimeTableReq;
 import com.festival.domain.timetable.dto.TimeTableRes;
 import com.festival.domain.timetable.service.TimeTableService;
 import jakarta.validation.Valid;
