@@ -2,14 +2,8 @@ package com.festival.domain.booth.fixture;
 
 import com.festival.common.base.OperateStatus;
 import com.festival.domain.booth.model.Booth;
-import com.festival.domain.booth.model.BoothStatus;
+
 import com.festival.domain.booth.model.BoothType;
-import com.festival.domain.util.TestImageUtils;
-
-import java.util.List;
-
-import static com.festival.domain.booth.model.BoothStatus.OPERATE;
-import static com.festival.domain.util.TestImageUtils.generateMockImageFile;
 
 public class BoothFixture {
 
