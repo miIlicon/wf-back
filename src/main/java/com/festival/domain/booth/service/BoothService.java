@@ -1,6 +1,7 @@
 package com.festival.domain.booth.service;
 
 import com.festival.common.base.OperateStatus;
+import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.BadRequestException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
@@ -83,7 +84,7 @@ public class BoothService {
             throw new NotFoundException(NOT_FOUND_BOOTH);
         }
         if (booth.get().getStatus() == OperateStatus.TERMINATE) {
-            throw new BadRequestException(ALREADY_DELETED);
+            throw new AlreadyDeleteException(ALREADY_DELETED);
         }
         return booth.get();
     }
