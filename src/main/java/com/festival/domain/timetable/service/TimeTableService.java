@@ -1,6 +1,8 @@
 package com.festival.domain.timetable.service;
 
+import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.ErrorCode;
+import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.common.util.SecurityUtils;
@@ -62,5 +64,14 @@ public class TimeTableService {
         );
         return timeTableRepository.getList(timeTableSearchCond);
     }
+    private TimeTable checkingDeletedStatus(Optional<TimeTable> timeTable) {
+        if (timeTable.isEmpty()) {
+            throw new NotFoundException(NOT_FOUND_TIMETABLE);
+        }
 
+        if (timeTable.get().getStatus() == OperateStatus.TERMINATE) {
+            throw new AlreadyDeleteException(ALREADY_DELETED);
+        }
+        return timeTable.get();
+    }
 }

@@ -41,12 +41,14 @@ public class BamBooForestService {
 
     @Transactional
     public void delete(Long id) {
-        BamBooForest findBamBooForest = bamBooForestRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BAMBOO));
+        BamBooForest findBamBooForest = checkingDeletedStatus(bamBooForestRepository.findById(id));
+
         Member accessUser = memberService.getAuthenticationMember();
         if (!checkingAdminRole(accessUser.getMemberRoles())) {
             throw new ForbiddenException(FORBIDDEN_DELETE);
         }
-        findBamBooForest.changeStatus(BamBooForestStatus.TERMINATE);
+
+        findBamBooForest.changeStatus(OperateStatus.TERMINATE);
     }
 
     public Page<BamBooForestRes> getBamBooForestList(String status, Pageable pageable) {

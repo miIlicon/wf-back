@@ -1,5 +1,6 @@
 package com.festival.domain.program.service;
 
+import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
@@ -24,7 +25,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.festival.common.exception.ErrorCode.*;
-import static com.festival.domain.guide.model.GuideStatus.TERMINATE;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -38,6 +38,8 @@ public class ProgramService {
     public Long createProgram(ProgramReq programReq) {
         Program program = Program.of(programReq);
         program.setImage(imageService.createImage(programReq.getMainFile(), programReq.getSubFiles(), programReq.getType()));
+        program.connectMember(memberService.getAuthenticationMember());
+
         return programRepository.save(program).getId();
     }
 
@@ -84,9 +86,9 @@ public class ProgramService {
         if (program.isEmpty()) {
             throw new NotFoundException(NOT_FOUND_PROGRAM);
         }
-        ProgramStatus status = program.get().getStatus();
+        OperateStatus status = program.get().getStatus();
 
-        if (program.get().getStatus() == ProgramStatus.TERMINATE) {
+        if (program.get().getStatus() == OperateStatus.TERMINATE) {
             throw new AlreadyDeleteException(ALREADY_DELETED);
         }
         return program.get();

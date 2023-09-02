@@ -1,5 +1,7 @@
 package com.festival.domain.guide.service;
 
+import com.festival.common.base.OperateStatus;
+import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.BadRequestException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
@@ -21,7 +23,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.festival.common.exception.ErrorCode.*;
-import static com.festival.domain.guide.model.GuideStatus.TERMINATE;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -43,7 +44,7 @@ public class GuideService {
 
     @Transactional
     public Long updateGuide(Long id, GuideReq guideReq) {
-        Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_GUIDE));
+        Guide guide = checkingDeletedStatus(guideRepository.findById(id));
         Member findMember = memberService.getAuthenticationMember();
 
         if (!SecurityUtils.checkingRole(guide.getMember(), memberService.getAuthenticationMember())) {
@@ -62,7 +63,8 @@ public class GuideService {
         if (!SecurityUtils.checkingRole(guide.getMember(), memberService.getAuthenticationMember())) {
             throw new ForbiddenException(FORBIDDEN_DELETE);
         }
-        guide.changeStatus(TERMINATE);
+
+        guide.changeStatus(OperateStatus.TERMINATE);
     }
 
     public GuideRes getGuide(Long id){

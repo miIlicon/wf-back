@@ -21,7 +21,7 @@ public class TimeTableController {
     private final TimeTableService timeTableService;
     private final ValidationUtils validationUtils;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PostMapping
     public ResponseEntity<Long> createTimeTable(@Valid TimeTableCreateReq timeTableCreateReq) throws Exception {
         if (!validationUtils.isTimeTableValid(timeTableCreateReq)) {
@@ -30,7 +30,7 @@ public class TimeTableController {
         return ResponseEntity.ok().body(timeTableService.create(timeTableCreateReq));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PutMapping("/{timeTableId}")
     public ResponseEntity<Long> updateTimeTable(@PathVariable Long timeTableId,
                                                 @Valid TimeTableCreateReq timeTableCreateReq) throws Exception {
@@ -40,14 +40,14 @@ public class TimeTableController {
         return ResponseEntity.ok().body(timeTableService.update(timeTableId, timeTableCreateReq));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @DeleteMapping("/{timeTableId}")
     public ResponseEntity<Void> deleteTimeTable(@PathVariable Long timeTableId) {
         timeTableService.delete(timeTableId);
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @GetMapping
     public ResponseEntity<List<TimeTableRes>> getTimeTables(@Valid TimeTableDateReq timeTableDateReq) {
         return ResponseEntity.ok().body(timeTableService.getList(timeTableDateReq));

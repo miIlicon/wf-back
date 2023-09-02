@@ -26,7 +26,7 @@ public class GuideController {
     private final GuideService guideService;
     private final ValidationUtils validationUtils;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PostMapping
     public ResponseEntity<Long> createGuide(@Valid GuideReq guideReq) throws Exception {
         if (!validationUtils.isGuideValid(guideReq)) {
@@ -36,7 +36,7 @@ public class GuideController {
         return ResponseEntity.ok().body(id);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PutMapping("/{guideId}")
     public ResponseEntity<Long> updateGuide(@PathVariable Long guideId, @Valid GuideReq guideReq) throws Exception {
         if (!validationUtils.isGuideValid(guideReq)) {
@@ -45,7 +45,7 @@ public class GuideController {
         return ResponseEntity.ok().body(guideService.updateGuide(guideId, guideReq));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @DeleteMapping("/{guideId}")
     public ResponseEntity<Void> deleteGuide(@PathVariable Long guideId) {
         guideService.deleteGuide(guideId);

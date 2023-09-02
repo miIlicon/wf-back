@@ -1,6 +1,7 @@
 package com.festival.domain.booth.model;
 
 import com.festival.common.base.BaseEntity;
+import com.festival.common.base.OperateStatus;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.image.model.Image;
 import com.festival.domain.member.model.Member;
@@ -36,10 +37,6 @@ public class Booth extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private BoothStatus status;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private BoothType type;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -50,7 +47,7 @@ public class Booth extends BaseEntity {
     private Member member;
 
     @Builder
-    private Booth(String title, String subTitle, String content, float latitude, float longitude,BoothStatus status, BoothType type) {
+    private Booth(String title, String subTitle, String content, float latitude, float longitude, OperateStatus status, BoothType type) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
@@ -67,7 +64,7 @@ public class Booth extends BaseEntity {
                 .content(boothReq.getContent())
                 .latitude(boothReq.getLatitude())
                 .longitude(boothReq.getLongitude())
-                .status(BoothStatus.handleStatus(boothReq.getStatus()))
+                .status(OperateStatus.checkStatus(boothReq.getStatus()))
                 .type(BoothType.handleType(boothReq.getType())).build();
     }
     public void setImage(Image image){
@@ -84,7 +81,7 @@ public class Booth extends BaseEntity {
         this.content =  boothReq.getContent();
         this.latitude = boothReq.getLatitude();
         this.longitude = boothReq.getLongitude();
-        this.status = BoothStatus.handleStatus(boothReq.getStatus());
+        this.status = OperateStatus.checkStatus(boothReq.getStatus());
         this.type = BoothType.handleType(boothReq.getType());
     }
 

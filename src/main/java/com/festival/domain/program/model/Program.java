@@ -36,10 +36,6 @@ public class Program extends BaseEntity {
     @Column(name = "longitude", nullable = false) // 경도
     private float longitude;
 
-    @Column(name = "status", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ProgramStatus status;
-
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private ProgramType type;
@@ -52,7 +48,7 @@ public class Program extends BaseEntity {
     private Member member;
 
     @Builder
-    private Program(Long id, String title, String subTitle, String content, float latitude, float longitude, ProgramStatus status, ProgramType type) {
+    private Program(Long id, String title, String subTitle, String content, float latitude, float longitude, OperateStatus status, ProgramType type) {
         this.id = id;
         this.title = title;
         this.subTitle = subTitle;

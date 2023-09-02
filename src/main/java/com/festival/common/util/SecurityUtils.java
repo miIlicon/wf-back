@@ -24,4 +24,5 @@ public class SecurityUtils {
     public static boolean checkingAdminRole(List<MemberRole> memberRoles) {
         return memberRoles.contains(MemberRole.ADMIN);
     }
+
 }

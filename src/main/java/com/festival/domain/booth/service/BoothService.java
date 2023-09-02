@@ -32,11 +32,12 @@ public class BoothService {
     private final BoothRepository boothRepository;
 
     private final ImageService imageService;
+    private final MemberService memberService;
 
     public Long createBooth(BoothReq boothReq) {
         Booth booth = Booth.of(boothReq);
         booth.setImage(imageService.createImage(boothReq.getMainFile(), boothReq.getSubFiles(), boothReq.getType()));
-
+        booth.connectMember(memberService.getAuthenticationMember());
         return boothRepository.save(booth).getId();
     }
 
@@ -64,10 +65,12 @@ public class BoothService {
         booth.changeStatus(OperateStatus.TERMINATE);
     }
 
+    @Transactional(readOnly = true)
     public BoothRes getBooth(Long id) {
         return BoothRes.of(boothRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BOOTH)));
     }
 
+    @Transactional(readOnly = true)
     public List<BoothRes> getBoothList(BoothListReq boothListReq, Pageable pageable) {
         List<Booth> list = boothRepository.getList(BoothListSearchCond.builder()
                 .status(boothListReq.getStatus())

@@ -24,7 +24,7 @@ public class ProgramController {
     private final ProgramService programService;
     private final ValidationUtils validationUtils;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PostMapping
     public ResponseEntity<Long> create(@Valid ProgramReq programReqDto) throws Exception {
         if (!validationUtils.isProgramValid(programReqDto)) {
@@ -33,7 +33,7 @@ public class ProgramController {
         return ResponseEntity.ok().body(programService.createProgram(programReqDto));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PutMapping("/{programId}")
     public ResponseEntity<Long> update(@PathVariable Long programId,
                                        @Valid ProgramReq programReqDto) throws Exception {
@@ -43,7 +43,7 @@ public class ProgramController {
         return ResponseEntity.ok().body(programService.updateProgram(programId, programReqDto));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @DeleteMapping("/{programId}")
     public ResponseEntity<Void> delete(@PathVariable Long programId) {
         programService.delete(programId);
