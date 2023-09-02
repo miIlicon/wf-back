@@ -44,7 +44,7 @@ public class ProgramController {
     @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @DeleteMapping("/{programId}")
     public ResponseEntity<Void> deleteProgram(@PathVariable Long programId) {
-        programService.delete(programId);
+        programService.deleteProgram(programId);
         return ResponseEntity.ok().build();
     }
 
