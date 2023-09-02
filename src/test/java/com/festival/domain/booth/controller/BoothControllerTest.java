@@ -19,6 +19,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
@@ -403,7 +405,7 @@ class BoothControllerTest extends ControllerTestSupport {
                 .andExpect(status().isNotFound());
     }
 
-    @DisplayName("축제부스 게시물을 여러개 조회한다.")
+    @DisplayName("축제부스 게시물을 목록조회한다. (페이징)")
     @Test
     void getBoothList() throws Exception {
         //given
@@ -413,11 +415,15 @@ class BoothControllerTest extends ControllerTestSupport {
         createBoothEntity(4);
         createBoothEntity(5);
 
+        Pageable pageable = PageRequest.of(0, 5);
+
         //when
         MvcResult mvcResult = mockMvc.perform(
                         get("/api/v2/booth/list")
                                 .param("status", "OPERATE")
                                 .param("type", "FOOD_TRUCK")
+                                .param("page", pageable.getPageNumber() + "")
+                                .param("size", pageable.getPageSize() + "")
                                 .contentType(APPLICATION_JSON)
                 )
                 .andDo(print())

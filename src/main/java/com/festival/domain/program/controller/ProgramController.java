@@ -7,7 +7,6 @@ import com.festival.domain.program.dto.ProgramRes;
 import com.festival.domain.program.service.ProgramService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/program")
@@ -26,7 +24,7 @@ public class ProgramController {
 
     @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PostMapping
-    public ResponseEntity<Long> create(@Valid ProgramReq programReqDto) throws Exception {
+    public ResponseEntity<Long> createProgram(@Valid ProgramReq programReqDto) throws Exception {
         if (!validationUtils.isProgramValid(programReqDto)) {
             throw new Exception();
         }
@@ -35,7 +33,7 @@ public class ProgramController {
 
     @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PutMapping("/{programId}")
-    public ResponseEntity<Long> update(@PathVariable Long programId,
+    public ResponseEntity<Long> updateProgram(@PathVariable Long programId,
                                        @Valid ProgramReq programReqDto) throws Exception {
         if (!validationUtils.isProgramValid(programReqDto)) {
             throw new Exception();
@@ -45,7 +43,7 @@ public class ProgramController {
 
     @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @DeleteMapping("/{programId}")
-    public ResponseEntity<Void> delete(@PathVariable Long programId) {
+    public ResponseEntity<Void> deleteProgram(@PathVariable Long programId) {
         programService.delete(programId);
         return ResponseEntity.ok().build();
     }
@@ -58,7 +56,7 @@ public class ProgramController {
 
     @PreAuthorize("permitAll()")
     @GetMapping("/list")
-    public ResponseEntity<List<ProgramRes>> getList(@Valid ProgramListReq programListReqDto, Pageable pageable) {
+    public ResponseEntity<List<ProgramRes>> getProgramList(@Valid ProgramListReq programListReqDto, Pageable pageable) {
         return ResponseEntity.ok().body(programService.getProgramList(programListReqDto, pageable));
     }
 

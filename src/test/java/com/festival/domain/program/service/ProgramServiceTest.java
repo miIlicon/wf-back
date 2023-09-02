@@ -1,6 +1,5 @@
 package com.festival.domain.program.service;
 
-
 import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
@@ -67,8 +66,8 @@ class ProgramServiceTest {
                 .subTitle("프로그램 게시물 부제목")
                 .status("OPERATE")
                 .content("프로그램 게시물 내용")
-                .longitude(50)
-                .latitude(50)
+                .longitude(50.0f)
+                .latitude(50.0f)
                 .mainFile(generateMockImageFile("mainFile"))
                 .subFiles(List.of(generateMockImageFile("subFile1"), generateMockImageFile("subFile1")))
                 .type("EVENT")
@@ -96,8 +95,8 @@ class ProgramServiceTest {
                     .subTitle("프로그램 게시물 부제목")
                     .status("OPERATE")
                     .content("프로그램 게시물 내용")
-                    .longitude(50)
-                    .latitude(50)
+                    .longitude(50.0f)
+                    .latitude(50.0f)
                     .mainFile(generateMockImageFile("mainFile"))
                     .subFiles(List.of(generateMockImageFile("subFile1"), generateMockImageFile("subFile1")))
                     .type("EVENT")
@@ -133,8 +132,8 @@ class ProgramServiceTest {
                     .subTitle("프로그램 게시물 부제목")
                     .status("OPERATE")
                     .content("프로그램 게시물 내용")
-                    .longitude(50)
-                    .latitude(50)
+                    .longitude(50.0f)
+                    .latitude(50.0f)
                     .mainFile(generateMockImageFile("mainFile"))
                     .subFiles(List.of(generateMockImageFile("subFile1"), generateMockImageFile("subFile1")))
                     .type("EVENT")
@@ -161,8 +160,8 @@ class ProgramServiceTest {
                 .subTitle("프로그램 게시물 부제목")
                 .status("OPERATE")
                 .content("프로그램 게시물 내용")
-                .longitude(50)
-                .latitude(50)
+                .longitude(50.0f)
+                .latitude(50.0f)
                 .mainFile(generateMockImageFile("mainFile"))
                 .subFiles(List.of(generateMockImageFile("subFile1"), generateMockImageFile("subFile1")))
                 .type("EVENT")
@@ -190,8 +189,8 @@ class ProgramServiceTest {
                 .subTitle("프로그램 게시물 부제목")
                 .status("OPERATE")
                 .content("프로그램 게시물 내용")
-                .longitude(50)
-                .latitude(50)
+                .longitude(50.0f)
+                .latitude(50.0f)
                 .mainFile(generateMockImageFile("mainFile"))
                 .subFiles(List.of(generateMockImageFile("subFile1"), generateMockImageFile("subFile1")))
                 .type("EVENT")

@@ -39,7 +39,7 @@ public class BambooForestController {
 
     @PreAuthorize("permitAll()")
     @GetMapping("/list")
-    public ResponseEntity<Page<BamBooForestRes>> getListBamBooForest(String status, Pageable pageable) {
+    public ResponseEntity<Page<BamBooForestRes>> getBamBooForestList(String status, Pageable pageable) {
         return ResponseEntity.ok().body(bambooForestService.getBamBooForestList(status, pageable));
     }
 }
