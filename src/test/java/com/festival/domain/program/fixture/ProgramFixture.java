@@ -25,4 +25,14 @@ public class ProgramFixture {
             .latitude(50)
             .type(ProgramType.GAME)
             .build();
+
+    public static Program DELETED_PROGRAM = Program.builder()
+            .title("삭제된 프로그램 게시물 제목")
+            .subTitle("삭제된 프로그램 게시물 부제목")
+            .status(OperateStatus.TERMINATE)
+            .content("삭제된 프로그램 게시물 내용")
+            .longitude(50)
+            .latitude(50)
+            .type(ProgramType.GAME)
+            .build();
 }

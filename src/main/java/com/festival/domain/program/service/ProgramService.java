@@ -60,7 +60,7 @@ public class ProgramService {
     }
 
     @Transactional
-    public void delete(Long programId) {
+    public void deleteProgram(Long programId) {
         Program program = checkingDeletedStatus(programRepository.findById(programId));
 
         Member findMember = memberService.getAuthenticationMember();
