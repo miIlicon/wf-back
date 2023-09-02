@@ -249,7 +249,7 @@ class BoothServiceTest {
     void getBoothTest(){
         //given
         Booth foodTruck = BoothFixture.FOOD_TRUCK;
-        ReflectionTestUtils.setField(foodTruck, "image", ImageFixture.image);
+        ReflectionTestUtils.setField(foodTruck, "image", ImageFixture.IMAGE);
 
         given(boothRepository.findById(1L))
                 .willReturn(Optional.of(foodTruck));
@@ -266,7 +266,7 @@ class BoothServiceTest {
     void getBoothList(){
         //given
         Booth pub = BoothFixture.PUB;
-        ReflectionTestUtils.setField(pub, "image", ImageFixture.image);
+        ReflectionTestUtils.setField(pub, "image", ImageFixture.IMAGE);
         
         given(boothRepository.getList(any(BoothListSearchCond.class), any(Pageable.class)))
                 .willReturn(List.of(pub));
