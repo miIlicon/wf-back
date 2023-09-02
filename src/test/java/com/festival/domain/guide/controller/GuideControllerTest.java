@@ -26,6 +26,7 @@ import java.util.List;
 import static com.festival.domain.guide.model.GuideType.NOTICE;
 import static com.festival.domain.guide.model.GuideType.QNA;
 import static com.festival.domain.member.model.MemberRole.ADMIN;
+import static com.festival.domain.member.model.MemberRole.MANAGER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.springframework.http.MediaType.*;
@@ -44,6 +45,8 @@ class GuideControllerTest extends ControllerTestSupport {
 
     private Member member;
 
+    private Member differentMember;
+
     @BeforeEach
     void setUp() {
         member = Member.builder()
@@ -53,12 +56,12 @@ class GuideControllerTest extends ControllerTestSupport {
                 .build();
         memberRepository.saveAndFlush(member);
 
-        member = Member.builder()
+        differentMember = Member.builder()
                 .username("differentUser")
                 .password("12345")
-                .memberRole(ADMIN)
+                .memberRole(MANAGER)
                 .build();
-        memberRepository.saveAndFlush(member);
+        memberRepository.saveAndFlush(differentMember);
     }
 
     @WithMockUser(username = "testUser", roles = "ADMIN")
@@ -102,7 +105,7 @@ class GuideControllerTest extends ControllerTestSupport {
         Long id = objectMapper.readValue(content, Long.class);
         Guide findGuide = guideRepository.findById(id).get();
         assertThat(findGuide).isNotNull()
-                .extracting("title", "content", "guideType", "guideStatus")
+                .extracting("title", "content", "type", "status")
                 .contains("title", "content", QNA, OperateStatus.OPERATE);
     }
 
@@ -137,8 +140,48 @@ class GuideControllerTest extends ControllerTestSupport {
         //then
         Guide findGuide = guideRepository.findById(savedGuide.getId()).get();
         assertThat(findGuide).isNotNull()
-                .extracting("title", "content", "guideType", "guideStatus")
+                .extracting("title", "content", "type", "status")
                 .contains("updateTitle", "updateContent", NOTICE, OperateStatus.OPERATE);
+    }
+
+    @WithMockUser(username = "testUser", roles = "ADMIN")
+    @DisplayName("게시물을 수정 시도할 때, 안내사항 게시물이 존재하지 않으면 NotFoundException을 반환한다.")
+    @Test
+    void updateGuideNotFound() throws Exception {
+        //when //then
+        mockMvc.perform(
+                        put("/api/v2/guide/1")
+                                .param("title", "updateTitle")
+                                .param("content", "updateContent")
+                                .param("type", "NOTICE")
+                                .param("status", "OPERATE")
+                                .contentType(MULTIPART_FORM_DATA)
+                )
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @WithMockUser(username = "differentUser", roles = "MANAGER")
+    @DisplayName("안내사항 게시물은 다른 사람이 수정할 수 없다.")
+    @Test
+    void updateGuideNotMine() throws Exception {
+        //given
+        Guide guide = createGuideEntity("title", "content", "QNA", "OPERATE");
+        guide.connectMember(member);
+        Guide savedGuide = guideRepository.saveAndFlush(guide);
+
+        //when //then
+        mockMvc.perform(
+                        put("/api/v2/guide/" + savedGuide.getId())
+                                .param("title", "updateTitle")
+                                .param("content", "updateContent")
+                                .param("type", "NOTICE")
+                                .param("status", "OPERATE")
+                                .contentType(MULTIPART_FORM_DATA)
+                )
+                .andDo(print())
+                .andExpect(status().isForbidden());
+
     }
 
     @WithMockUser(username = "testUser", roles = "ADMIN")
@@ -163,7 +206,20 @@ class GuideControllerTest extends ControllerTestSupport {
         assertThat(findGuide.getStatus()).isEqualTo(OperateStatus.TERMINATE);
     }
 
-    @WithMockUser(username = "differentUser", roles = "ADMIN")
+    @DisplayName("안내사항 게시물이 존재하지 않는데 삭제를 시도하면 NotFoundException을 반환한다.")
+    @Test
+    void deleteNotFound() throws Exception {
+        //when //then
+        mockMvc.perform(
+                        delete("/api/v2/guide/1")
+                                .contentType(APPLICATION_FORM_URLENCODED)
+                )
+                .andDo(print())
+                .andExpect(status().isNotFound());
+
+    }
+
+    @WithMockUser(username = "differentUser", roles = "MANAGER")
     @DisplayName("안내사항 게시물을 삭제할 때, 다른 사람은 삭제할 수 없다.")
     @Test
     void NotDeleteDifferentUser() throws Exception {
@@ -181,17 +237,17 @@ class GuideControllerTest extends ControllerTestSupport {
                 .andExpect(status().isForbidden());
     }
 
-//    @DisplayName("안내사항 게시물을 선택했을때, 해당 게시물이 존재하지 않으면 NotFoundException을 반환한다.")
-//    @Test
-//    void getNullGuide() throws Exception {
-//        //when //then
-//        mockMvc.perform(
-//                        get("/api/v2/guide/1")
-//                                .contentType(APPLICATION_JSON)
-//                )
-//                .andDo(print())
-//                .andExpect(status().is5xxServerError());
-//    }
+    @DisplayName("안내사항 게시물을 선택했을때, 해당 게시물이 존재하지 않으면 NotFoundException을 반환한다.")
+    @Test
+    void getNullGuide() throws Exception {
+        //when //then
+        mockMvc.perform(
+                        get("/api/v2/guide/1")
+                                .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
 
     @DisplayName("안내사항 게시물 하나를 선택하여 상세 내용을 가져온다.")
     @Test

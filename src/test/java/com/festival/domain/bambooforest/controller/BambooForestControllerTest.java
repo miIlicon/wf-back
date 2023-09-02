@@ -7,6 +7,7 @@ import com.festival.domain.bambooforest.repository.BamBooForestRepository;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.member.repository.MemberRepository;
 import com.festival.domain.util.ControllerTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import java.util.List;
 
 import static com.festival.domain.member.model.MemberRole.ADMIN;
+import static com.festival.domain.member.model.MemberRole.MANAGER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
@@ -32,6 +34,27 @@ class BambooForestControllerTest extends ControllerTestSupport {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    private Member member;
+
+    private Member differentMember;
+
+    @BeforeEach
+    void setUp() {
+        member = Member.builder()
+                .username("testUser")
+                .password("12345")
+                .memberRole(ADMIN)
+                .build();
+        memberRepository.saveAndFlush(member);
+
+        differentMember = Member.builder()
+                .username("differentUser")
+                .password("12345")
+                .memberRole(MANAGER)
+                .build();
+        memberRepository.saveAndFlush(differentMember);
+    }
 
     @DisplayName("대나무숲에 글을 하나 작성한다.")
     @Test
@@ -57,13 +80,6 @@ class BambooForestControllerTest extends ControllerTestSupport {
     @Test
     void deleteBamBooForest() throws Exception {
         //given
-        Member member = Member.builder()
-                .username("testUser")
-                .password("12345")
-                .memberRole(ADMIN)
-                .build();
-        memberRepository.saveAndFlush(member);
-
         BamBooForestCreateReq request = createBamBooForestReq("bambooForestContent", "festival@email.com", "OPERATE");
         BamBooForest bamBooForest = BamBooForest.of(request);
         BamBooForest savedBamBooForest = bamBooForestRepository.saveAndFlush(bamBooForest);
@@ -79,6 +95,18 @@ class BambooForestControllerTest extends ControllerTestSupport {
         //then
         BamBooForest findBambooForest = bamBooForestRepository.findById(savedBamBooForest.getId()).get();
         assertThat(findBambooForest.getStatus()).isEqualTo(OperateStatus.TERMINATE);
+    }
+
+    @DisplayName("대나무숲 게시물이 존재하지 않으면, NotFoundException을 발생시킨다.")
+    @Test
+    void deleteBambooNotFound() throws Exception {
+        //when //then
+        mockMvc.perform(
+                        delete("/api/v2/bambooforest/1")
+                                .contentType(APPLICATION_FORM_URLENCODED)
+                )
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     @DisplayName("대나무숲의 게시물은 10개씩 표시된다. 데이터는 페이지 처리된다. 테스트 시에는 5개의 데이터를 생성하여 테스트한다.")

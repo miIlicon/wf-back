@@ -5,17 +5,8 @@ import com.festival.domain.bambooforest.dto.BamBooForestCreateReq;
 import com.festival.domain.bambooforest.fixture.BamBooForestFixture;
 import com.festival.domain.bambooforest.model.BamBooForest;
 import com.festival.domain.bambooforest.repository.BamBooForestRepository;
-import com.festival.domain.bambooforest.service.vo.BamBooForestSearchCond;
-import com.festival.domain.booth.controller.dto.BoothListReq;
-import com.festival.domain.booth.controller.dto.BoothReq;
-import com.festival.domain.booth.controller.dto.BoothRes;
-import com.festival.domain.booth.fixture.BoothFixture;
-import com.festival.domain.booth.model.Booth;
-import com.festival.domain.booth.service.vo.BoothListSearchCond;
-import com.festival.domain.image.fixture.ImageFixture;
 import com.festival.domain.member.fixture.MemberFixture;
 import com.festival.domain.member.repository.MemberRepository;
-import com.festival.domain.member.service.MemberService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,20 +14,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 import static com.festival.common.exception.ErrorCode.NOT_FOUND_BAMBOO;
 import static com.festival.domain.bambooforest.fixture.BamBooForestFixture.bamBooForest;
-import static com.festival.domain.util.TestImageUtils.generateMockImageFile;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -50,7 +34,6 @@ class BamBooForestServiceTest {
     @Mock
     private MemberRepository memberRepository;
 
-
     @DisplayName("대나무 숲을 생성한 후 boothId를 반환한다.")
     @Test
     void createBamBooForest() {
@@ -63,7 +46,7 @@ class BamBooForestServiceTest {
                 .build();
 
         BamBooForest bamBooForest = BamBooForestFixture.bamBooForest;
-        ReflectionTestUtils.setField(bamBooForest, "id",1L);
+        ReflectionTestUtils.setField(bamBooForest, "id", 1L);
 
         given(bamBooForestRepository.save(any(BamBooForest.class)))
                 .willReturn(bamBooForest);
