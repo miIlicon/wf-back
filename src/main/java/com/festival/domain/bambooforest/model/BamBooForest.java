@@ -2,7 +2,7 @@ package com.festival.domain.bambooforest.model;
 
 import com.festival.common.base.BaseEntity;
 import com.festival.common.base.OperateStatus;
-import com.festival.domain.bambooforest.dto.BamBooForestCreateReq;
+import com.festival.domain.bambooforest.dto.BamBooForestReq;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,11 +29,11 @@ public class BamBooForest extends BaseEntity {
         this.status = status;
     }
 
-    public static BamBooForest of(BamBooForestCreateReq bambooForestCreateReq) {
+    public static BamBooForest of(BamBooForestReq bambooForestReq) {
         return BamBooForest.builder()
-                .content(bambooForestCreateReq.getContent())
-                .contact(bambooForestCreateReq.getContact())
-                .status(settingStatus(bambooForestCreateReq.getStatus()))
+                .content(bambooForestReq.getContent())
+                .contact(bambooForestReq.getContact())
+                .status(settingStatus(bambooForestReq.getStatus()))
                 .build();
     }
 

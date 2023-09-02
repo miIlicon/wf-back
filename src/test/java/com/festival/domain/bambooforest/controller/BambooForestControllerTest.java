@@ -1,11 +1,10 @@
 package com.festival.domain.bambooforest.controller;
 
 import com.festival.common.base.OperateStatus;
-import com.festival.domain.bambooforest.dto.BamBooForestCreateReq;
+import com.festival.domain.bambooforest.dto.BamBooForestReq;
 import com.festival.domain.bambooforest.model.BamBooForest;
 import com.festival.domain.bambooforest.repository.BamBooForestRepository;
 import com.festival.domain.member.model.Member;
-import com.festival.domain.member.repository.MemberRepository;
 import com.festival.domain.util.ControllerTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -57,7 +56,7 @@ class BambooForestControllerTest extends ControllerTestSupport {
     @Test
     void createBamBooForest() throws Exception {
         //given
-        BamBooForestCreateReq request = createBamBooForestReq("bambooForestContent", "festival@email.com", "OPERATE");
+        BamBooForestReq request = createBamBooForestReq("bambooForestContent", "festival@email.com", "OPERATE");
 
         //when //then
         mockMvc.perform(
@@ -77,7 +76,7 @@ class BambooForestControllerTest extends ControllerTestSupport {
     @Test
     void deleteBamBooForest() throws Exception {
         //given
-        BamBooForestCreateReq request = createBamBooForestReq("bambooForestContent", "festival@email.com", "OPERATE");
+        BamBooForestReq request = createBamBooForestReq("bambooForestContent", "festival@email.com", "OPERATE");
         BamBooForest bamBooForest = BamBooForest.of(request);
         BamBooForest savedBamBooForest = bamBooForestRepository.saveAndFlush(bamBooForest);
 
@@ -113,13 +112,13 @@ class BambooForestControllerTest extends ControllerTestSupport {
         String status = "OPERATE";
         Pageable pageable = PageRequest.of(0, 5);
 
-        BamBooForestCreateReq request1 = createBamBooForestReq("bamboo1", "festival1@email.com", "OPERATE");
-        BamBooForestCreateReq request2 = createBamBooForestReq("bamboo2", "festival2@email.com", "OPERATE");
-        BamBooForestCreateReq request3 = createBamBooForestReq("bamboo3", "festival3@email.com", "OPERATE");
-        BamBooForestCreateReq request4 = createBamBooForestReq("bamboo4", "festival4@email.com", "OPERATE");
-        BamBooForestCreateReq request5 = createBamBooForestReq("bamboo5", "festival5@email.com", "OPERATE");
-        BamBooForestCreateReq request6 = createBamBooForestReq("bamboo6", "festival6@email.com", "OPERATE");
-        BamBooForestCreateReq request7 = createBamBooForestReq("bamboo7", "festival7@email.com", "OPERATE");
+        BamBooForestReq request1 = createBamBooForestReq("bamboo1", "festival1@email.com", "OPERATE");
+        BamBooForestReq request2 = createBamBooForestReq("bamboo2", "festival2@email.com", "OPERATE");
+        BamBooForestReq request3 = createBamBooForestReq("bamboo3", "festival3@email.com", "OPERATE");
+        BamBooForestReq request4 = createBamBooForestReq("bamboo4", "festival4@email.com", "OPERATE");
+        BamBooForestReq request5 = createBamBooForestReq("bamboo5", "festival5@email.com", "OPERATE");
+        BamBooForestReq request6 = createBamBooForestReq("bamboo6", "festival6@email.com", "OPERATE");
+        BamBooForestReq request7 = createBamBooForestReq("bamboo7", "festival7@email.com", "OPERATE");
 
         BamBooForest bamBooForest1 = BamBooForest.of(request1);
         BamBooForest bamBooForest2 = BamBooForest.of(request2);
@@ -148,8 +147,8 @@ class BambooForestControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.content", hasSize(5)));;
     }
 
-    private static BamBooForestCreateReq createBamBooForestReq(String bambooForestContent, String mail, String operate) {
-        return BamBooForestCreateReq.builder()
+    private static BamBooForestReq createBamBooForestReq(String bambooForestContent, String mail, String operate) {
+        return BamBooForestReq.builder()
                 .content(bambooForestContent)
                 .contact(mail)
                 .status(operate)
