@@ -32,7 +32,7 @@ public class Booth extends BaseEntity {
     @Column(nullable = false)
     private float latitude;
 
-    @Column(nullable = false) // 경도
+    @Column(nullable = false)
     private float longitude;
 
     @Column(nullable = false)
