@@ -65,7 +65,7 @@ class BamBooForestServiceTest {
         given(bamBooForestRepository.findById(1L))
                 .willReturn(Optional.of(bamBooForest));
         given(memberRepository.findByUsername(any(String.class)))
-                .willReturn(Optional.of(MemberFixture.member1));
+                .willReturn(Optional.of(MemberFixture.MANAGER1));
 
         //when
         bamBooForestService.delete(1L);

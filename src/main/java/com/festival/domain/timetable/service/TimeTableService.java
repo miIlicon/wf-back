@@ -7,7 +7,7 @@ import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.common.util.SecurityUtils;
 import com.festival.domain.member.service.MemberService;
-import com.festival.domain.timetable.dto.TimeTableCreateReq;
+import com.festival.domain.timetable.dto.TimeTableReq;
 import com.festival.domain.timetable.dto.TimeTableDateReq;
 import com.festival.domain.timetable.dto.TimeTableRes;
 import com.festival.domain.timetable.dto.TimeTableSearchCond;
@@ -33,27 +33,30 @@ public class TimeTableService {
     private final MemberService memberService;
 
     @Transactional
-    public Long create(TimeTableCreateReq timeTableCreateReq) {
-        TimeTable timeTable = TimeTable.of(timeTableCreateReq);
+    public Long create(TimeTableReq timeTableReq) {
+        TimeTable timeTable = TimeTable.of(timeTableReq);
         timeTable.connectMember(memberService.getAuthenticationMember());
         TimeTable savedTimeTable = timeTableRepository.save(timeTable);
         return savedTimeTable.getId();
     }
 
     @Transactional
-    public Long update(Long timeTableId, TimeTableCreateReq timeTableCreateReq) {
+    public Long update(Long timeTableId, TimeTableReq timeTableReq) {
         TimeTable timeTable = checkingDeletedStatus(timeTableRepository.findById(timeTableId));
 
         if(!SecurityUtils.checkingAdminRole(memberService.getAuthenticationMember().getMemberRoles())) {
             throw new ForbiddenException(ErrorCode.FORBIDDEN_UPDATE);
         }
-        timeTable.update(timeTableCreateReq);
+        timeTable.update(timeTableReq);
         return timeTable.getId();
     }
 
     @Transactional
     public void delete(Long id) {
         TimeTable timeTable = checkingDeletedStatus(timeTableRepository.findById(id));
+        if(!SecurityUtils.checkingAdminRole(memberService.getAuthenticationMember().getMemberRoles())) {
+            throw new ForbiddenException(ErrorCode.FORBIDDEN_DELETE);
+        }
         timeTable.changeStatus(OperateStatus.TERMINATE);
     }
 

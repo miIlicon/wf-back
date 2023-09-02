@@ -104,7 +104,7 @@ class ProgramServiceTest {
                     .build();
 
             Program program = ProgramFixture.EVENT;
-            Member member1 = MemberFixture.member1;
+            Member member1 = MemberFixture.MANAGER1;
 
             program.connectMember(member1);
             ReflectionTestUtils.setField(program, "id",1L);
@@ -197,8 +197,8 @@ class ProgramServiceTest {
                 .type("EVENT")
                 .build();
         Program program = ProgramFixture.EVENT;
-        program.connectMember(MemberFixture.member1);
-        Member member2 = MemberFixture.member2;
+        program.connectMember(MemberFixture.MANAGER1);
+        Member member2 = MemberFixture.MANAGER2;
 
 
         given(programRepository.findById(1L))
