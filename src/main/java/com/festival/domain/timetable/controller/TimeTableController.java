@@ -9,8 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +21,7 @@ public class TimeTableController {
     private final TimeTableService timeTableService;
     private final ValidationUtils validationUtils;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PostMapping
     public ResponseEntity<Long> createTimeTable(@Valid TimeTableCreateReq timeTableCreateReq) throws Exception {
         if (!validationUtils.isTimeTableValid(timeTableCreateReq)) {
@@ -32,26 +30,24 @@ public class TimeTableController {
         return ResponseEntity.ok().body(timeTableService.create(timeTableCreateReq));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PutMapping("/{timeTableId}")
     public ResponseEntity<Long> updateTimeTable(@PathVariable Long timeTableId,
-                                                @Valid TimeTableCreateReq timeTableCreateReq,
-                                                @AuthenticationPrincipal User user) throws Exception {
+                                                @Valid TimeTableCreateReq timeTableCreateReq) throws Exception {
         if (!validationUtils.isTimeTableValid(timeTableCreateReq)) {
             throw new Exception();
         }
-        return ResponseEntity.ok().body(timeTableService.update(timeTableId, timeTableCreateReq, user.getUsername()));
+        return ResponseEntity.ok().body(timeTableService.update(timeTableId, timeTableCreateReq));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @DeleteMapping("/{timeTableId}")
-    public ResponseEntity<Void> deleteTimeTable(@PathVariable Long timeTableId,
-                                                @AuthenticationPrincipal User user) {
-        timeTableService.delete(timeTableId, user.getUsername());
+    public ResponseEntity<Void> deleteTimeTable(@PathVariable Long timeTableId) {
+        timeTableService.delete(timeTableId);
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @GetMapping
     public ResponseEntity<List<TimeTableRes>> getTimeTables(@Valid TimeTableDateReq timeTableDateReq) {
         return ResponseEntity.ok().body(timeTableService.getList(timeTableDateReq));

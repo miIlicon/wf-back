@@ -34,7 +34,7 @@ public class GuideRes {
         return GuideRes.builder()
                 .title(guide.getTitle())
                 .content(guide.getContent())
-                .type(guide.getGuideType().getValue())
+                .type(guide.getType().getValue())
                 .mainFilePath(guide.getImage().getMainFilePath())
                 .subFilePaths(guide.getImage().getSubFilePaths())
                 .build();

@@ -2,6 +2,7 @@ package com.festival.domain.program.model;
 
 
 import com.festival.common.base.BaseEntity;
+import com.festival.common.base.OperateStatus;
 import com.festival.domain.image.model.Image;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.program.dto.ProgramReq;
@@ -35,10 +36,6 @@ public class Program extends BaseEntity {
     @Column(name = "longitude", nullable = false) // 경도
     private float longitude;
 
-    @Column(name = "status", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ProgramStatus status;
-
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private ProgramType type;
@@ -46,11 +43,12 @@ public class Program extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Image image;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @Builder
-    private Program(Long id, String title, String subTitle, String content, float latitude, float longitude, ProgramStatus status, ProgramType type) {
+    private Program(Long id, String title, String subTitle, String content, float latitude, float longitude, OperateStatus status, ProgramType type) {
         this.id = id;
         this.title = title;
         this.subTitle = subTitle;
@@ -68,7 +66,7 @@ public class Program extends BaseEntity {
                 .content(programReq.getContent())
                 .latitude(programReq.getLatitude())
                 .longitude(programReq.getLongitude())
-                .status(ProgramStatus.handleStatus(programReq.getStatus()))
+                .status(OperateStatus.checkStatus(programReq.getStatus()))
                 .type(ProgramType.handleType(programReq.getType()))
                 .build();
     }
@@ -79,17 +77,18 @@ public class Program extends BaseEntity {
         this.content = programReqDto.getContent();
         this.latitude = programReqDto.getLatitude();
         this.longitude = programReqDto.getLongitude();
-        this.status = ProgramStatus.handleStatus(programReqDto.getStatus());
+        this.status = OperateStatus.checkStatus(programReqDto.getStatus());
         this.type = ProgramType.handleType(programReqDto.getType());
     }
 
-    public void setStatus(ProgramStatus newStatus) {
+    public void changeStatus(OperateStatus newStatus) {
         this.status = newStatus;
     }
 
     public void setImage(Image uploadImage) {
         this.image = uploadImage;
     }
+
     public void connectMember(Member member){
         this.member = member;
     }

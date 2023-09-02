@@ -1,11 +1,12 @@
 package com.festival.domain.bambooforest.service;
 
+import com.festival.common.base.OperateStatus;
+import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.domain.bambooforest.dto.BamBooForestCreateReq;
 import com.festival.domain.bambooforest.dto.BamBooForestRes;
 import com.festival.domain.bambooforest.model.BamBooForest;
-import com.festival.domain.bambooforest.model.BamBooForestStatus;
 import com.festival.domain.bambooforest.repository.BamBooForestRepository;
 import com.festival.domain.bambooforest.service.vo.BamBooForestSearchCond;
 import com.festival.domain.member.model.Member;
@@ -16,9 +17,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.festival.common.exception.ErrorCode.FORBIDDEN_DELETE;
-import static com.festival.common.exception.ErrorCode.NOT_FOUND_BAMBOO;
-import static com.festival.common.util.SecurityUtils.checkingAdmin;
+import java.util.Optional;
+
+import static com.festival.common.exception.ErrorCode.*;
+import static com.festival.common.exception.ErrorCode.ALREADY_DELETED;
+import static com.festival.common.util.SecurityUtils.checkingAdminRole;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -38,12 +41,14 @@ public class BamBooForestService {
 
     @Transactional
     public void delete(Long id) {
-        BamBooForest findBamBooForest = bamBooForestRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BAMBOO));
+        BamBooForest findBamBooForest = checkingDeletedStatus(bamBooForestRepository.findById(id));
+
         Member accessUser = memberService.getAuthenticationMember();
-        if (!checkingAdmin(accessUser.getMemberRoles())) {
+        if (!checkingAdminRole(accessUser.getMemberRoles())) {
             throw new ForbiddenException(FORBIDDEN_DELETE);
         }
-        findBamBooForest.changeStatus(BamBooForestStatus.TERMINATE);
+
+        findBamBooForest.changeStatus(OperateStatus.TERMINATE);
     }
 
     public Page<BamBooForestRes> getBamBooForestList(String status, Pageable pageable) {
@@ -54,5 +59,14 @@ public class BamBooForestService {
         return bamBooForestRepository.getList(bamBooForestSearchCond);
     }
 
+    private BamBooForest checkingDeletedStatus(Optional<BamBooForest> bamBooForest) {
+        if (bamBooForest.isEmpty()) {
+            throw new NotFoundException(NOT_FOUND_BAMBOO);
+        }
 
+        if (bamBooForest.get().getStatus() == OperateStatus.TERMINATE) {
+            throw new AlreadyDeleteException(ALREADY_DELETED);
+        }
+        return bamBooForest.get();
+    }
 }

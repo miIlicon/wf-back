@@ -28,7 +28,7 @@ public class BoothController {
     private final BoothService boothService;
     private final ValidationUtils validationUtils;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PostMapping
     public ResponseEntity<Long> create(@Valid BoothReq boothReq) throws Exception {
         if (!validationUtils.isBoothValid(boothReq)) {
@@ -37,20 +37,19 @@ public class BoothController {
         return ResponseEntity.ok().body(boothService.createBooth(boothReq));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PutMapping("/{boothId}")
     public ResponseEntity<Long> update(@Valid BoothReq boothReq, @PathVariable("boothId") Long id) throws Exception {
         if (!validationUtils.isBoothValid(boothReq)) {
             throw new Exception();
         }
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return ResponseEntity.ok().body(boothService.updateBooth(boothReq, id, username));
+        return ResponseEntity.ok().body(boothService.updateBooth(boothReq, id));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @DeleteMapping("/{boothId}")
-    public ResponseEntity<Void> delete(@PathVariable("boothId") Long id, @AuthenticationPrincipal User user) {
-        boothService.deleteBooth(id, user.getUsername());
+    public ResponseEntity<Void> delete(@PathVariable("boothId") Long id) {
+        boothService.deleteBooth(id);
         return ResponseEntity.ok().build();
     }
 

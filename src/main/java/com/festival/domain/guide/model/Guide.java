@@ -1,6 +1,7 @@
 package com.festival.domain.guide.model;
 
 import com.festival.common.base.BaseEntity;
+import com.festival.common.base.OperateStatus;
 import com.festival.domain.guide.dto.GuideReq;
 import com.festival.domain.image.model.Image;
 import com.festival.domain.member.model.Member;
@@ -23,10 +24,7 @@ public class Guide extends BaseEntity {
     private String content;
 
     @Enumerated(EnumType.STRING)
-    private GuideType guideType;
-
-    @Enumerated(EnumType.STRING)
-    private GuideStatus guideStatus;
+    private GuideType type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -36,26 +34,26 @@ public class Guide extends BaseEntity {
     private Image image;
 
     @Builder
-    private Guide(String title, String content, GuideType guideType, GuideStatus guideStatus) {
+    private Guide(String title, String content, GuideType type, OperateStatus status) {
         this.title = title;
         this.content = content;
-        this.guideType = guideType;
-        this.guideStatus = guideStatus;
+        this.type = type;
+        this.status = status;
     }
 
     public static Guide of(GuideReq guideReq) {
         return Guide.builder()
                 .title(guideReq.getTitle())
                 .content(guideReq.getContent())
-                .guideType(settingType(guideReq.getType()))
-                .guideStatus(settingStatus(guideReq.getStatus()))
+                .type(settingType(guideReq.getType()))
+                .status(settingStatus(guideReq.getStatus()))
                 .build();
     }
 
     public void update(GuideReq guideReq) {
         this.title = guideReq.getTitle();
         this.content = guideReq.getContent();
-        this.guideType = settingType(guideReq.getType());
+        this.type = settingType(guideReq.getType());
     }
 
     public void setImage(Image image){
@@ -66,15 +64,15 @@ public class Guide extends BaseEntity {
         this.member = member;
     }
 
-    public void changeStatus(GuideStatus status) {
-        this.guideStatus = status;
+    public void changeStatus(OperateStatus status) {
+        this.status = status;
     }
 
     private static GuideType settingType(String guideType) {
         return GuideType.checkType(guideType);
     }
 
-    private static GuideStatus settingStatus(String guideStatus) {
-        return GuideStatus.checkStatus(guideStatus);
+    private static OperateStatus settingStatus(String guideStatus) {
+        return OperateStatus.checkStatus(guideStatus);
     }
 }

@@ -1,6 +1,8 @@
 package com.festival.domain.timetable.model;
 
 import com.festival.common.base.BaseEntity;
+import com.festival.common.base.OperateStatus;
+import com.festival.domain.member.model.Member;
 import com.festival.domain.timetable.dto.TimeTableCreateReq;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -27,16 +29,16 @@ public class TimeTable extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime endTime;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TimeTableStatus timeTableStatus;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Builder
-    private TimeTable(String title, LocalDateTime startTime, LocalDateTime endTime, TimeTableStatus timeTableStatus) {
+    private TimeTable(String title, LocalDateTime startTime, LocalDateTime endTime, OperateStatus status) {
         this.title = title;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.timeTableStatus = timeTableStatus;
+        this.status = status;
     }
 
     public static TimeTable of(TimeTableCreateReq timeTableCreateReq) {
@@ -44,7 +46,7 @@ public class TimeTable extends BaseEntity {
                 .title(timeTableCreateReq.getTitle())
                 .startTime(timeTableCreateReq.getStartTime())
                 .endTime(timeTableCreateReq.getEndTime())
-                .timeTableStatus(settingStatus(timeTableCreateReq.getStatus()))
+                .status(settingStatus(timeTableCreateReq.getStatus()))
                 .build();
     }
 
@@ -52,14 +54,18 @@ public class TimeTable extends BaseEntity {
         this.title = timeTableCreateReq.getTitle();
         this.startTime = timeTableCreateReq.getStartTime();
         this.endTime = timeTableCreateReq.getEndTime();
-        this.timeTableStatus = settingStatus(timeTableCreateReq.getStatus());
+        this.status = settingStatus(timeTableCreateReq.getStatus());
     }
 
-    public void changeStatus(TimeTableStatus timeTableStatus) {
-        this.timeTableStatus = timeTableStatus;
+    public void changeStatus(OperateStatus timeTableStatus) {
+        this.status = timeTableStatus;
     }
 
-    private static TimeTableStatus settingStatus(String timeTableStatus) {
-        return TimeTableStatus.checkStatus(timeTableStatus);
+    public void connectMember(Member member) {
+        this.member = member;
+    }
+
+    private static OperateStatus settingStatus(String status) {
+        return OperateStatus.checkStatus(status);
     }
 }

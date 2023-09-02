@@ -49,6 +49,6 @@ public class BamBooForestRepositoryImpl implements BamBooForestRepositoryCustom 
     }
 
     private static BooleanExpression statusEq(String status) {
-        return bamBooForest.bamBooForestStatus.stringValue().eq(status);
+        return bamBooForest.status.stringValue().eq(status);
     }
 }

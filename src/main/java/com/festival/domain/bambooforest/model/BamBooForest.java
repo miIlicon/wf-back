@@ -1,6 +1,7 @@
 package com.festival.domain.bambooforest.model;
 
 import com.festival.common.base.BaseEntity;
+import com.festival.common.base.OperateStatus;
 import com.festival.domain.bambooforest.dto.BamBooForestCreateReq;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -21,29 +22,26 @@ public class BamBooForest extends BaseEntity {
 
     private String contact;
 
-    @Enumerated(EnumType.STRING)
-    private BamBooForestStatus bamBooForestStatus;
-
     @Builder
-    private BamBooForest(String content, String contact, BamBooForestStatus bamBooForestStatus) {
+    private BamBooForest(String content, String contact, OperateStatus status) {
         this.content = content;
         this.contact = contact;
-        this.bamBooForestStatus = bamBooForestStatus;
+        this.status = status;
     }
 
     public static BamBooForest of(BamBooForestCreateReq bambooForestCreateReq) {
         return BamBooForest.builder()
                 .content(bambooForestCreateReq.getContent())
                 .contact(bambooForestCreateReq.getContact())
-                .bamBooForestStatus(settingStatus(bambooForestCreateReq.getStatus()))
+                .status(settingStatus(bambooForestCreateReq.getStatus()))
                 .build();
     }
 
-    public void changeStatus(BamBooForestStatus bamBooForestStatus) {
-        this.bamBooForestStatus = bamBooForestStatus;
+    public void changeStatus(OperateStatus bamBooForestStatus) {
+        this.status = bamBooForestStatus;
     }
 
-    private static BamBooForestStatus settingStatus(String status) {
-        return BamBooForestStatus.checkStatus(status);
+    private static OperateStatus settingStatus(String status) {
+        return OperateStatus.checkStatus(status);
     }
 }

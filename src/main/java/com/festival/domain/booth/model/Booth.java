@@ -1,18 +1,19 @@
 package com.festival.domain.booth.model;
 
 import com.festival.common.base.BaseEntity;
+import com.festival.common.base.OperateStatus;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.image.model.Image;
+import com.festival.domain.member.model.Member;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Booth extends BaseEntity {
 
     @Id
@@ -36,19 +37,17 @@ public class Booth extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private BoothStatus status;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private BoothType type;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Image image;
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Builder
-    private Booth(String title, String subTitle, String content, float latitude, float longitude,BoothStatus status, BoothType type) {
+    private Booth(String title, String subTitle, String content, float latitude, float longitude, OperateStatus status, BoothType type) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
@@ -58,7 +57,6 @@ public class Booth extends BaseEntity {
         this.type = type;
     }
 
-
     public static Booth of(BoothReq boothReq){
         return Booth.builder()
                 .title(boothReq.getTitle())
@@ -66,11 +64,15 @@ public class Booth extends BaseEntity {
                 .content(boothReq.getContent())
                 .latitude(boothReq.getLatitude())
                 .longitude(boothReq.getLongitude())
-                .status(BoothStatus.handleStatus(boothReq.getStatus()))
+                .status(OperateStatus.checkStatus(boothReq.getStatus()))
                 .type(BoothType.handleType(boothReq.getType())).build();
     }
     public void setImage(Image image){
         this.image = image;
+    }
+
+    public void connectMember(Member member){
+        this.member = member;
     }
 
     public void update(BoothReq boothReq){
@@ -79,11 +81,11 @@ public class Booth extends BaseEntity {
         this.content =  boothReq.getContent();
         this.latitude = boothReq.getLatitude();
         this.longitude = boothReq.getLongitude();
-        this.status = BoothStatus.handleStatus(boothReq.getStatus());
+        this.status = OperateStatus.checkStatus(boothReq.getStatus());
         this.type = BoothType.handleType(boothReq.getType());
     }
-    public void delete()
-    {
-        this.status = BoothStatus.TERMINATE;
+
+    public void changeStatus(OperateStatus status) {
+        this.status = status;
     }
 }
