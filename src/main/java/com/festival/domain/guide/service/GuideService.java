@@ -91,7 +91,7 @@ public class GuideService {
             throw new NotFoundException(NOT_FOUND_GUIDE);
         }
         if (guide.get().getStatus().equals(OperateStatus.TERMINATE)) {
-            throw new BadRequestException(ALREADY_DELETED);
+            throw new AlreadyDeleteException(ALREADY_DELETED);
         }
         return guide.get();
     }
