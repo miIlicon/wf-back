@@ -32,9 +32,6 @@ class BambooForestControllerTest extends ControllerTestSupport {
     @Autowired
     private BamBooForestRepository bamBooForestRepository;
 
-    @Autowired
-    private MemberRepository memberRepository;
-
     private Member member;
 
     private Member differentMember;

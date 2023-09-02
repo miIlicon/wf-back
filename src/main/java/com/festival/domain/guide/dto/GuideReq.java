@@ -26,10 +26,10 @@ public class GuideReq {
     @NotNull(message = "상태값을 입력해주세요")
     private String status;
 
-//    @NotNull(message = "썸네일 이미지를 선택해주세요")
+    @NotNull(message = "썸네일 이미지를 선택해주세요")
     private MultipartFile mainFile;
 
-//    @NotNull(message = "서브 이미지를 선택해주세요")
+    @NotNull(message = "서브 이미지를 선택해주세요")
     private List<MultipartFile> subFiles;
 
     @Builder

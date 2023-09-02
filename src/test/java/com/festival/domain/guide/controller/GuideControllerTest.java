@@ -8,7 +8,6 @@ import com.festival.domain.guide.repository.GuideRepository;
 import com.festival.domain.image.fixture.ImageFixture;
 import com.festival.domain.image.model.Image;
 import com.festival.domain.member.model.Member;
-import com.festival.domain.member.repository.MemberRepository;
 import com.festival.domain.util.ControllerTestSupport;
 import com.festival.domain.util.TestImageUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
@@ -39,9 +40,6 @@ class GuideControllerTest extends ControllerTestSupport {
 
     @Autowired
     private GuideRepository guideRepository;
-
-    @Autowired
-    private MemberRepository memberRepository;
 
     private Member member;
 
@@ -114,6 +112,13 @@ class GuideControllerTest extends ControllerTestSupport {
     @Test
     void updateGuide() throws Exception {
         //given
+        MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
+        List<MockMultipartFile> subFiles = List.of(
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles")
+        );
+
         GuideReq guideReq = GuideReq.builder()
                 .title("title")
                 .content("content")
@@ -125,14 +130,22 @@ class GuideControllerTest extends ControllerTestSupport {
         Guide savedGuide = guideRepository.saveAndFlush(guide);
 
         //when
-        mockMvc.perform(
-                        put("/api/v2/guide/" + savedGuide.getId())
-                                .param("title", "updateTitle")
-                                .param("content", "updateContent")
-                                .param("type", "NOTICE")
-                                .param("status", "OPERATE")
-                                .contentType(MULTIPART_FORM_DATA)
-                )
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/api/v2/guide/" + savedGuide.getId())
+                .file(mainFile)
+                .file(subFiles.get(0))
+                .file(subFiles.get(1))
+                .file(subFiles.get(2))
+                .param("title", "updateTitle")
+                .param("content", "updateContent")
+                .param("type", "NOTICE")
+                .param("status", "OPERATE")
+                .contentType(MULTIPART_FORM_DATA)
+                .with(request -> {
+                    request.setMethod("PUT");
+                    return request;
+                });
+
+        mockMvc.perform(builder)
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(savedGuide.getId().toString()));
@@ -148,15 +161,30 @@ class GuideControllerTest extends ControllerTestSupport {
     @DisplayName("게시물을 수정 시도할 때, 안내사항 게시물이 존재하지 않으면 NotFoundException을 반환한다.")
     @Test
     void updateGuideNotFound() throws Exception {
+        MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
+        List<MockMultipartFile> subFiles = List.of(
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles")
+        );
+
         //when //then
-        mockMvc.perform(
-                        put("/api/v2/guide/1")
-                                .param("title", "updateTitle")
-                                .param("content", "updateContent")
-                                .param("type", "NOTICE")
-                                .param("status", "OPERATE")
-                                .contentType(MULTIPART_FORM_DATA)
-                )
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/api/v2/guide/1")
+                .file(mainFile)
+                .file(subFiles.get(0))
+                .file(subFiles.get(1))
+                .file(subFiles.get(2))
+                .param("title", "updateTitle")
+                .param("content", "updateContent")
+                .param("type", "NOTICE")
+                .param("status", "OPERATE")
+                .contentType(MULTIPART_FORM_DATA)
+                .with(request -> {
+                    request.setMethod("PUT");
+                    return request;
+                });
+
+        mockMvc.perform(builder)
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -166,22 +194,36 @@ class GuideControllerTest extends ControllerTestSupport {
     @Test
     void updateGuideNotMine() throws Exception {
         //given
+        MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
+        List<MockMultipartFile> subFiles = List.of(
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles")
+        );
+
         Guide guide = createGuideEntity("title", "content", "QNA", "OPERATE");
         guide.connectMember(member);
         Guide savedGuide = guideRepository.saveAndFlush(guide);
 
         //when //then
-        mockMvc.perform(
-                        put("/api/v2/guide/" + savedGuide.getId())
-                                .param("title", "updateTitle")
-                                .param("content", "updateContent")
-                                .param("type", "NOTICE")
-                                .param("status", "OPERATE")
-                                .contentType(MULTIPART_FORM_DATA)
-                )
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/api/v2/guide/" + savedGuide.getId())
+                .file(mainFile)
+                .file(subFiles.get(0))
+                .file(subFiles.get(1))
+                .file(subFiles.get(2))
+                .param("title", "updateTitle")
+                .param("content", "updateContent")
+                .param("type", "NOTICE")
+                .param("status", "OPERATE")
+                .contentType(MULTIPART_FORM_DATA)
+                .with(request -> {
+                    request.setMethod("PUT");
+                    return request;
+                });
+
+        mockMvc.perform(builder)
                 .andDo(print())
                 .andExpect(status().isForbidden());
-
     }
 
     @WithMockUser(username = "testUser", roles = "ADMIN")
