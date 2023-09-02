@@ -1,6 +1,5 @@
 package com.festival.domain.booth.service;
 
-import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.domain.booth.controller.dto.BoothListReq;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.booth.controller.dto.BoothRes;
@@ -25,13 +24,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import static com.festival.common.exception.ErrorCode.NOT_FOUND_BOOTH;
 import static com.festival.domain.util.TestImageUtils.generateMockImageFile;
-import static io.jsonwebtoken.lang.Assert.isInstanceOf;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-
 
 @ExtendWith(MockitoExtension.class)
 class BoothServiceTest {
