@@ -3,7 +3,7 @@ package com.festival.domain.timetable.model;
 import com.festival.common.base.BaseEntity;
 import com.festival.common.base.OperateStatus;
 import com.festival.domain.member.model.Member;
-import com.festival.domain.timetable.dto.TimeTableCreateReq;
+import com.festival.domain.timetable.dto.TimeTableReq;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -41,20 +41,20 @@ public class TimeTable extends BaseEntity {
         this.status = status;
     }
 
-    public static TimeTable of(TimeTableCreateReq timeTableCreateReq) {
+    public static TimeTable of(TimeTableReq timeTableReq) {
         return TimeTable.builder()
-                .title(timeTableCreateReq.getTitle())
-                .startTime(timeTableCreateReq.getStartTime())
-                .endTime(timeTableCreateReq.getEndTime())
-                .status(settingStatus(timeTableCreateReq.getStatus()))
+                .title(timeTableReq.getTitle())
+                .startTime(timeTableReq.getStartTime())
+                .endTime(timeTableReq.getEndTime())
+                .status(settingStatus(timeTableReq.getStatus()))
                 .build();
     }
 
-    public void update(TimeTableCreateReq timeTableCreateReq) {
-        this.title = timeTableCreateReq.getTitle();
-        this.startTime = timeTableCreateReq.getStartTime();
-        this.endTime = timeTableCreateReq.getEndTime();
-        this.status = settingStatus(timeTableCreateReq.getStatus());
+    public void update(TimeTableReq timeTableReq) {
+        this.title = timeTableReq.getTitle();
+        this.startTime = timeTableReq.getStartTime();
+        this.endTime = timeTableReq.getEndTime();
+        this.status = settingStatus(timeTableReq.getStatus());
     }
 
     public void changeStatus(OperateStatus timeTableStatus) {

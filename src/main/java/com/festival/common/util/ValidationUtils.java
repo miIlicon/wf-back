@@ -4,7 +4,7 @@ import com.festival.domain.bambooforest.dto.BamBooForestCreateReq;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.guide.dto.GuideReq;
 import com.festival.domain.program.dto.ProgramReq;
-import com.festival.domain.timetable.dto.TimeTableCreateReq;
+import com.festival.domain.timetable.dto.TimeTableReq;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -90,7 +90,7 @@ public class ValidationUtils {
         return true;
     }
 
-    public boolean isTimeTableValid(TimeTableCreateReq timeTable) throws Exception {
+    public boolean isTimeTableValid(TimeTableReq timeTable) throws Exception {
         checkItemPattern(timeTable.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), DATE_PATTERN);
         checkItemPattern(timeTable.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), DATE_PATTERN);
         checkStrLength(timeTable.getTitle(), 1, 30);

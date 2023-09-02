@@ -1,7 +1,7 @@
 package com.festival.domain.timetable.controller;
 
 import com.festival.common.util.ValidationUtils;
-import com.festival.domain.timetable.dto.TimeTableCreateReq;
+import com.festival.domain.timetable.dto.TimeTableReq;
 import com.festival.domain.timetable.dto.TimeTableDateReq;
 import com.festival.domain.timetable.dto.TimeTableRes;
 import com.festival.domain.timetable.service.TimeTableService;
@@ -23,21 +23,21 @@ public class TimeTableController {
 
     @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PostMapping
-    public ResponseEntity<Long> createTimeTable(@Valid TimeTableCreateReq timeTableCreateReq) throws Exception {
-        if (!validationUtils.isTimeTableValid(timeTableCreateReq)) {
+    public ResponseEntity<Long> createTimeTable(@Valid TimeTableReq timeTableReq) throws Exception {
+        if (!validationUtils.isTimeTableValid(timeTableReq)) {
             throw new Exception();
         }
-        return ResponseEntity.ok().body(timeTableService.create(timeTableCreateReq));
+        return ResponseEntity.ok().body(timeTableService.create(timeTableReq));
     }
 
     @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PutMapping("/{timeTableId}")
     public ResponseEntity<Long> updateTimeTable(@PathVariable Long timeTableId,
-                                                @Valid TimeTableCreateReq timeTableCreateReq) throws Exception {
-        if (!validationUtils.isTimeTableValid(timeTableCreateReq)) {
+                                                @Valid TimeTableReq timeTableReq) throws Exception {
+        if (!validationUtils.isTimeTableValid(timeTableReq)) {
             throw new Exception();
         }
-        return ResponseEntity.ok().body(timeTableService.update(timeTableId, timeTableCreateReq));
+        return ResponseEntity.ok().body(timeTableService.update(timeTableId, timeTableReq));
     }
 
     @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
