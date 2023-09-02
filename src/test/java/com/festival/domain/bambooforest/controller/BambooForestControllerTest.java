@@ -2,7 +2,6 @@ package com.festival.domain.bambooforest.controller;
 
 import com.festival.domain.bambooforest.dto.BamBooForestCreateReq;
 import com.festival.domain.bambooforest.model.BamBooForest;
-import com.festival.domain.bambooforest.model.BamBooForestStatus;
 import com.festival.domain.bambooforest.repository.BamBooForestRepository;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.member.repository.MemberRepository;
@@ -78,7 +77,7 @@ class BambooForestControllerTest extends ControllerTestSupport {
 
         //then
         BamBooForest findBambooForest = bamBooForestRepository.findById(savedBamBooForest.getId()).get();
-        assertThat(findBambooForest.getBamBooForestStatus()).isEqualTo(BamBooForestStatus.TERMINATE);
+        assertThat(findBambooForest.getStatus()).isEqualTo(BamBooForestStatus.TERMINATE);
     }
 
     @DisplayName("대나무숲의 게시물은 10개씩 표시된다. 데이터는 페이지 처리된다. 테스트 시에는 5개의 데이터를 생성하여 테스트한다.")

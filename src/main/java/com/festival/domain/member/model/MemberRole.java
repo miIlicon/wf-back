@@ -4,7 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum MemberRole {
-    ADMIN("ADMIN");
+    ADMIN("ADMIN"),
+    MANAGER("MANAGER");
 
     private String value;
 
@@ -15,6 +16,7 @@ public enum MemberRole {
     public static MemberRole checkMemberRole(String role) {
         return switch (role) {
             case "ADMIN" -> ADMIN;
+            case "MANAGER" -> MANAGER;
             default -> null;
         };
     }

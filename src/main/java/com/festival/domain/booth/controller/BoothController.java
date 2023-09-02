@@ -43,14 +43,13 @@ public class BoothController {
         if (!validationUtils.isBoothValid(boothReq)) {
             throw new Exception();
         }
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return ResponseEntity.ok().body(boothService.updateBooth(boothReq, id, username));
+        return ResponseEntity.ok().body(boothService.updateBooth(boothReq, id));
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{boothId}")
-    public ResponseEntity<Void> delete(@PathVariable("boothId") Long id, @AuthenticationPrincipal User user) {
-        boothService.deleteBooth(id, user.getUsername());
+    public ResponseEntity<Void> delete(@PathVariable("boothId") Long id) {
+        boothService.deleteBooth(id);
         return ResponseEntity.ok().build();
     }
 

@@ -3,7 +3,6 @@ package com.festival.domain.guide.service;
 import com.festival.common.exception.custom_exception.BadRequestException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
-import com.festival.common.util.ImageUtils;
 import com.festival.common.util.SecurityUtils;
 import com.festival.domain.guide.dto.GuideReq;
 import com.festival.domain.guide.dto.GuideRes;
@@ -46,7 +45,8 @@ public class GuideService {
     public Long updateGuide(Long id, GuideReq guideReq) {
         Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_GUIDE));
         Member findMember = memberService.getAuthenticationMember();
-        if (!SecurityUtils.checkingRole(findMember.getUsername(), guide.getMember().getUsername(), findMember.getMemberRoles())) {
+
+        if (!SecurityUtils.checkingRole(guide.getMember(), memberService.getAuthenticationMember())) {
             throw new ForbiddenException(FORBIDDEN_UPDATE);
         }
         guide.update(guideReq);
@@ -57,8 +57,9 @@ public class GuideService {
     @Transactional
     public void deleteGuide(Long id) {
         Guide guide = checkingDeletedStatus(guideRepository.findById(id));
+
         Member findMember = memberService.getAuthenticationMember();
-        if (!SecurityUtils.checkingRole(findMember.getUsername(), guide.getMember().getUsername(), findMember.getMemberRoles())) {
+        if (!SecurityUtils.checkingRole(guide.getMember(), memberService.getAuthenticationMember())) {
             throw new ForbiddenException(FORBIDDEN_DELETE);
         }
         guide.changeStatus(TERMINATE);
@@ -87,7 +88,7 @@ public class GuideService {
         if (guide.isEmpty()) {
             throw new NotFoundException(NOT_FOUND_GUIDE);
         }
-        if (guide.get().getGuideStatus().equals(TERMINATE)) {
+        if (guide.get().getStatus().equals(OperateStatus.TERMINATE)) {
             throw new BadRequestException(ALREADY_DELETED);
         }
         return guide.get();

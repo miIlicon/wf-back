@@ -9,8 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,19 +33,17 @@ public class TimeTableController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{timeTableId}")
     public ResponseEntity<Long> updateTimeTable(@PathVariable Long timeTableId,
-                                                @Valid TimeTableCreateReq timeTableCreateReq,
-                                                @AuthenticationPrincipal User user) throws Exception {
+                                                @Valid TimeTableCreateReq timeTableCreateReq) throws Exception {
         if (!validationUtils.isTimeTableValid(timeTableCreateReq)) {
             throw new Exception();
         }
-        return ResponseEntity.ok().body(timeTableService.update(timeTableId, timeTableCreateReq, user.getUsername()));
+        return ResponseEntity.ok().body(timeTableService.update(timeTableId, timeTableCreateReq));
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{timeTableId}")
-    public ResponseEntity<Void> deleteTimeTable(@PathVariable Long timeTableId,
-                                                @AuthenticationPrincipal User user) {
-        timeTableService.delete(timeTableId, user.getUsername());
+    public ResponseEntity<Void> deleteTimeTable(@PathVariable Long timeTableId) {
+        timeTableService.delete(timeTableId);
         return ResponseEntity.ok().build();
     }
 

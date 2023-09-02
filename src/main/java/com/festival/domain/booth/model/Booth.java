@@ -3,16 +3,16 @@ package com.festival.domain.booth.model;
 import com.festival.common.base.BaseEntity;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.image.model.Image;
+import com.festival.domain.member.model.Member;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Booth extends BaseEntity {
 
     @Id
@@ -45,7 +45,9 @@ public class Booth extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Image image;
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Builder
     private Booth(String title, String subTitle, String content, float latitude, float longitude,BoothStatus status, BoothType type) {
@@ -57,7 +59,6 @@ public class Booth extends BaseEntity {
         this.status = status;
         this.type = type;
     }
-
 
     public static Booth of(BoothReq boothReq){
         return Booth.builder()
@@ -73,6 +74,10 @@ public class Booth extends BaseEntity {
         this.image = image;
     }
 
+    public void connectMember(Member member){
+        this.member = member;
+    }
+
     public void update(BoothReq boothReq){
         this.title = boothReq.getTitle();
         this.subTitle = boothReq.getSubTitle();
@@ -82,8 +87,8 @@ public class Booth extends BaseEntity {
         this.status = BoothStatus.handleStatus(boothReq.getStatus());
         this.type = BoothType.handleType(boothReq.getType());
     }
-    public void delete()
-    {
-        this.status = BoothStatus.TERMINATE;
+
+    public void changeStatus(OperateStatus status) {
+        this.status = status;
     }
 }

@@ -3,6 +3,8 @@ package com.festival.domain.timetable.service;
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
+import com.festival.common.util.SecurityUtils;
+import com.festival.domain.member.service.MemberService;
 import com.festival.domain.timetable.dto.TimeTableCreateReq;
 import com.festival.domain.timetable.dto.TimeTableDateReq;
 import com.festival.domain.timetable.dto.TimeTableRes;
@@ -10,16 +12,14 @@ import com.festival.domain.timetable.dto.TimeTableSearchCond;
 import com.festival.domain.timetable.model.TimeTable;
 import com.festival.domain.timetable.repository.TimeTableRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
-import static com.festival.domain.timetable.model.TimeTableStatus.TERMINATE;
+import static com.festival.common.exception.ErrorCode.ALREADY_DELETED;
+import static com.festival.common.exception.ErrorCode.NOT_FOUND_TIMETABLE;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -28,17 +28,21 @@ public class TimeTableService {
 
     private final TimeTableRepository timeTableRepository;
 
+    private final MemberService memberService;
+
     @Transactional
     public Long create(TimeTableCreateReq timeTableCreateReq) {
         TimeTable timeTable = TimeTable.of(timeTableCreateReq);
+        timeTable.connectMember(memberService.getAuthenticationMember());
         TimeTable savedTimeTable = timeTableRepository.save(timeTable);
         return savedTimeTable.getId();
     }
 
     @Transactional
-    public Long update(Long timeTableId, TimeTableCreateReq timeTableCreateReq, String username) {
-        TimeTable timeTable = timeTableRepository.findById(timeTableId).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_TIMETABLE));
-        if (timeTable.getLastModifiedBy().equals(username)) {
+    public Long update(Long timeTableId, TimeTableCreateReq timeTableCreateReq) {
+        TimeTable timeTable = checkingDeletedStatus(timeTableRepository.findById(timeTableId));
+
+        if(!SecurityUtils.checkingAdminRole(memberService.getAuthenticationMember().getMemberRoles())) {
             throw new ForbiddenException(ErrorCode.FORBIDDEN_UPDATE);
         }
         timeTable.update(timeTableCreateReq);
@@ -46,12 +50,9 @@ public class TimeTableService {
     }
 
     @Transactional
-    public void delete(Long id, String username) {
-        TimeTable timeTable = timeTableRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_TIMETABLE));
-        if (timeTable.getLastModifiedBy().equals(username)) {
-            throw new ForbiddenException(ErrorCode.FORBIDDEN_DELETE);
-        }
-        timeTable.changeStatus(TERMINATE);
+    public void delete(Long id) {
+        TimeTable timeTable = checkingDeletedStatus(timeTableRepository.findById(id));
+        timeTable.changeStatus(OperateStatus.TERMINATE);
     }
 
     public List<TimeTableRes> getList(TimeTableDateReq timeTableDateReq) {

@@ -1,6 +1,5 @@
 package com.festival.domain.program.controller;
 
-
 import com.festival.common.util.ValidationUtils;
 import com.festival.domain.program.dto.ProgramListReq;
 import com.festival.domain.program.dto.ProgramReq;
@@ -12,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/program")
 public class ProgramController {
+
     private final ProgramService programService;
     private final ValidationUtils validationUtils;
 

@@ -5,6 +5,7 @@ import com.festival.domain.guide.dto.GuideRes;
 import com.festival.domain.guide.model.Guide;
 import com.festival.domain.guide.repository.GuideRepository;
 import com.festival.domain.image.fixture.ImageFixture;
+import com.festival.domain.image.model.Image;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.member.repository.MemberRepository;
 import com.festival.domain.util.ControllerTestSupport;
@@ -48,6 +49,13 @@ class GuideControllerTest extends ControllerTestSupport {
     void setUp() {
         member = Member.builder()
                 .username("testUser")
+                .password("12345")
+                .memberRole(ADMIN)
+                .build();
+        memberRepository.saveAndFlush(member);
+
+        member = Member.builder()
+                .username("differentUser")
                 .password("12345")
                 .memberRole(ADMIN)
                 .build();
@@ -154,6 +162,68 @@ class GuideControllerTest extends ControllerTestSupport {
         //then
         Guide findGuide = guideRepository.findById(savedGuide.getId()).get();
         assertThat(findGuide.getGuideStatus()).isEqualTo(TERMINATE);
+    }
+
+    @WithMockUser(username = "differentUser", roles = "ADMIN")
+    @DisplayName("안내사항 게시물을 삭제할 때, 다른 사람은 삭제할 수 없다.")
+    @Test
+    void NotDeleteDifferentUser() throws Exception {
+        //given
+        Guide guide = createGuideEntity("title", "content", "QNA", "OPERATE");
+        guide.connectMember(member);
+        Guide savedGuide = guideRepository.saveAndFlush(guide);
+
+        //when //then
+        mockMvc.perform(
+                        delete("/api/v2/guide/" + savedGuide.getId())
+                                .contentType(APPLICATION_FORM_URLENCODED)
+                )
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+//    @DisplayName("안내사항 게시물을 선택했을때, 해당 게시물이 존재하지 않으면 NotFoundException을 반환한다.")
+//    @Test
+//    void getNullGuide() throws Exception {
+//        //when //then
+//        mockMvc.perform(
+//                        get("/api/v2/guide/1")
+//                                .contentType(APPLICATION_JSON)
+//                )
+//                .andDo(print())
+//                .andExpect(status().is5xxServerError());
+//    }
+
+    @DisplayName("안내사항 게시물 하나를 선택하여 상세 내용을 가져온다.")
+    @Test
+    void getGuide() throws Exception {
+        //given
+        Guide guide = createGuideEntity("title", "content", "QNA", "OPERATE");
+        Image image = Image.builder()
+                .mainFilePath("/mainFile213")
+                .subFilePaths(List.of("/subFile1123", "/subFile2123"))
+                .build();
+        guide.setImage(image);
+        guide.connectMember(member);
+        Guide savedGuide = guideRepository.saveAndFlush(guide);
+
+        //when
+        MvcResult mvcResult = mockMvc.perform(
+                        get("/api/v2/guide/" + savedGuide.getId())
+                                .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn();
+
+        //then
+        String content = mvcResult.getResponse().getContentAsString();
+        GuideRes guideRes = objectMapper.readValue(content, GuideRes.class);
+        assertThat(guideRes).isNotNull()
+                .extracting("title", "content", "type")
+                .contains("title", "content", "QNA"
+        );
     }
 
     @DisplayName("안내사항 목록을 가져온다. 목록은 페이징으로 10개씩 처리된다. 테스트 환경에서는 5개의 데이터를 페이징하여 테스트한다.")
