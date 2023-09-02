@@ -331,21 +331,21 @@ class GuideControllerTest extends ControllerTestSupport {
         Pageable pageable = PageRequest.of(0, 5);
 
         Guide guide1 = createGuideEntity("title1", "content1", "QNA", "OPERATE");
-        guide1.setImage(ImageFixture.image);
+        guide1.setImage(ImageFixture.IMAGE);
         Guide guide2 = createGuideEntity("title2", "content2", "NOTICE", "OPERATE");
-        guide2.setImage(ImageFixture.image);
+        guide2.setImage(ImageFixture.IMAGE);
         Guide guide3 = createGuideEntity("title3", "content3", "QNA", "OPERATE");
-        guide3.setImage(ImageFixture.image);
+        guide3.setImage(ImageFixture.IMAGE);
         Guide guide4 = createGuideEntity("title4", "content4", "NOTICE", "OPERATE");
-        guide4.setImage(ImageFixture.image);
+        guide4.setImage(ImageFixture.IMAGE);
         Guide guide5 = createGuideEntity("title5", "content5", "QNA", "OPERATE");
-        guide5.setImage(ImageFixture.image);
+        guide5.setImage(ImageFixture.IMAGE);
         Guide guide6 = createGuideEntity("title6", "content6", "NOTICE", "OPERATE");
-        guide6.setImage(ImageFixture.image);
+        guide6.setImage(ImageFixture.IMAGE);
         Guide guide7 = createGuideEntity("title7", "content7", "QNA", "OPERATE");
-        guide7.setImage(ImageFixture.image);
+        guide7.setImage(ImageFixture.IMAGE);
         Guide guide8 = createGuideEntity("title8", "content8", "NOTICE", "OPERATE");
-        guide8.setImage(ImageFixture.image);
+        guide8.setImage(ImageFixture.IMAGE);
 
         List<Guide> guides = guideRepository.saveAllAndFlush(List.of(guide1, guide2, guide3, guide4, guide5, guide6, guide7, guide8));
 

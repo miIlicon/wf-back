@@ -7,7 +7,6 @@ import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.domain.guide.dto.GuideReq;
 import com.festival.domain.guide.dto.GuideRes;
-import com.festival.domain.guide.fixture.GuideFixture;
 import com.festival.domain.guide.model.Guide;
 import com.festival.domain.guide.model.GuideType;
 import com.festival.domain.guide.repository.GuideRepository;
@@ -29,7 +28,6 @@ import java.util.Optional;
 
 import static com.festival.domain.guide.fixture.GuideFixture.DELETED_GUIDE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -221,7 +219,7 @@ class GuideServiceTest {
     void getguideTest(){
         //given
         Guide guide = getGuide();
-        ReflectionTestUtils.setField(guide, "image", ImageFixture.image);
+        ReflectionTestUtils.setField(guide, "image", ImageFixture.IMAGE);
 
         given(guideRepository.findById(1L))
                 .willReturn(Optional.of(guide));
