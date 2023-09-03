@@ -123,12 +123,12 @@ class GuideServiceTest {
         //given
         GuideReq guideUpdateReq = getGuideUpdateReq();
         Guide guide = getGuide();
-        guide.connectMember(MemberFixture.MANAGER1);
+        guide.connectMember(MemberFixture.ADMIN);
 
         given(guideRepository.findById(1L))
                 .willReturn(Optional.of(guide));
         given(memberService.getAuthenticationMember())
-                .willReturn(MemberFixture.MANAGER1);
+                .willReturn(MemberFixture.ADMIN);
 
         //when
         Long guideId = guideService.updateGuide(1L, guideUpdateReq);
@@ -204,12 +204,12 @@ class GuideServiceTest {
     void deleteGuide4(){
         //given
         Guide guide = getGuide();
-        guide.connectMember(MemberFixture.MANAGER1);
+        guide.connectMember(MemberFixture.ADMIN);
 
         given(guideRepository.findById(1L))
                 .willReturn(Optional.of(guide));
         given(memberService.getAuthenticationMember())
-                .willReturn(MemberFixture.MANAGER1);
+                .willReturn(MemberFixture.ADMIN);
 
         //when && then
         guideService.deleteGuide(1L);
