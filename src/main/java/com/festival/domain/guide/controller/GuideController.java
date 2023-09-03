@@ -7,13 +7,9 @@ import com.festival.domain.guide.service.GuideService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +22,7 @@ public class GuideController {
     private final GuideService guideService;
     private final ValidationUtils validationUtils;
 
-    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
+    @PreAuthorize("hasAuthority({'ADMIN'})")
     @PostMapping
     public ResponseEntity<Long> createGuide(@Valid GuideReq guideReq) throws Exception {
         if (!validationUtils.isGuideValid(guideReq)) {
@@ -36,7 +32,7 @@ public class GuideController {
         return ResponseEntity.ok().body(id);
     }
 
-    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
+    @PreAuthorize("hasAuthority({'ADMIN'})")
     @PutMapping("/{guideId}")
     public ResponseEntity<Long> updateGuide(@PathVariable Long guideId, @Valid GuideReq guideReq) throws Exception {
         if (!validationUtils.isGuideValid(guideReq)) {
@@ -45,7 +41,7 @@ public class GuideController {
         return ResponseEntity.ok().body(guideService.updateGuide(guideId, guideReq));
     }
 
-    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
+    @PreAuthorize("hasAuthority({'ADMIN'})")
     @DeleteMapping("/{guideId}")
     public ResponseEntity<Void> deleteGuide(@PathVariable Long guideId) {
         guideService.deleteGuide(guideId);
