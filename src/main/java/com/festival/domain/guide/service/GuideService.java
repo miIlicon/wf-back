@@ -5,10 +5,12 @@ import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.common.util.SecurityUtils;
+import com.festival.domain.guide.dto.GuidePageRes;
 import com.festival.domain.guide.dto.GuideReq;
 import com.festival.domain.guide.dto.GuideRes;
 import com.festival.domain.guide.model.Guide;
 import com.festival.domain.guide.repository.GuideRepository;
+import com.festival.domain.guide.repository.vo.GuideSearchCond;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.member.service.MemberService;
@@ -45,7 +47,6 @@ public class GuideService {
     public Long updateGuide(Long id, GuideReq guideReq) {
         Guide guide = checkingDeletedStatus(guideRepository.findById(id));
 
-        Member findMember = memberService.getAuthenticationMember();
         if (!SecurityUtils.checkingAdminRole(memberService.getAuthenticationMember().getMemberRoles())) {
             throw new ForbiddenException(FORBIDDEN_UPDATE);
         }
@@ -58,7 +59,6 @@ public class GuideService {
     public void deleteGuide(Long id) {
         Guide guide = checkingDeletedStatus(guideRepository.findById(id));
 
-        Member findMember = memberService.getAuthenticationMember();
         if (!SecurityUtils.checkingAdminRole(memberService.getAuthenticationMember().getMemberRoles())) {
             throw new ForbiddenException(FORBIDDEN_DELETE);
         }
@@ -71,9 +71,12 @@ public class GuideService {
         return GuideRes.of(guide);
     }
 
-    public List<GuideRes> getGuideList(String status, Pageable pageable) {
-        List<Guide> guideList = guideRepository.getList(status, pageable);
-        return guideList.stream().map(GuideRes::of).collect(Collectors.toList());
+    public GuidePageRes getGuideList(String status, Pageable pageable) {
+        GuideSearchCond guideSearchCond = GuideSearchCond.builder()
+                .status(status)
+                .pageable(pageable)
+                .build();
+        return guideRepository.getList(guideSearchCond);
     }
 
     private void settingImage(GuideReq guideReq, Guide guide) {

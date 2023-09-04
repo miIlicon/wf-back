@@ -274,7 +274,6 @@ class BoothServiceTest {
                         .boothResList(List.of(BoothRes.builder().
                                 build())).build());
         //when
-
         BoothListReq boothListReq = BoothListReq.builder()
                 .type("PUB")
                 .status("OPERATE")
@@ -286,6 +285,7 @@ class BoothServiceTest {
         //then
         Assertions.assertThat(boothPageRes.getBoothResList()).hasSize(1);
     }
+
     private Booth getBooth(){
         Booth booth = Booth.builder()
                 .title("부스 게시물 제목")

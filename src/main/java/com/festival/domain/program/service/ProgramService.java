@@ -50,7 +50,6 @@ public class ProgramService {
     public Long updateProgram(Long programId, ProgramReq programReq) {
         Program program = checkingDeletedStatus(programRepository.findById(programId));
 
-        Member findMember = memberService.getAuthenticationMember();
         if (!SecurityUtils.checkingRole(program.getMember(), memberService.getAuthenticationMember())) {
             throw new ForbiddenException(FORBIDDEN_UPDATE);
         }
@@ -64,7 +63,6 @@ public class ProgramService {
     public void deleteProgram(Long programId) {
         Program program = checkingDeletedStatus(programRepository.findById(programId));
 
-        Member findMember = memberService.getAuthenticationMember();
         if (!SecurityUtils.checkingRole(program.getMember(), memberService.getAuthenticationMember())) {
             throw new ForbiddenException(ErrorCode.FORBIDDEN_DELETE);
         }
@@ -91,8 +89,6 @@ public class ProgramService {
         if (program.isEmpty()) {
             throw new NotFoundException(NOT_FOUND_PROGRAM);
         }
-        OperateStatus status = program.get().getStatus();
-
         if (program.get().getStatus() == OperateStatus.TERMINATE) {
             throw new AlreadyDeleteException(ALREADY_DELETED);
         }
