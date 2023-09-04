@@ -6,6 +6,7 @@ import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.domain.booth.controller.dto.BoothListReq;
+import com.festival.domain.booth.controller.dto.BoothPageRes;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.booth.controller.dto.BoothRes;
 import com.festival.domain.booth.fixture.BoothFixture;
@@ -267,9 +268,11 @@ class BoothServiceTest {
         //given
         Booth pub = BoothFixture.PUB;
         ReflectionTestUtils.setField(pub, "image", ImageFixture.IMAGE);
-        
-        given(boothRepository.getList(any(BoothListSearchCond.class), any(Pageable.class)))
-                .willReturn(List.of(pub));
+
+        given(boothRepository.getList(any(BoothListSearchCond.class)))
+                .willReturn(BoothPageRes.builder()
+                        .boothResList(List.of(BoothRes.builder().
+                                build())).build());
         //when
 
         BoothListReq boothListReq = BoothListReq.builder()
@@ -278,10 +281,10 @@ class BoothServiceTest {
                 .build();
         Pageable pageable =  PageRequest.of(0, 3);
 
-        List<BoothRes> boothRes = boothService.getBoothList(boothListReq, pageable);
+        BoothPageRes boothPageRes = boothService.getBoothList(boothListReq, pageable);
 
         //then
-        Assertions.assertThat(boothRes).hasSize(1);
+        Assertions.assertThat(boothPageRes.getBoothResList()).hasSize(1);
     }
     private Booth getBooth(){
         Booth booth = Booth.builder()
