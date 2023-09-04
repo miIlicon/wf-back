@@ -1,5 +1,7 @@
 package com.festival.common.util;
 
+import com.festival.common.exception.ErrorCode;
+import com.festival.common.exception.custom_exception.InvalidException;
 import com.festival.domain.bambooforest.dto.BamBooForestReq;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.guide.dto.GuideReq;
@@ -15,49 +17,56 @@ import java.util.regex.Pattern;
 @Component
 @RequiredArgsConstructor
 public class ValidationUtils {
+
     private static final String EMAIL_REGEX =
             "^[a-zA-Z0-9_+&*-]+(?:\\." +
                     "[a-zA-Z0-9_+&*-]+)*@" +
                     "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
                     "A-Z]{2,7}$";
+
     private static final String DATE_PATTERN =
             "^([0-9]{4})-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]:([0-5][0-9])$";
 
-    public void checkStrLength(String str, int min, int max) throws Exception {
+    private void checkStrLength(String str, int min, int max) {
         int strlen = str.length();
         if (min > strlen || max < strlen) {
-            throw new Exception("[" + str + "] 의 사이즈가 올바르지 않습니다.");
+            throw new InvalidException(ErrorCode.INVALID_LENGTH);
         }
     }
 
-    public void checkNumberRange(double number, double min, double max) throws Exception {
+    private void checkNumberRange(double number, double min, double max) {
         if (min > number || max < number) {
-            throw new Exception("[" + number + "] 의 사이즈가 올바르지 않습니다.");
+            throw new InvalidException(ErrorCode.INVALID_RANGE);
         }
     }
 
-    public void checkTypeItem(String[] typeList, String type) throws Exception {
+    private void checkTypeItem(String[] typeList, String type) {
         boolean isExist = Arrays.asList(typeList).contains(type);
         if (!isExist) {
-            throw new Exception("[" + type + "] 은 올바른 타입이 아닙니다.");
+            throw new InvalidException(ErrorCode.INVALID_TYPE);
         }
     }
 
-    public void checkStatus(String status) throws Exception {
+    private void checkStatus(String status) {
         String[] statusList = {"OPERATE", "TERMINATE"};
         if (!Arrays.asList(statusList).contains(status)) {
-            throw new Exception("[" + status + "] 은 올바른 상태값이 아닙니다.");
+            throw new InvalidException(ErrorCode.INVALID_STATUS);
         }
     }
 
-    public void checkItemPattern(String item, String itemPattern) throws Exception {
+    private void checkItemPattern(String item, String itemPattern) {
         Pattern pattern = Pattern.compile(itemPattern);
         if (!pattern.matcher(item).matches()) {
-            throw new Exception("[" + item + "] 은 유효하지 않은 값입니다.");
+            switch (itemPattern) {
+                case EMAIL_REGEX:
+                    throw new InvalidException(ErrorCode.INVALID_DATE);
+                case DATE_PATTERN:
+                    throw new InvalidException(ErrorCode.INVALID_EMAIL);
+            }
         }
     }
 
-    public boolean isGuideValid(GuideReq guide) throws Exception {
+    public boolean isGuideValid(GuideReq guide) {
         checkStrLength(guide.getTitle(), 1, 20);
         checkStrLength(guide.getContent(), 1, 300);
         String[] typeList = {"NOTICE"};
@@ -66,7 +75,7 @@ public class ValidationUtils {
         return true;
     }
 
-    public boolean isBoothValid(BoothReq booth) throws Exception {
+    public boolean isBoothValid(BoothReq booth) {
         checkStrLength(booth.getTitle(), 1, 30);
         checkStrLength(booth.getSubTitle(), 1, 50);
         checkStrLength(booth.getContent(), 1, 300);
@@ -78,7 +87,7 @@ public class ValidationUtils {
         return true;
     }
 
-    public boolean isProgramValid(ProgramReq program) throws Exception {
+    public boolean isProgramValid(ProgramReq program) {
         checkStrLength(program.getTitle(), 1, 30);
         checkStrLength(program.getSubTitle(), 1, 50);
         checkStrLength(program.getContent(), 1, 300);
@@ -90,7 +99,7 @@ public class ValidationUtils {
         return true;
     }
 
-    public boolean isTimeTableValid(TimeTableReq timeTable) throws Exception {
+    public boolean isTimeTableValid(TimeTableReq timeTable) {
         checkItemPattern(timeTable.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), DATE_PATTERN);
         checkItemPattern(timeTable.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), DATE_PATTERN);
         checkStrLength(timeTable.getTitle(), 1, 30);
@@ -98,10 +107,11 @@ public class ValidationUtils {
         return true;
     }
 
-    public boolean isBamBooForestValid(BamBooForestReq bamBooForest) throws Exception {
+    public boolean isBamBooForestValid(BamBooForestReq bamBooForest) {
         checkStrLength(bamBooForest.getContent(), 1, 200);
         checkItemPattern(bamBooForest.getContact(), EMAIL_REGEX);
         checkStatus(bamBooForest.getStatus());
         return true;
     }
+
 }
