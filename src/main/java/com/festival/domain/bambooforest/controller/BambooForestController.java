@@ -20,7 +20,7 @@ public class BambooForestController {
     private final BamBooForestService bambooForestService;
     private final ValidationUtils validationUtils;
 
-    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
+    @PreAuthorize("permitAll()")
     @PostMapping
     public ResponseEntity<Long> createBamBooForest(@Valid BamBooForestReq bamBooForestReq) throws Exception {
         if (!validationUtils.isBamBooForestValid(bamBooForestReq)) {
@@ -29,7 +29,7 @@ public class BambooForestController {
         return ResponseEntity.ok().body(bambooForestService.createBamBooForest(bamBooForestReq));
     }
 
-    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
+    @PreAuthorize("hasAuthority({'ADMIN'})")
     @DeleteMapping("/{bamBooForestId}")
     public ResponseEntity<Void> deleteBamBooForest(@PathVariable Long bamBooForestId) {
         bambooForestService.deleteBamBooForest(bamBooForestId);
