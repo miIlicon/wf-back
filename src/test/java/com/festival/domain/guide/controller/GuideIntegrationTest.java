@@ -1,6 +1,7 @@
 package com.festival.domain.guide.controller;
 
 import com.festival.common.base.OperateStatus;
+import com.festival.domain.guide.dto.GuidePageRes;
 import com.festival.domain.guide.dto.GuideReq;
 import com.festival.domain.guide.dto.GuideRes;
 import com.festival.domain.guide.model.Guide;
@@ -368,22 +369,25 @@ class GuideIntegrationTest extends ControllerTestSupport {
                 .andReturn();
 
         //then
-        String content = mvcResult.getResponse().getContentAsString();
-        List<GuideRes> guideResList = objectMapper.readValue(content, objectMapper.getTypeFactory().constructCollectionType(List.class, GuideRes.class));
-        assertThat(guideResList).hasSize(10)
+        GuidePageRes guidePageRes = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), GuidePageRes.class);
+        assertThat(guidePageRes.getGuideResList()).hasSize(10)
                 .extracting("title", "content", "type")
                 .containsExactlyInAnyOrder(
-                        tuple("title1", "content1", "NOTICE"),
-                        tuple("title2", "content2", "NOTICE"),
-                        tuple("title3", "content3", "NOTICE"),
-                        tuple("title4", "content4", "NOTICE"),
-                        tuple("title5", "content5", "NOTICE"),
-                        tuple("title6", "content6", "NOTICE"),
-                        tuple("title7", "content7", "NOTICE"),
-                        tuple("title8", "content8", "NOTICE"),
-                        tuple("title9", "content9", "NOTICE"),
-                        tuple("title10", "content10", "NOTICE")
+                        tuple(guides.get(0).getTitle(), guides.get(0).getContent(), "NOTICE"),
+                        tuple(guides.get(1).getTitle(), guides.get(1).getContent(), "NOTICE"),
+                        tuple(guides.get(2).getTitle(), guides.get(2).getContent(), "NOTICE"),
+                        tuple(guides.get(3).getTitle(), guides.get(3).getContent(), "NOTICE"),
+                        tuple(guides.get(4).getTitle(), guides.get(4).getContent(), "NOTICE"),
+                        tuple(guides.get(5).getTitle(), guides.get(5).getContent(), "NOTICE"),
+                        tuple(guides.get(6).getTitle(), guides.get(6).getContent(), "NOTICE"),
+                        tuple(guides.get(7).getTitle(), guides.get(7).getContent(), "NOTICE"),
+                        tuple(guides.get(8).getTitle(), guides.get(8).getContent(), "NOTICE"),
+                        tuple(guides.get(9).getTitle(), guides.get(9).getContent(), "NOTICE")
                 );
+        assertThat(guidePageRes).isNotNull()
+                                         .extracting("totalCount", "totalPage", "pageNumber", "pageSize")
+                                         .contains(11L, 2, 0, 10);
+
     }
 
     private Guide createGuideEntity(String title, String content, String type, String status) {

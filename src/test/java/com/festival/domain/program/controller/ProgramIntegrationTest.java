@@ -437,6 +437,10 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                                 programReq.getLatitude(), programReq.getLongitude(),
                                 programReq.getStatus(), programReq.getType())
                 );
+
+        assertThat(programPageRes).isNotNull()
+                .extracting("totalCount", "totalPage", "pageNumber", "pageSize")
+                .contains(7L, 2, 0, 6);
     }
 
     private static MockHttpServletRequestBuilder makeMultiPartRequest(Program savedProgram, MockMultipartFile mainFile, List<MockMultipartFile> subFiles) {
