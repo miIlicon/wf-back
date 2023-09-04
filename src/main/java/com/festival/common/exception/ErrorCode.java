@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
+
     // 400
     ALREADY_DELETED("이미 삭제된 글입니다.", HttpStatus.BAD_REQUEST),
 
@@ -32,7 +33,6 @@ public enum ErrorCode {
     DUPLICATION_ID("중복된 아이디가 입력되었습니다.", HttpStatus.CONFLICT);
 
 
-
     private final String message;
     private final HttpStatus status;
 
@@ -40,4 +40,5 @@ public enum ErrorCode {
         this.message = message;
         this.status = status;
     }
+
 }

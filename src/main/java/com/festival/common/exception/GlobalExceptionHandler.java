@@ -26,7 +26,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException e){
         ErrorCode errorCode = e.getErrorCode();
         log.error(errorCode.getMessage());
-
         return ResponseEntity.status(errorCode.getStatus()).body( new ErrorResponse(errorCode.getMessage()));
     }
 
@@ -47,7 +46,7 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors()
                 .forEach(c -> errors.put(((FieldError) c).getField(), c.getDefaultMessage()));
-        log.warn(ex.getMessage());
+        log.error(ex.getMessage());
         return ResponseEntity.badRequest().body(errors);
     }
 
