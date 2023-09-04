@@ -2,7 +2,6 @@ package com.festival.domain.guide.service;
 
 import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
-import com.festival.common.exception.custom_exception.BadRequestException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.common.util.SecurityUtils;
@@ -45,9 +44,9 @@ public class GuideService {
     @Transactional
     public Long updateGuide(Long id, GuideReq guideReq) {
         Guide guide = checkingDeletedStatus(guideRepository.findById(id));
-        Member findMember = memberService.getAuthenticationMember();
 
-        if (!SecurityUtils.checkingRole(guide.getMember(), memberService.getAuthenticationMember())) {
+        Member findMember = memberService.getAuthenticationMember();
+        if (!SecurityUtils.checkingAdminRole(memberService.getAuthenticationMember().getMemberRoles())) {
             throw new ForbiddenException(FORBIDDEN_UPDATE);
         }
         guide.update(guideReq);
@@ -60,7 +59,7 @@ public class GuideService {
         Guide guide = checkingDeletedStatus(guideRepository.findById(id));
 
         Member findMember = memberService.getAuthenticationMember();
-        if (!SecurityUtils.checkingRole(guide.getMember(), memberService.getAuthenticationMember())) {
+        if (!SecurityUtils.checkingAdminRole(memberService.getAuthenticationMember().getMemberRoles())) {
             throw new ForbiddenException(FORBIDDEN_DELETE);
         }
 

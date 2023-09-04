@@ -1,7 +1,6 @@
 package com.festival.domain.guide.dto;
 
 import com.festival.domain.guide.model.Guide;
-import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +31,7 @@ public class GuideRes {
 
     public static GuideRes of(Guide guide) {
         return GuideRes.builder()
+                .id(guide.getId())
                 .title(guide.getTitle())
                 .content(guide.getContent())
                 .type(guide.getType().getValue())

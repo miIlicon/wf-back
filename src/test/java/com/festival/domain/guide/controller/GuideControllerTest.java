@@ -25,7 +25,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.List;
 
 import static com.festival.domain.guide.model.GuideType.NOTICE;
-import static com.festival.domain.guide.model.GuideType.QNA;
 import static com.festival.domain.member.model.MemberRole.ADMIN;
 import static com.festival.domain.member.model.MemberRole.MANAGER;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -77,7 +76,7 @@ class GuideControllerTest extends ControllerTestSupport {
         GuideReq guideReq = GuideReq.builder()
                 .title("title")
                 .content("content")
-                .type("QNA")
+                .type("NOTICE")
                 .status("OPERATE")
                 .build();
 
@@ -104,7 +103,7 @@ class GuideControllerTest extends ControllerTestSupport {
         Guide findGuide = guideRepository.findById(id).get();
         assertThat(findGuide).isNotNull()
                 .extracting("title", "content", "type", "status")
-                .contains("title", "content", QNA, OperateStatus.OPERATE);
+                .contains("title", "content", NOTICE, OperateStatus.OPERATE);
     }
 
     @WithMockUser(username = "testUser", roles = "ADMIN")
@@ -122,7 +121,7 @@ class GuideControllerTest extends ControllerTestSupport {
         GuideReq guideReq = GuideReq.builder()
                 .title("title")
                 .content("content")
-                .type("QNA")
+                .type("NOTICE")
                 .status("OPERATE")
                 .build();
         Guide guide = Guide.of(guideReq);
@@ -201,7 +200,7 @@ class GuideControllerTest extends ControllerTestSupport {
                 TestImageUtils.generateMockImageFile("subFiles")
         );
 
-        Guide guide = createGuideEntity("title", "content", "QNA", "OPERATE");
+        Guide guide = createGuideEntity("title", "content", "NOTICE", "OPERATE");
         guide.connectMember(member);
         Guide savedGuide = guideRepository.saveAndFlush(guide);
 
@@ -231,7 +230,7 @@ class GuideControllerTest extends ControllerTestSupport {
     @Test
     void deleteGuide() throws Exception {
         //given
-        Guide guide = createGuideEntity("title", "content", "QNA", "OPERATE");
+        Guide guide = createGuideEntity("title", "content", "NOTICE", "OPERATE");
         guide.connectMember(member);
         Guide savedGuide = guideRepository.saveAndFlush(guide);
 
@@ -266,7 +265,7 @@ class GuideControllerTest extends ControllerTestSupport {
     @Test
     void NotDeleteDifferentUser() throws Exception {
         //given
-        Guide guide = createGuideEntity("title", "content", "QNA", "OPERATE");
+        Guide guide = createGuideEntity("title", "content", "NOTICE", "OPERATE");
         guide.connectMember(member);
         Guide savedGuide = guideRepository.saveAndFlush(guide);
 
@@ -295,7 +294,7 @@ class GuideControllerTest extends ControllerTestSupport {
     @Test
     void getGuide() throws Exception {
         //given
-        Guide guide = createGuideEntity("title", "content", "QNA", "OPERATE");
+        Guide guide = createGuideEntity("title", "content", "NOTICE", "OPERATE");
         Image image = Image.builder()
                 .mainFilePath("/mainFile213")
                 .subFilePaths(List.of("/subFile1123", "/subFile2123"))
@@ -319,7 +318,7 @@ class GuideControllerTest extends ControllerTestSupport {
         GuideRes guideRes = objectMapper.readValue(content, GuideRes.class);
         assertThat(guideRes).isNotNull()
                 .extracting("title", "content", "type")
-                .contains("title", "content", "QNA"
+                .contains("title", "content", "NOTICE"
         );
     }
 
@@ -330,19 +329,19 @@ class GuideControllerTest extends ControllerTestSupport {
         String status = "OPERATE";
         Pageable pageable = PageRequest.of(0, 5);
 
-        Guide guide1 = createGuideEntity("title1", "content1", "QNA", "OPERATE");
+        Guide guide1 = createGuideEntity("title1", "content1", "NOTICE", "OPERATE");
         guide1.setImage(ImageFixture.IMAGE);
         Guide guide2 = createGuideEntity("title2", "content2", "NOTICE", "OPERATE");
         guide2.setImage(ImageFixture.IMAGE);
-        Guide guide3 = createGuideEntity("title3", "content3", "QNA", "OPERATE");
+        Guide guide3 = createGuideEntity("title3", "content3", "NOTICE", "OPERATE");
         guide3.setImage(ImageFixture.IMAGE);
         Guide guide4 = createGuideEntity("title4", "content4", "NOTICE", "OPERATE");
         guide4.setImage(ImageFixture.IMAGE);
-        Guide guide5 = createGuideEntity("title5", "content5", "QNA", "OPERATE");
+        Guide guide5 = createGuideEntity("title5", "content5", "NOTICE", "OPERATE");
         guide5.setImage(ImageFixture.IMAGE);
         Guide guide6 = createGuideEntity("title6", "content6", "NOTICE", "OPERATE");
         guide6.setImage(ImageFixture.IMAGE);
-        Guide guide7 = createGuideEntity("title7", "content7", "QNA", "OPERATE");
+        Guide guide7 = createGuideEntity("title7", "content7", "NOTICE", "OPERATE");
         guide7.setImage(ImageFixture.IMAGE);
         Guide guide8 = createGuideEntity("title8", "content8", "NOTICE", "OPERATE");
         guide8.setImage(ImageFixture.IMAGE);
@@ -368,11 +367,11 @@ class GuideControllerTest extends ControllerTestSupport {
         assertThat(guideResList).hasSize(5)
                 .extracting("title", "content", "type")
                 .containsExactlyInAnyOrder(
-                        tuple("title1", "content1", "QNA"),
+                        tuple("title1", "content1", "NOTICE"),
                         tuple("title2", "content2", "NOTICE"),
-                        tuple("title3", "content3", "QNA"),
+                        tuple("title3", "content3", "NOTICE"),
                         tuple("title4", "content4", "NOTICE"),
-                        tuple("title5", "content5", "QNA")
+                        tuple("title5", "content5", "NOTICE")
                 );
     }
 
