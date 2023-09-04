@@ -2,6 +2,7 @@ package com.festival.domain.program.controller;
 
 import com.festival.common.util.ValidationUtils;
 import com.festival.domain.program.dto.ProgramListReq;
+import com.festival.domain.program.dto.ProgramPageRes;
 import com.festival.domain.program.dto.ProgramReq;
 import com.festival.domain.program.dto.ProgramRes;
 import com.festival.domain.program.service.ProgramService;
@@ -56,7 +57,7 @@ public class ProgramController {
 
     @PreAuthorize("permitAll()")
     @GetMapping("/list")
-    public ResponseEntity<List<ProgramRes>> getProgramList(@Valid ProgramListReq programListReqDto, Pageable pageable) {
+    public ResponseEntity<ProgramPageRes> getProgramList(@Valid ProgramListReq programListReqDto, Pageable pageable) {
         return ResponseEntity.ok().body(programService.getProgramList(programListReqDto, pageable));
     }
 

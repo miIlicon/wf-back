@@ -2,12 +2,10 @@ package com.festival.domain.bambooforest.controller;
 
 import com.festival.common.util.ValidationUtils;
 import com.festival.domain.bambooforest.dto.BamBooForestReq;
-import com.festival.domain.bambooforest.dto.BamBooForestRes;
 import com.festival.domain.bambooforest.service.BamBooForestService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

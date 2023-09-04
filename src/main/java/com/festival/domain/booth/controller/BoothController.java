@@ -2,6 +2,7 @@ package com.festival.domain.booth.controller;
 
 import com.festival.common.util.ValidationUtils;
 import com.festival.domain.booth.controller.dto.BoothListReq;
+import com.festival.domain.booth.controller.dto.BoothPageRes;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.booth.controller.dto.BoothRes;
 import com.festival.domain.booth.service.BoothService;
@@ -55,7 +56,7 @@ public class BoothController {
 
     @PreAuthorize("permitAll()")
     @GetMapping("/list")
-    public ResponseEntity<List<BoothRes>> getBoothList(@Valid BoothListReq boothListReq, Pageable pageable) {
+    public ResponseEntity<BoothPageRes> getBoothList(@Valid BoothListReq boothListReq, Pageable pageable) {
         return ResponseEntity.ok().body(boothService.getBoothList(boothListReq, pageable));
     }
 }

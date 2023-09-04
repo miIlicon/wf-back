@@ -4,15 +4,14 @@ import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
+import com.festival.domain.bambooforest.dto.BamBooForestPageRes;
 import com.festival.domain.bambooforest.dto.BamBooForestReq;
-import com.festival.domain.bambooforest.dto.BamBooForestRes;
 import com.festival.domain.bambooforest.model.BamBooForest;
 import com.festival.domain.bambooforest.repository.BamBooForestRepository;
 import com.festival.domain.bambooforest.service.vo.BamBooForestSearchCond;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +50,7 @@ public class BamBooForestService {
         findBamBooForest.changeStatus(OperateStatus.TERMINATE);
     }
 
-    public Page<BamBooForestRes> getBamBooForestList(String status, Pageable pageable) {
+    public BamBooForestPageRes getBamBooForestList(String status, Pageable pageable) {
         BamBooForestSearchCond bamBooForestSearchCond = BamBooForestSearchCond.builder()
                 .status(status)
                 .pageable(pageable)
