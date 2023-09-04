@@ -7,6 +7,7 @@ import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.common.util.SecurityUtils;
 import com.festival.domain.booth.controller.dto.BoothListReq;
+import com.festival.domain.booth.controller.dto.BoothPageRes;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.booth.controller.dto.BoothRes;
 import com.festival.domain.booth.model.Booth;
@@ -72,11 +73,13 @@ public class BoothService {
     }
 
     @Transactional(readOnly = true)
-    public List<BoothRes> getBoothList(BoothListReq boothListReq, Pageable pageable) {
-        List<Booth> list = boothRepository.getList(BoothListSearchCond.builder()
+    public BoothPageRes getBoothList(BoothListReq boothListReq, Pageable pageable) {
+        return boothRepository.getList(BoothListSearchCond.builder()
                 .status(boothListReq.getStatus())
-                .type(boothListReq.getType()).build(), pageable);
-        return list.stream().map(BoothRes::of).collect(Collectors.toList());
+                .type(boothListReq.getType())
+                .pageable(pageable)
+                .build());
+
     }
 
     private Booth checkingDeletedStatus(Optional<Booth> booth) {

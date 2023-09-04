@@ -1,11 +1,14 @@
 package com.festival.domain.bambooforest.controller;
 
 import com.festival.common.base.OperateStatus;
+import com.festival.domain.bambooforest.dto.BamBooForestPageRes;
 import com.festival.domain.bambooforest.dto.BamBooForestReq;
 import com.festival.domain.bambooforest.model.BamBooForest;
 import com.festival.domain.bambooforest.repository.BamBooForestRepository;
 import com.festival.domain.member.model.Member;
+import com.festival.domain.program.dto.ProgramRes;
 import com.festival.domain.util.ControllerTestSupport;
+import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,12 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 
 import static com.festival.domain.member.model.MemberRole.ADMIN;
 import static com.festival.domain.member.model.MemberRole.MANAGER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -142,7 +147,7 @@ class BambooForestIntegrationTest extends ControllerTestSupport {
         String status = "OPERATE";
         Pageable pageable = PageRequest.of(0, 10);
 
-        mockMvc.perform(
+        MvcResult mvcResult = mockMvc.perform(
                         get("/api/v2/bambooforest/list")
                                 .contentType(APPLICATION_FORM_URLENCODED)
                                 .param("status", status)
@@ -152,7 +157,27 @@ class BambooForestIntegrationTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(jsonPath("$.content", hasSize(10)));
+                .andReturn();
+
+        BamBooForestPageRes bamBooForestPageRes = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), BamBooForestPageRes.class);
+        assertThat(bamBooForestPageRes.getForestResList()).hasSize(10)
+                .extracting("id", "content")
+                .containsExactlyInAnyOrder(
+                        tuple(bamBooForests.get(0).getId(), "bamboo1"),
+                        tuple(bamBooForests.get(1).getId(), "bamboo2"),
+                        tuple(bamBooForests.get(2).getId(), "bamboo3"),
+                        tuple(bamBooForests.get(3).getId(), "bamboo4"),
+                        tuple(bamBooForests.get(4).getId(), "bamboo5"),
+                        tuple(bamBooForests.get(5).getId(), "bamboo6"),
+                        tuple(bamBooForests.get(6).getId(), "bamboo7"),
+                        tuple(bamBooForests.get(7).getId(), "bamboo8"),
+                        tuple(bamBooForests.get(8).getId(), "bamboo9"),
+                        tuple(bamBooForests.get(9).getId(), "bamboo10")
+                );
+
+                assertThat(bamBooForestPageRes).isNotNull()
+                        .extracting("totalCount", "totalPage", "pageNumber", "pageSize")
+                        .contains(11L, 2, 0, 10);
     }
 
     private static BamBooForestReq createBamBooForestReq(String bambooForestContent, String mail, String operate) {

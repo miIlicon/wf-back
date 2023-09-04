@@ -1,16 +1,17 @@
 package com.festival.domain.program.repository;
 
-
+import com.festival.domain.program.dto.ProgramPageRes;
 import com.festival.domain.program.model.Program;
 import com.festival.domain.program.service.vo.ProgramSearchCond;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
-import static com.festival.domain.booth.model.QBooth.booth;
 import static com.festival.domain.program.model.QProgram.program;
 
 public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
@@ -30,16 +31,27 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
     }
 
     @Override
-    public List<Program> getList(ProgramSearchCond programSearchCond, Pageable pageable) {
-        return queryFactory
+    public ProgramPageRes getList(ProgramSearchCond programSearchCond) {
+        List<Program> result = queryFactory
                 .selectFrom(program)
                 .join(program.image).fetchJoin()
                 .where(
                         StatusEq(programSearchCond.getStatus()),
                         TypeEq(programSearchCond.getType())
                 )
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .offset(programSearchCond.getPageable().getOffset())
+                .limit(programSearchCond.getPageable().getPageSize())
                 .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory
+                .select(program.count())
+                .from(program)
+                .where(
+                        StatusEq(programSearchCond.getStatus()),
+                        TypeEq(programSearchCond.getType())
+                );
+
+        Page<Program> page = PageableExecutionUtils.getPage(result, programSearchCond.getPageable(), countQuery::fetchOne);
+        return ProgramPageRes.of(page);
     }
 }

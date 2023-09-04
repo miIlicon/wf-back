@@ -1,10 +1,8 @@
 package com.festival.domain.guide.repository;
 
-import com.festival.domain.guide.model.Guide;
-import org.springframework.data.domain.Pageable;
-
-import java.util.List;
+import com.festival.domain.guide.dto.GuidePageRes;
+import com.festival.domain.guide.repository.vo.GuideSearchCond;
 
 public interface GuideRepositoryCustom {
-    List<Guide> getList(String status, Pageable pageable);
+    GuidePageRes getList(GuideSearchCond guideSearchCond);
 }

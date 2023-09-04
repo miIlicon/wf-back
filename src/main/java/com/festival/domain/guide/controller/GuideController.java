@@ -1,6 +1,7 @@
 package com.festival.domain.guide.controller;
 
 import com.festival.common.util.ValidationUtils;
+import com.festival.domain.guide.dto.GuidePageRes;
 import com.festival.domain.guide.dto.GuideReq;
 import com.festival.domain.guide.dto.GuideRes;
 import com.festival.domain.guide.service.GuideService;
@@ -28,8 +29,7 @@ public class GuideController {
         if (!validationUtils.isGuideValid(guideReq)) {
             throw new Exception();
         }
-        Long id = guideService.createGuide(guideReq);
-        return ResponseEntity.ok().body(id);
+        return ResponseEntity.ok().body(guideService.createGuide(guideReq));
     }
 
     @PreAuthorize("hasAuthority({'ADMIN'})")
@@ -56,7 +56,7 @@ public class GuideController {
 
     @PreAuthorize("permitAll()")
     @GetMapping("/list")
-    public ResponseEntity<List<GuideRes>> getGuideList(@NotNull(message = "상태값을 입력해주세요") String status, Pageable pageable) {
+    public ResponseEntity<GuidePageRes> getGuideList(@NotNull(message = "상태값을 입력해주세요") String status, Pageable pageable) {
         return ResponseEntity.ok().body(guideService.getGuideList(status, pageable));
     }
 }

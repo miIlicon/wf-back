@@ -1,18 +1,20 @@
 package com.festival.domain.bambooforest.dto;
 
-import com.querydsl.core.annotations.QueryProjection;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.festival.domain.bambooforest.model.BamBooForest;
+import lombok.*;
 
 @Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class BamBooForestRes {
+
     private Long id;
     private String content;
 
-    @QueryProjection
-    public BamBooForestRes(Long id, String content) {
-        this.id = id;
-        this.content = content;
+    public static BamBooForestRes of(BamBooForest bamBooForest){
+        return BamBooForestRes.builder()
+                .id(bamBooForest.getId())
+                .content(bamBooForest.getContent()).build();
     }
 }

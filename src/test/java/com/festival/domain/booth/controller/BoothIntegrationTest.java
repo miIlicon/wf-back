@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.NotFoundException;
+import com.festival.domain.bambooforest.dto.BamBooForestPageRes;
+import com.festival.domain.booth.controller.dto.BoothPageRes;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.booth.controller.dto.BoothRes;
 import com.festival.domain.booth.model.Booth;
@@ -429,9 +431,8 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 .andReturn();
 
         //then
-        String content = mvcResult.getResponse().getContentAsString();
-        List<BoothRes> boothResList = objectMapper.readValue(content, objectMapper.getTypeFactory().constructCollectionType(List.class, BoothRes.class));
-        assertThat(boothResList).hasSize(6)
+        BoothPageRes boothPageRes = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), BoothPageRes.class);
+        assertThat(boothPageRes.getBoothResList()).hasSize(6)
                 .extracting("title", "content", "type", "status")
                 .containsExactlyInAnyOrder(
                         tuple("testTitle1", "testContent1", "FOOD_TRUCK", "OPERATE"),
@@ -441,6 +442,10 @@ class BoothIntegrationTest extends ControllerTestSupport {
                         tuple("testTitle5", "testContent5", "FOOD_TRUCK", "OPERATE"),
                         tuple("testTitle6", "testContent6", "FOOD_TRUCK", "OPERATE")
                 );
+
+        assertThat(boothPageRes).isNotNull()
+                .extracting("totalCount", "totalPage", "pageNumber", "pageSize")
+                .contains(7L, 2, 0, 6);
     }
 
     private Booth createBoothEntity(int count) throws IOException {

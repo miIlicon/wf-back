@@ -10,6 +10,7 @@ import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.member.service.MemberService;
 import com.festival.domain.program.dto.ProgramListReq;
+import com.festival.domain.program.dto.ProgramPageRes;
 import com.festival.domain.program.dto.ProgramReq;
 import com.festival.domain.program.dto.ProgramRes;
 import com.festival.domain.program.model.Program;
@@ -49,7 +50,6 @@ public class ProgramService {
     public Long updateProgram(Long programId, ProgramReq programReq) {
         Program program = checkingDeletedStatus(programRepository.findById(programId));
 
-        Member findMember = memberService.getAuthenticationMember();
         if (!SecurityUtils.checkingRole(program.getMember(), memberService.getAuthenticationMember())) {
             throw new ForbiddenException(FORBIDDEN_UPDATE);
         }
@@ -63,7 +63,6 @@ public class ProgramService {
     public void deleteProgram(Long programId) {
         Program program = checkingDeletedStatus(programRepository.findById(programId));
 
-        Member findMember = memberService.getAuthenticationMember();
         if (!SecurityUtils.checkingRole(program.getMember(), memberService.getAuthenticationMember())) {
             throw new ForbiddenException(ErrorCode.FORBIDDEN_DELETE);
         }
@@ -76,21 +75,20 @@ public class ProgramService {
         return ProgramRes.of(program);
     }
 
-    public List<ProgramRes> getProgramList(ProgramListReq programListReqDto, Pageable pageable) {
-        ProgramSearchCond programSearchCond = ProgramSearchCond.builder()
+    public ProgramPageRes getProgramList(ProgramListReq programListReqDto, Pageable pageable) {
+        return programRepository.getList(
+                ProgramSearchCond.builder()
                 .status(programListReqDto.getStatus())
                 .type(programListReqDto.getType())
-                .build();
-        List<Program> programList = programRepository.getList(programSearchCond, pageable);
-        return programList.stream().map(ProgramRes::of).collect(Collectors.toList());
+                .pageable(pageable)
+                .build()
+        );
     }
 
     private Program checkingDeletedStatus(Optional<Program> program) {
         if (program.isEmpty()) {
             throw new NotFoundException(NOT_FOUND_PROGRAM);
         }
-        OperateStatus status = program.get().getStatus();
-
         if (program.get().getStatus() == OperateStatus.TERMINATE) {
             throw new AlreadyDeleteException(ALREADY_DELETED);
         }

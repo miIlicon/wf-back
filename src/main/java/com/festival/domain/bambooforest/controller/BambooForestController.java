@@ -1,13 +1,12 @@
 package com.festival.domain.bambooforest.controller;
 
 import com.festival.common.util.ValidationUtils;
+import com.festival.domain.bambooforest.dto.BamBooForestPageRes;
 import com.festival.domain.bambooforest.dto.BamBooForestReq;
-import com.festival.domain.bambooforest.dto.BamBooForestRes;
 import com.festival.domain.bambooforest.service.BamBooForestService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,7 +38,7 @@ public class BambooForestController {
 
     @PreAuthorize("permitAll()")
     @GetMapping("/list")
-    public ResponseEntity<Page<BamBooForestRes>> getBamBooForestList(@NotNull(message = "상태값을 입력해주세요.") String status, Pageable pageable) {
+    public ResponseEntity<BamBooForestPageRes> getBamBooForestList(@NotNull(message = "상태값을 입력해주세요.") String status, Pageable pageable) {
         return ResponseEntity.ok().body(bambooForestService.getBamBooForestList(status, pageable));
     }
 }

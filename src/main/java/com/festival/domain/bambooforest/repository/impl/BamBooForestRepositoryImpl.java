@@ -1,7 +1,7 @@
 package com.festival.domain.bambooforest.repository.impl;
 
-import com.festival.domain.bambooforest.dto.BamBooForestRes;
-import com.festival.domain.bambooforest.dto.QBamBooForestRes;
+import com.festival.domain.bambooforest.dto.BamBooForestPageRes;
+import com.festival.domain.bambooforest.model.BamBooForest;
 import com.festival.domain.bambooforest.repository.BamBooForestRepositoryCustom;
 import com.festival.domain.bambooforest.service.vo.BamBooForestSearchCond;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -24,13 +24,9 @@ public class BamBooForestRepositoryImpl implements BamBooForestRepositoryCustom 
     }
 
     @Override
-    public Page<BamBooForestRes> getList(BamBooForestSearchCond bamBooForestSearchCond) {
-        List<BamBooForestRes> result = queryFactory
-                .select(new QBamBooForestRes(
-                        bamBooForest.id,
-                        bamBooForest.content
-                ))
-                .from(bamBooForest)
+    public BamBooForestPageRes getList(BamBooForestSearchCond bamBooForestSearchCond) {
+        List<BamBooForest> result = queryFactory
+                .selectFrom(bamBooForest)
                 .where(
                         statusEq(bamBooForestSearchCond.getStatus())
                 )
@@ -44,8 +40,8 @@ public class BamBooForestRepositoryImpl implements BamBooForestRepositoryCustom 
                 .where(
                         statusEq(bamBooForestSearchCond.getStatus())
                 );
-
-        return PageableExecutionUtils.getPage(result, bamBooForestSearchCond.getPageable(), countQuery::fetchOne);
+        Page<BamBooForest> page = PageableExecutionUtils.getPage(result, bamBooForestSearchCond.getPageable(), countQuery::fetchOne);
+        return BamBooForestPageRes.of(page);
     }
 
     private static BooleanExpression statusEq(String status) {

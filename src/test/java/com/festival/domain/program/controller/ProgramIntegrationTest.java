@@ -3,8 +3,10 @@ package com.festival.domain.program.controller;
 import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.NotFoundException;
+import com.festival.domain.guide.dto.GuidePageRes;
 import com.festival.domain.image.model.Image;
 import com.festival.domain.member.model.Member;
+import com.festival.domain.program.dto.ProgramPageRes;
 import com.festival.domain.program.dto.ProgramReq;
 import com.festival.domain.program.dto.ProgramRes;
 import com.festival.domain.program.model.Program;
@@ -408,8 +410,8 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .andReturn();
 
         //then
-        List<ProgramRes> programResList = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), objectMapper.getTypeFactory().constructCollectionType(List.class, ProgramRes.class));
-        assertThat(programResList).hasSize(6)
+        ProgramPageRes programPageRes = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ProgramPageRes.class);
+        assertThat(programPageRes.getProgramList()).hasSize(6)
                 .extracting("title", "subTitle", "content", "latitude", "longitude", "status", "type")
                 .containsExactly(
                         tuple(programReq.getTitle(), programReq.getSubTitle(),
@@ -437,6 +439,10 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                                 programReq.getLatitude(), programReq.getLongitude(),
                                 programReq.getStatus(), programReq.getType())
                 );
+
+        assertThat(programPageRes).isNotNull()
+                .extracting("totalCount", "totalPage", "pageNumber", "pageSize")
+                .contains(7L, 2, 0, 6);
     }
 
     private static MockHttpServletRequestBuilder makeMultiPartRequest(Program savedProgram, MockMultipartFile mainFile, List<MockMultipartFile> subFiles) {
