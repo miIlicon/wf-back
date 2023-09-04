@@ -126,10 +126,10 @@ class BambooForestIntegrationTest extends ControllerTestSupport {
         BamBooForest bamBooForest5 = BamBooForest.of(request5);
         BamBooForest bamBooForest6 = BamBooForest.of(request6);
         BamBooForest bamBooForest7 = BamBooForest.of(request7);
-        BamBooForest bamBooForest8 = BamBooForest.of(request7);
-        BamBooForest bamBooForest9 = BamBooForest.of(request7);
-        BamBooForest bamBooForest10 = BamBooForest.of(request7);
-        BamBooForest bamBooForest11 = BamBooForest.of(request7);
+        BamBooForest bamBooForest8 = BamBooForest.of(request8);
+        BamBooForest bamBooForest9 = BamBooForest.of(request9);
+        BamBooForest bamBooForest10 = BamBooForest.of(request10);
+        BamBooForest bamBooForest11 = BamBooForest.of(request11);
 
         List<BamBooForest> bamBooForests = bamBooForestRepository.saveAllAndFlush(List.of(
                 bamBooForest1, bamBooForest2, bamBooForest3,
