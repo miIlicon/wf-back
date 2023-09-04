@@ -46,7 +46,6 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
         JPAQuery<Long> countQuery = queryFactory
                 .select(program.count())
                 .from(program)
-                .join(program.image).fetchJoin()
                 .where(
                         StatusEq(programSearchCond.getStatus()),
                         TypeEq(programSearchCond.getType())

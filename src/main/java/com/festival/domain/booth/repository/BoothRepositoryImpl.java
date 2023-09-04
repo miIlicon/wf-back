@@ -1,7 +1,5 @@
 package com.festival.domain.booth.repository;
 
-import com.festival.domain.bambooforest.dto.BamBooForestPageRes;
-import com.festival.domain.bambooforest.model.BamBooForest;
 import com.festival.domain.booth.controller.dto.BoothPageRes;
 import com.festival.domain.booth.model.Booth;
 import com.festival.domain.booth.model.BoothType;
@@ -11,14 +9,11 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
-import static com.festival.domain.bambooforest.model.QBamBooForest.bamBooForest;
 import static com.festival.domain.booth.model.QBooth.booth;
-
 
 public class BoothRepositoryImpl implements BoothRepositoryCustom {
 
@@ -29,7 +24,8 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
     }
 
     public BoothPageRes getList(BoothListSearchCond boothListSearchCond) {
-        List<Booth> result = queryFactory.selectFrom(booth)
+        List<Booth> result = queryFactory
+                .selectFrom(booth)
                 .join(booth.image).fetchJoin()
                 .where(
                         eqStatus(boothListSearchCond.getStatus()),
@@ -40,13 +36,14 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory
-                .select(bamBooForest.count())
-                .from(bamBooForest)
+                .select(booth.count())
+                .from(booth)
                 .where(
-                        statusEq(boothListSearchCond.getStatus())
+                        eqStatus(boothListSearchCond.getStatus()),
+                        eqType(boothListSearchCond.getType())
                 );
-        Page<Booth> page = PageableExecutionUtils.getPage(result, boothListSearchCond.getPageable(), countQuery::fetchOne);
 
+        Page<Booth> page = PageableExecutionUtils.getPage(result, boothListSearchCond.getPageable(), countQuery::fetchOne);
         return BoothPageRes.of(page);
     }
 
