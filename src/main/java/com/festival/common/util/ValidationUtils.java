@@ -1,5 +1,7 @@
 package com.festival.common.util;
 
+import com.festival.common.exception.ErrorCode;
+import com.festival.common.exception.custom_exception.InvalidException;
 import com.festival.domain.bambooforest.dto.BamBooForestReq;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.guide.dto.GuideReq;
@@ -32,7 +34,7 @@ public class ValidationUtils {
 
     public void checkNumberRange(double number, double min, double max) throws Exception {
         if (min > number || max < number) {
-            throw new Exception("[" + number + "] 의 사이즈가 올바르지 않습니다.");
+            throw new InvalidException(ErrorCode.INVALID_RANGE);
         }
     }
 
@@ -50,10 +52,15 @@ public class ValidationUtils {
         }
     }
 
-    public void checkItemPattern(String item, String itemPattern) throws Exception {
+    private void checkItemPattern(String item, String itemPattern) {
         Pattern pattern = Pattern.compile(itemPattern);
         if (!pattern.matcher(item).matches()) {
-            throw new Exception("[" + item + "] 은 유효하지 않은 값입니다.");
+            switch (itemPattern) {
+                case EMAIL_REGEX:
+                    throw new InvalidException(ErrorCode.INVALID_DATE);
+                case DATE_PATTERN:
+                    throw new InvalidException(ErrorCode.INVALID_EMAIL);
+            }
         }
     }
 
