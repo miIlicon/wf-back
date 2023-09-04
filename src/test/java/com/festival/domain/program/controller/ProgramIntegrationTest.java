@@ -35,14 +35,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class ProgramControllerTest extends ControllerTestSupport {
+class ProgramIntegrationTest extends ControllerTestSupport {
 
     @Autowired
     private ProgramRepository programRepository;
 
     private Member member;
-
-    private Member differentMember;
 
     @BeforeEach
     void setUp() {
@@ -53,7 +51,7 @@ class ProgramControllerTest extends ControllerTestSupport {
                 .build();
         memberRepository.saveAndFlush(member);
 
-        differentMember = Member.builder()
+        Member differentMember = Member.builder()
                 .username("differentUser")
                 .password("12345")
                 .memberRole(MANAGER)
@@ -343,7 +341,7 @@ class ProgramControllerTest extends ControllerTestSupport {
                         programReq.getStatus(), programReq.getType());
     }
 
-    @DisplayName("프로그램 게시물을 목록조회한다. (페이징)")
+    @DisplayName("프로그램 게시물을 목록조회한다. 페이지당 게시물은 6개이다.")
     @Test
     void getProgramList() throws Exception {
         //given
@@ -384,10 +382,20 @@ class ProgramControllerTest extends ControllerTestSupport {
         Program program5 = Program.of(programReq);
         program5.connectMember(member);
         program5.setImage(image);
-        programRepository.saveAll(List.of(program1, program2, program3, program4, program5));
+
+        Program program6 = Program.of(programReq);
+        program6.connectMember(member);
+        program6.setImage(image);
+
+        Program program7 = Program.of(programReq);
+        program7.connectMember(member);
+        program7.setImage(image);
+
+        programRepository.saveAll(List.of(program1, program2, program3, program4, program5,
+                program6, program7));
 
         //when
-        Pageable pageable = PageRequest.of(0, 3);
+        Pageable pageable = PageRequest.of(0, 6);
         MvcResult mvcResult = mockMvc.perform(
                         get("/api/v2/program/list")
                                 .param("status", "OPERATE")
@@ -401,9 +409,21 @@ class ProgramControllerTest extends ControllerTestSupport {
 
         //then
         List<ProgramRes> programResList = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), objectMapper.getTypeFactory().constructCollectionType(List.class, ProgramRes.class));
-        assertThat(programResList).hasSize(3)
+        assertThat(programResList).hasSize(6)
                 .extracting("title", "subTitle", "content", "latitude", "longitude", "status", "type")
                 .containsExactly(
+                        tuple(programReq.getTitle(), programReq.getSubTitle(),
+                                programReq.getContent(),
+                                programReq.getLatitude(), programReq.getLongitude(),
+                                programReq.getStatus(), programReq.getType()),
+                        tuple(programReq.getTitle(), programReq.getSubTitle(),
+                                programReq.getContent(),
+                                programReq.getLatitude(), programReq.getLongitude(),
+                                programReq.getStatus(), programReq.getType()),
+                        tuple(programReq.getTitle(), programReq.getSubTitle(),
+                                programReq.getContent(),
+                                programReq.getLatitude(), programReq.getLongitude(),
+                                programReq.getStatus(), programReq.getType()),
                         tuple(programReq.getTitle(), programReq.getSubTitle(),
                                 programReq.getContent(),
                                 programReq.getLatitude(), programReq.getLongitude(),

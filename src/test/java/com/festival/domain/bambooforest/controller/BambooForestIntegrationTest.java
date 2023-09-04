@@ -26,14 +26,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class BambooForestControllerTest extends ControllerTestSupport {
+class BambooForestIntegrationTest extends ControllerTestSupport {
 
     @Autowired
     private BamBooForestRepository bamBooForestRepository;
 
     private Member member;
-
-    private Member differentMember;
 
     @BeforeEach
     void setUp() {
@@ -44,7 +42,7 @@ class BambooForestControllerTest extends ControllerTestSupport {
                 .build();
         memberRepository.saveAndFlush(member);
 
-        differentMember = Member.builder()
+        Member differentMember = Member.builder()
                 .username("differentUser")
                 .password("12345")
                 .memberRole(MANAGER)
@@ -105,13 +103,10 @@ class BambooForestControllerTest extends ControllerTestSupport {
                 .andExpect(status().isNotFound());
     }
 
-    @DisplayName("대나무숲의 게시물은 10개씩 표시된다. 데이터는 페이지 처리된다. 테스트 시에는 5개의 데이터를 생성하여 테스트한다.")
+    @DisplayName("대나무숲의 게시물은 10개씩 표시된다. 데이터는 페이지 처리된다.")
     @Test
     void getListBamBooForest() throws Exception {
         //given
-        String status = "OPERATE";
-        Pageable pageable = PageRequest.of(0, 5);
-
         BamBooForestReq request1 = createBamBooForestReq("bamboo1", "festival1@email.com", "OPERATE");
         BamBooForestReq request2 = createBamBooForestReq("bamboo2", "festival2@email.com", "OPERATE");
         BamBooForestReq request3 = createBamBooForestReq("bamboo3", "festival3@email.com", "OPERATE");
@@ -119,6 +114,10 @@ class BambooForestControllerTest extends ControllerTestSupport {
         BamBooForestReq request5 = createBamBooForestReq("bamboo5", "festival5@email.com", "OPERATE");
         BamBooForestReq request6 = createBamBooForestReq("bamboo6", "festival6@email.com", "OPERATE");
         BamBooForestReq request7 = createBamBooForestReq("bamboo7", "festival7@email.com", "OPERATE");
+        BamBooForestReq request8 = createBamBooForestReq("bamboo8", "festival8@email.com", "OPERATE");
+        BamBooForestReq request9 = createBamBooForestReq("bamboo9", "festival9@email.com", "OPERATE");
+        BamBooForestReq request10 = createBamBooForestReq("bamboo10", "festival10@email.com", "OPERATE");
+        BamBooForestReq request11 = createBamBooForestReq("bamboo11", "festival11@email.com", "OPERATE");
 
         BamBooForest bamBooForest1 = BamBooForest.of(request1);
         BamBooForest bamBooForest2 = BamBooForest.of(request2);
@@ -127,13 +126,22 @@ class BambooForestControllerTest extends ControllerTestSupport {
         BamBooForest bamBooForest5 = BamBooForest.of(request5);
         BamBooForest bamBooForest6 = BamBooForest.of(request6);
         BamBooForest bamBooForest7 = BamBooForest.of(request7);
+        BamBooForest bamBooForest8 = BamBooForest.of(request8);
+        BamBooForest bamBooForest9 = BamBooForest.of(request9);
+        BamBooForest bamBooForest10 = BamBooForest.of(request10);
+        BamBooForest bamBooForest11 = BamBooForest.of(request11);
 
         List<BamBooForest> bamBooForests = bamBooForestRepository.saveAllAndFlush(List.of(
-                bamBooForest1, bamBooForest2, bamBooForest3
-                , bamBooForest4, bamBooForest5, bamBooForest6, bamBooForest7)
-        );
+                bamBooForest1, bamBooForest2, bamBooForest3,
+                bamBooForest4, bamBooForest5, bamBooForest6,
+                bamBooForest7, bamBooForest8, bamBooForest9,
+                bamBooForest10, bamBooForest11
+        ));
 
         //when //then
+        String status = "OPERATE";
+        Pageable pageable = PageRequest.of(0, 10);
+
         mockMvc.perform(
                         get("/api/v2/bambooforest/list")
                                 .contentType(APPLICATION_FORM_URLENCODED)
@@ -144,7 +152,7 @@ class BambooForestControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(jsonPath("$.content", hasSize(5)));;
+                .andExpect(jsonPath("$.content", hasSize(10)));
     }
 
     private static BamBooForestReq createBamBooForestReq(String bambooForestContent, String mail, String operate) {

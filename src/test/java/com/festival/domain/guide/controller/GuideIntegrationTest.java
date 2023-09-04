@@ -35,14 +35,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class GuideControllerTest extends ControllerTestSupport {
+class GuideIntegrationTest extends ControllerTestSupport {
 
     @Autowired
     private GuideRepository guideRepository;
 
     private Member member;
-
-    private Member differentMember;
 
     @BeforeEach
     void setUp() {
@@ -53,7 +51,7 @@ class GuideControllerTest extends ControllerTestSupport {
                 .build();
         memberRepository.saveAndFlush(member);
 
-        differentMember = Member.builder()
+        Member differentMember = Member.builder()
                 .username("differentUser")
                 .password("12345")
                 .memberRole(MANAGER)
@@ -322,12 +320,12 @@ class GuideControllerTest extends ControllerTestSupport {
         );
     }
 
-    @DisplayName("안내사항 목록을 가져온다. 목록은 페이징으로 10개씩 처리된다. 테스트 환경에서는 5개의 데이터를 페이징하여 테스트한다.")
+    @DisplayName("안내사항 목록을 가져온다. 목록은 페이징으로 10개씩 처리된다.")
     @Test
     void getListGuide() throws Exception {
         //given
         String status = "OPERATE";
-        Pageable pageable = PageRequest.of(0, 5);
+        Pageable pageable = PageRequest.of(0, 10);
 
         Guide guide1 = createGuideEntity("title1", "content1", "NOTICE", "OPERATE");
         guide1.setImage(ImageFixture.IMAGE);
@@ -345,8 +343,16 @@ class GuideControllerTest extends ControllerTestSupport {
         guide7.setImage(ImageFixture.IMAGE);
         Guide guide8 = createGuideEntity("title8", "content8", "NOTICE", "OPERATE");
         guide8.setImage(ImageFixture.IMAGE);
+        Guide guide9 = createGuideEntity("title9", "content9", "NOTICE", "OPERATE");
+        guide9.setImage(ImageFixture.IMAGE);
+        Guide guide10 = createGuideEntity("title10", "content10", "NOTICE", "OPERATE");
+        guide10.setImage(ImageFixture.IMAGE);
+        Guide guide11 = createGuideEntity("title11", "content11", "NOTICE", "OPERATE");
+        guide11.setImage(ImageFixture.IMAGE);
 
-        List<Guide> guides = guideRepository.saveAllAndFlush(List.of(guide1, guide2, guide3, guide4, guide5, guide6, guide7, guide8));
+        List<Guide> guides = guideRepository.saveAllAndFlush(List.of(
+                guide1, guide2, guide3, guide4, guide5, guide6, guide7, guide8,
+                guide9, guide10, guide11));
 
         //when
         MvcResult mvcResult = mockMvc.perform(
@@ -364,14 +370,19 @@ class GuideControllerTest extends ControllerTestSupport {
         //then
         String content = mvcResult.getResponse().getContentAsString();
         List<GuideRes> guideResList = objectMapper.readValue(content, objectMapper.getTypeFactory().constructCollectionType(List.class, GuideRes.class));
-        assertThat(guideResList).hasSize(5)
+        assertThat(guideResList).hasSize(10)
                 .extracting("title", "content", "type")
                 .containsExactlyInAnyOrder(
                         tuple("title1", "content1", "NOTICE"),
                         tuple("title2", "content2", "NOTICE"),
                         tuple("title3", "content3", "NOTICE"),
                         tuple("title4", "content4", "NOTICE"),
-                        tuple("title5", "content5", "NOTICE")
+                        tuple("title5", "content5", "NOTICE"),
+                        tuple("title6", "content6", "NOTICE"),
+                        tuple("title7", "content7", "NOTICE"),
+                        tuple("title8", "content8", "NOTICE"),
+                        tuple("title9", "content9", "NOTICE"),
+                        tuple("title10", "content10", "NOTICE")
                 );
     }
 
