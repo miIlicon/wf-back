@@ -4,7 +4,6 @@ import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.domain.member.model.Member;
-import com.festival.domain.program.dto.ProgramRes;
 import com.festival.domain.timetable.dto.TimeTableReq;
 import com.festival.domain.timetable.dto.TimeTableRes;
 import com.festival.domain.timetable.model.TimeTable;
@@ -29,14 +28,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class TimeTableControllerTest extends ControllerTestSupport {
+class TimeTableIntegrationTest extends ControllerTestSupport {
 
     @Autowired
     private TimeTableRepository timeTableRepository;
 
     private Member member;
-
-    private Member differentMember;
 
     @BeforeEach
     void setUp() {
@@ -47,7 +44,7 @@ class TimeTableControllerTest extends ControllerTestSupport {
                 .build();
         memberRepository.saveAndFlush(member);
 
-        differentMember = Member.builder()
+        Member differentMember = Member.builder()
                 .username("differentUser")
                 .password("12345")
                 .memberRole(MANAGER)
@@ -220,7 +217,7 @@ class TimeTableControllerTest extends ControllerTestSupport {
                 .andExpect(status().isNotFound());
     }
 
-    @DisplayName("시간표 객체를 목록조회한다. (페이징)")
+    @DisplayName("시간표 객체를 목록조회한다.")
     @Test
     void getTimeTableList() throws Exception {
         //given

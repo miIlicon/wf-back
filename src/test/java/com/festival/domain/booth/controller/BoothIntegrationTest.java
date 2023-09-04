@@ -9,12 +9,10 @@ import com.festival.domain.booth.controller.dto.BoothRes;
 import com.festival.domain.booth.model.Booth;
 import com.festival.domain.booth.model.BoothType;
 import com.festival.domain.booth.repository.BoothRepository;
-import com.festival.domain.guide.dto.GuideRes;
 import com.festival.domain.image.model.Image;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.util.ControllerTestSupport;
 import com.festival.domain.util.TestImageUtils;
-import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,14 +38,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class BoothControllerTest extends ControllerTestSupport {
+class BoothIntegrationTest extends ControllerTestSupport {
 
     @Autowired
     private BoothRepository boothRepository;
 
     private Member member;
-
-    private Member differentMember;
 
     @BeforeEach
     void setUp() {
@@ -58,7 +54,7 @@ class BoothControllerTest extends ControllerTestSupport {
                 .build();
         memberRepository.saveAndFlush(member);
 
-        differentMember = Member.builder()
+        Member differentMember = Member.builder()
                 .username("differentUser")
                 .password("12345")
                 .memberRole(MANAGER)
@@ -405,7 +401,7 @@ class BoothControllerTest extends ControllerTestSupport {
                 .andExpect(status().isNotFound());
     }
 
-    @DisplayName("축제부스 게시물을 목록조회한다. (페이징)")
+    @DisplayName("축제부스 게시물을 목록조회한다. 페이지당 게시물은 6개이다.")
     @Test
     void getBoothList() throws Exception {
         //given
@@ -414,10 +410,12 @@ class BoothControllerTest extends ControllerTestSupport {
         createBoothEntity(3);
         createBoothEntity(4);
         createBoothEntity(5);
-
-        Pageable pageable = PageRequest.of(0, 5);
+        createBoothEntity(6);
+        createBoothEntity(7);
 
         //when
+        Pageable pageable = PageRequest.of(0, 6);
+
         MvcResult mvcResult = mockMvc.perform(
                         get("/api/v2/booth/list")
                                 .param("status", "OPERATE")
@@ -433,14 +431,15 @@ class BoothControllerTest extends ControllerTestSupport {
         //then
         String content = mvcResult.getResponse().getContentAsString();
         List<BoothRes> boothResList = objectMapper.readValue(content, objectMapper.getTypeFactory().constructCollectionType(List.class, BoothRes.class));
-        assertThat(boothResList).hasSize(5)
+        assertThat(boothResList).hasSize(6)
                 .extracting("title", "content", "type", "status")
                 .containsExactlyInAnyOrder(
                         tuple("testTitle1", "testContent1", "FOOD_TRUCK", "OPERATE"),
                         tuple("testTitle2", "testContent2", "FOOD_TRUCK", "OPERATE"),
                         tuple("testTitle3", "testContent3", "FOOD_TRUCK", "OPERATE"),
                         tuple("testTitle4", "testContent4", "FOOD_TRUCK", "OPERATE"),
-                        tuple("testTitle5", "testContent5", "FOOD_TRUCK", "OPERATE")
+                        tuple("testTitle5", "testContent5", "FOOD_TRUCK", "OPERATE"),
+                        tuple("testTitle6", "testContent6", "FOOD_TRUCK", "OPERATE")
                 );
     }
 
