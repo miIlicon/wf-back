@@ -4,6 +4,7 @@ import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
+import com.festival.common.redis.RedisService;
 import com.festival.common.util.SecurityUtils;
 import com.festival.domain.guide.dto.GuidePageRes;
 import com.festival.domain.guide.dto.GuideReq;
@@ -37,7 +38,7 @@ public class GuideService {
     private final MemberService memberService;
     private final ImageService imageService;
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisService redisService;
 
     @Transactional
     public Long createGuide(GuideReq guideReq) {
@@ -70,22 +71,12 @@ public class GuideService {
         guide.changeStatus(OperateStatus.TERMINATE);
     }
 
-    @Transactional
     public GuideRes getGuide(Long id, String ipAddress){
         Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_GUIDE));
-        if(!isDuplicateAccess(ipAddress, guide.getId())) {
-            guide.increaseViewCount();
+        if(!redisService.isDuplicateAccess(ipAddress, guide.getId())) {
+            redisService.increaseRedisViewCount("Guide_Id_" + guide.getId());
         }
         return GuideRes.of(guide);
-    }
-
-    private boolean isDuplicateAccess(String ipAddress, Long guideId) {
-        ValueOperations<String, Object> redisRepository = redisTemplate.opsForValue();
-        if(redisRepository.get(ipAddress + "_" + guideId) == null) {
-            redisRepository.set(ipAddress + "_" + guideId, "TRUE");
-            return false;
-        }
-        return true;
     }
 
     public GuidePageRes getGuideList(String status, Pageable pageable) {
