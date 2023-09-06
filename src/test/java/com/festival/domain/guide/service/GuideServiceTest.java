@@ -224,7 +224,7 @@ class GuideServiceTest {
         given(guideRepository.findById(1L))
                 .willReturn(Optional.of(guide));
         //when
-        GuideRes guideRes = guideService.getGuide(1L);
+        GuideRes guideRes = guideService.getGuide(1L, "");
 
         //then
         Assertions.assertThat(guideRes).usingRecursiveComparison()

@@ -15,6 +15,7 @@ import com.festival.domain.booth.repository.BoothRepository;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.service.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -68,7 +69,7 @@ public class BoothService {
     }
 
     @Transactional(readOnly = true)
-    public BoothRes getBooth(Long id) {
+    public BoothRes getBooth(Long id, String ip) {
         return BoothRes.of(boothRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BOOTH)));
     }
 

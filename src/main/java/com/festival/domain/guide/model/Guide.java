@@ -33,6 +33,9 @@ public class Guide extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Image image;
 
+    @Column(nullable = false)
+    private Long viewCount = 0L;
+
     @Builder
     private Guide(String title, String content, GuideType type, OperateStatus status) {
         this.title = title;
@@ -54,6 +57,14 @@ public class Guide extends BaseEntity {
         this.title = guideReq.getTitle();
         this.content = guideReq.getContent();
         this.type = settingType(guideReq.getType());
+    }
+
+    public void increaseViewCount() {
+        this.viewCount++;
+    }
+
+    public void decreaseViewCount() {
+        this.viewCount--;
     }
 
     public void setImage(Image image){

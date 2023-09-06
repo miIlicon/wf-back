@@ -6,6 +6,7 @@ import com.festival.domain.booth.controller.dto.BoothPageRes;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.booth.controller.dto.BoothRes;
 import com.festival.domain.booth.service.BoothService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -50,8 +51,8 @@ public class BoothController {
 
     @PreAuthorize("permitAll()")
     @GetMapping("/{boothId}")
-    public ResponseEntity<BoothRes> getBooth(@PathVariable("boothId") Long id) {
-        return ResponseEntity.ok().body(boothService.getBooth(id));
+    public ResponseEntity<BoothRes> getBooth(@PathVariable("boothId") Long id, HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok().body(boothService.getBooth(id, httpServletRequest.getHeader("X-Forwarded-For")));
     }
 
     @PreAuthorize("permitAll()")

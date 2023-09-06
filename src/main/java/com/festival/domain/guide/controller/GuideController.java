@@ -5,6 +5,7 @@ import com.festival.domain.guide.dto.GuidePageRes;
 import com.festival.domain.guide.dto.GuideReq;
 import com.festival.domain.guide.dto.GuideRes;
 import com.festival.domain.guide.service.GuideService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,8 +49,8 @@ public class GuideController {
 
     @PreAuthorize("permitAll()")
     @GetMapping("/{guideId}")
-    public ResponseEntity<GuideRes> getGuide(@PathVariable Long guideId) {
-        return ResponseEntity.ok().body(guideService.getGuide(guideId));
+    public ResponseEntity<GuideRes> getGuide(@PathVariable Long guideId, HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok().body(guideService.getGuide(guideId, httpServletRequest.getLocalAddr()));
     }
 
     @PreAuthorize("permitAll()")
