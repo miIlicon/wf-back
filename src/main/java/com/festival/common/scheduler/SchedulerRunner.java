@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import java.util.Set;
 
 @RequiredArgsConstructor
-@Slf4j
 @Component
 @EnableScheduling
 public class SchedulerRunner {
@@ -23,7 +22,6 @@ public class SchedulerRunner {
     @Scheduled(fixedDelay = 3600000)
     public void updateViewCount()
     {
-        log.info("updateViewCount");
         Set<String> keySet = redisService.getKeySet("*Id*");
         for(String key : keySet){
             String[] splitKey = key.split("_");
