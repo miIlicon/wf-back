@@ -59,12 +59,12 @@ public class Guide extends BaseEntity {
         this.type = settingType(guideReq.getType());
     }
 
-    public void increaseViewCount() {
-        this.viewCount++;
+    public void increaseViewCount(Long viewCount) {
+        this.viewCount += viewCount;
     }
 
-    public void decreaseViewCount() {
-        this.viewCount--;
+    public void decreaseViewCount(Long viewCount) {
+        this.viewCount -= viewCount;
     }
 
     public void setImage(Image image){

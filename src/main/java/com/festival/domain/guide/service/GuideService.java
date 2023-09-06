@@ -4,6 +4,7 @@ import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
+import com.festival.common.redis.RedisService;
 import com.festival.common.util.SecurityUtils;
 import com.festival.domain.guide.dto.GuidePageRes;
 import com.festival.domain.guide.dto.GuideReq;
@@ -12,18 +13,13 @@ import com.festival.domain.guide.model.Guide;
 import com.festival.domain.guide.repository.GuideRepository;
 import com.festival.domain.guide.repository.vo.GuideSearchCond;
 import com.festival.domain.image.service.ImageService;
-import com.festival.domain.member.model.Member;
 import com.festival.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.festival.common.exception.ErrorCode.*;
 
@@ -37,7 +33,7 @@ public class GuideService {
     private final MemberService memberService;
     private final ImageService imageService;
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisService redisService;
 
     @Transactional
     public Long createGuide(GuideReq guideReq) {
@@ -70,22 +66,12 @@ public class GuideService {
         guide.changeStatus(OperateStatus.TERMINATE);
     }
 
-    @Transactional
     public GuideRes getGuide(Long id, String ipAddress){
         Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_GUIDE));
-        if(!isDuplicateAccess(ipAddress, guide.getId())) {
-            guide.increaseViewCount();
+        if(!redisService.isDuplicateAccess(ipAddress, guide.getId())) {
+            redisService.increaseRedisViewCount("Guide_Id_" + guide.getId());
         }
         return GuideRes.of(guide);
-    }
-
-    private boolean isDuplicateAccess(String ipAddress, Long guideId) {
-        ValueOperations<String, Object> redisRepository = redisTemplate.opsForValue();
-        if(redisRepository.get(ipAddress + "_" + guideId) == null) {
-            redisRepository.set(ipAddress + "_" + guideId, "TRUE");
-            return false;
-        }
-        return true;
     }
 
     public GuidePageRes getGuideList(String status, Pageable pageable) {
@@ -94,6 +80,18 @@ public class GuideService {
                 .pageable(pageable)
                 .build();
         return guideRepository.getList(guideSearchCond);
+    }
+
+    @Transactional
+    public void increaseGuideViewCount(Long id, Long viewCount) {
+        Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_GUIDE));
+        guide.increaseViewCount(viewCount);
+    }
+
+    @Transactional
+    public void decreaseGuideViewCount(Long id, Long viewCount) {
+        Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_GUIDE));
+        guide.decreaseViewCount(viewCount);
     }
 
     private void settingImage(GuideReq guideReq, Guide guide) {
