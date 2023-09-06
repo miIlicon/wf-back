@@ -13,18 +13,13 @@ import com.festival.domain.guide.model.Guide;
 import com.festival.domain.guide.repository.GuideRepository;
 import com.festival.domain.guide.repository.vo.GuideSearchCond;
 import com.festival.domain.image.service.ImageService;
-import com.festival.domain.member.model.Member;
 import com.festival.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.festival.common.exception.ErrorCode.*;
 
@@ -85,6 +80,18 @@ public class GuideService {
                 .pageable(pageable)
                 .build();
         return guideRepository.getList(guideSearchCond);
+    }
+
+    @Transactional
+    public void increaseGuideViewCount(Long id, Long viewCount) {
+        Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_GUIDE));
+        guide.increaseViewCount(viewCount);
+    }
+
+    @Transactional
+    public void decreaseGuideViewCount(Long id, Long viewCount) {
+        Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_GUIDE));
+        guide.decreaseViewCount(viewCount);
     }
 
     private void settingImage(GuideReq guideReq, Guide guide) {
