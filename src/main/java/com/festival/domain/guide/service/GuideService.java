@@ -73,7 +73,19 @@ public class GuideService {
     @Transactional
     public GuideRes getGuide(Long id, String ipAddress){
         Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_GUIDE));
+        if(!isDuplicateAccess(ipAddress, guide.getId())) {
+            guide.increaseViewCount();
+        }
         return GuideRes.of(guide);
+    }
+
+    private boolean isDuplicateAccess(String ipAddress, Long guideId) {
+        ValueOperations<String, Object> redisRepository = redisTemplate.opsForValue();
+        if(redisRepository.get(ipAddress + "_" + guideId) == null) {
+            redisRepository.set(ipAddress + "_" + guideId, "TRUE");
+            return false;
+        }
+        return true;
     }
 
     public GuidePageRes getGuideList(String status, Pageable pageable) {
