@@ -255,7 +255,7 @@ class BoothServiceTest {
         given(boothRepository.findById(1L))
                 .willReturn(Optional.of(foodTruck));
         //when
-        BoothRes boothRes = boothService.getBooth(1L);
+        BoothRes boothRes = boothService.getBooth(1L, "");
 
         //then
         Assertions.assertThat(boothRes).usingRecursiveComparison()

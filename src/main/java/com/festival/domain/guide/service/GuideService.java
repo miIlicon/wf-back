@@ -16,6 +16,8 @@ import com.festival.domain.member.model.Member;
 import com.festival.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,8 @@ public class GuideService {
 
     private final MemberService memberService;
     private final ImageService imageService;
+
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Transactional
     public Long createGuide(GuideReq guideReq) {
@@ -66,7 +70,8 @@ public class GuideService {
         guide.changeStatus(OperateStatus.TERMINATE);
     }
 
-    public GuideRes getGuide(Long id){
+    @Transactional
+    public GuideRes getGuide(Long id, String ipAddress){
         Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_GUIDE));
         return GuideRes.of(guide);
     }
