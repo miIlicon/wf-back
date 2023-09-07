@@ -27,6 +27,49 @@ public class ValidationUtils {
     private static final String DATE_PATTERN =
             "^([0-9]{4})-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]:([0-5][0-9])$";
 
+    public void isGuideValid(GuideReq guide) {
+        checkStrLength(guide.getTitle(), 1, 20);
+        checkStrLength(guide.getContent(), 1, 300);
+        String[] typeList = {"NOTICE"};
+        checkTypeItem(typeList, guide.getType());
+        checkStatus(guide.getStatus());
+    }
+
+    public void isBoothValid(BoothReq booth) {
+        checkStrLength(booth.getTitle(), 1, 30);
+        checkStrLength(booth.getSubTitle(), 1, 50);
+        checkStrLength(booth.getContent(), 1, 300);
+        checkNumberRange(booth.getLatitude(), -90.0, 90.0);
+        checkNumberRange(booth.getLongitude(), -180, 180);
+        String[] typeList = {"FOOD_TRUCK", "FLEA_MARKET", "PUB"};
+        checkTypeItem(typeList, booth.getType());
+        checkStatus(booth.getStatus());
+    }
+
+    public void isProgramValid(ProgramReq program) {
+        checkStrLength(program.getTitle(), 1, 30);
+        checkStrLength(program.getSubTitle(), 1, 50);
+        checkStrLength(program.getContent(), 1, 300);
+        checkNumberRange(program.getLatitude(), -90.0, 90.0);
+        checkNumberRange(program.getLongitude(), -180, 180);
+        String[] typeList = {"EVENT", "GAME"};
+        checkTypeItem(typeList, program.getType());
+        checkStatus(program.getStatus());
+    }
+
+    public void isTimeTableValid(TimeTableReq timeTable) {
+        checkItemPattern(timeTable.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), DATE_PATTERN);
+        checkItemPattern(timeTable.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), DATE_PATTERN);
+        checkStrLength(timeTable.getTitle(), 1, 30);
+        checkStatus(timeTable.getStatus());
+    }
+
+    public void isBamBooForestValid(BamBooForestReq bamBooForest) {
+        checkStrLength(bamBooForest.getContent(), 1, 200);
+        checkItemPattern(bamBooForest.getContact(), EMAIL_REGEX);
+        checkStatus(bamBooForest.getStatus());
+    }
+
     private void checkStrLength(String str, int min, int max) {
         int strlen = str.length();
         if (min > strlen || max < strlen) {
@@ -58,60 +101,9 @@ public class ValidationUtils {
         Pattern pattern = Pattern.compile(itemPattern);
         if (!pattern.matcher(item).matches()) {
             switch (itemPattern) {
-                case EMAIL_REGEX:
-                    throw new InvalidException(ErrorCode.INVALID_DATE);
-                case DATE_PATTERN:
-                    throw new InvalidException(ErrorCode.INVALID_EMAIL);
+                case EMAIL_REGEX -> throw new InvalidException(ErrorCode.INVALID_DATE);
+                case DATE_PATTERN -> throw new InvalidException(ErrorCode.INVALID_EMAIL);
             }
         }
     }
-
-    public boolean isGuideValid(GuideReq guide) {
-        checkStrLength(guide.getTitle(), 1, 20);
-        checkStrLength(guide.getContent(), 1, 300);
-        String[] typeList = {"NOTICE"};
-        checkTypeItem(typeList, guide.getType());
-        checkStatus(guide.getStatus());
-        return true;
-    }
-
-    public boolean isBoothValid(BoothReq booth) {
-        checkStrLength(booth.getTitle(), 1, 30);
-        checkStrLength(booth.getSubTitle(), 1, 50);
-        checkStrLength(booth.getContent(), 1, 300);
-        checkNumberRange(booth.getLatitude(), -90.0, 90.0);
-        checkNumberRange(booth.getLongitude(), -180, 180);
-        String[] typeList = {"FOOD_TRUCK", "FLEA_MARKET", "PUB"};
-        checkTypeItem(typeList, booth.getType());
-        checkStatus(booth.getStatus());
-        return true;
-    }
-
-    public boolean isProgramValid(ProgramReq program) {
-        checkStrLength(program.getTitle(), 1, 30);
-        checkStrLength(program.getSubTitle(), 1, 50);
-        checkStrLength(program.getContent(), 1, 300);
-        checkNumberRange(program.getLatitude(), -90.0, 90.0);
-        checkNumberRange(program.getLongitude(), -180, 180);
-        String[] typeList = {"EVENT", "GAME"};
-        checkTypeItem(typeList, program.getType());
-        checkStatus(program.getStatus());
-        return true;
-    }
-
-    public boolean isTimeTableValid(TimeTableReq timeTable) {
-        checkItemPattern(timeTable.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), DATE_PATTERN);
-        checkItemPattern(timeTable.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), DATE_PATTERN);
-        checkStrLength(timeTable.getTitle(), 1, 30);
-        checkStatus(timeTable.getStatus());
-        return true;
-    }
-
-    public boolean isBamBooForestValid(BamBooForestReq bamBooForest) {
-        checkStrLength(bamBooForest.getContent(), 1, 200);
-        checkItemPattern(bamBooForest.getContact(), EMAIL_REGEX);
-        checkStatus(bamBooForest.getStatus());
-        return true;
-    }
-
 }
