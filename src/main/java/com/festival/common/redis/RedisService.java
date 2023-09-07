@@ -30,12 +30,12 @@ public class RedisService {
         redisTemplate.opsForValue().decrement(key);
     }
 
-    public boolean isDuplicateAccess(String ipAddress, Long guideId) {
-        if(getData(ipAddress + "_" + guideId) == null) {
-            setData(ipAddress + "_" + guideId, 1L, TimeUnit.DAYS);
-            return false;
+    public boolean isDuplicateAccess(String ipAddress, String domainName) {
+        if(getData(ipAddress + "_" + domainName) == null) {
+            setData(ipAddress + "_" + domainName, 1L, TimeUnit.DAYS);
+            return true;
         }
-        return true;
+        return false;
     }
 
     public Set<String> getKeySet(String domain) {
