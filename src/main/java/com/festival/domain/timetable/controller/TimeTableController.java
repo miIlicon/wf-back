@@ -23,20 +23,16 @@ public class TimeTableController {
 
     @PreAuthorize("hasAuthority({'ADMIN'})")
     @PostMapping
-    public ResponseEntity<Long> createTimeTable(@Valid TimeTableReq timeTableReq) throws Exception {
-        if (!validationUtils.isTimeTableValid(timeTableReq)) {
-            throw new Exception();
-        }
+    public ResponseEntity<Long> createTimeTable(@Valid TimeTableReq timeTableReq) {
+        validationUtils.isTimeTableValid(timeTableReq);
         return ResponseEntity.ok().body(timeTableService.createTimeTable(timeTableReq));
     }
 
     @PreAuthorize("hasAuthority({'ADMIN'})")
     @PutMapping("/{timeTableId}")
     public ResponseEntity<Long> updateTimeTable(@PathVariable Long timeTableId,
-                                                @Valid TimeTableReq timeTableReq) throws Exception {
-        if (!validationUtils.isTimeTableValid(timeTableReq)) {
-            throw new Exception();
-        }
+                                                @Valid TimeTableReq timeTableReq) {
+        validationUtils.isTimeTableValid(timeTableReq);
         return ResponseEntity.ok().body(timeTableService.updateTimeTable(timeTableId, timeTableReq));
     }
 

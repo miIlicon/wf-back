@@ -22,10 +22,8 @@ public class BambooForestController {
 
     @PreAuthorize("permitAll()")
     @PostMapping
-    public ResponseEntity<Long> createBamBooForest(@Valid BamBooForestReq bamBooForestReq) throws Exception {
-        if (!validationUtils.isBamBooForestValid(bamBooForestReq)) {
-            throw new Exception();
-        }
+    public ResponseEntity<Long> createBamBooForest(@Valid BamBooForestReq bamBooForestReq) {
+        validationUtils.isBamBooForestValid(bamBooForestReq);
         return ResponseEntity.ok().body(bambooForestService.createBamBooForest(bamBooForestReq));
     }
 
