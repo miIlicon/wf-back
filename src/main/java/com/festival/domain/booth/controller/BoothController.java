@@ -14,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v2/booth")
@@ -52,7 +50,7 @@ public class BoothController {
     @PreAuthorize("permitAll()")
     @GetMapping("/{boothId}")
     public ResponseEntity<BoothRes> getBooth(@PathVariable("boothId") Long id, HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok().body(boothService.getBooth(id, httpServletRequest.getHeader("X-Forwarded-For")));
+        return ResponseEntity.ok().body(boothService.getBooth(id,httpServletRequest.getRemoteAddr()));
     }
 
     @PreAuthorize("permitAll()")

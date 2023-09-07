@@ -50,7 +50,7 @@ public class GuideController {
     @PreAuthorize("permitAll()")
     @GetMapping("/{guideId}")
     public ResponseEntity<GuideRes> getGuide(@PathVariable Long guideId, HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok().body(guideService.getGuide(guideId, httpServletRequest.getLocalAddr()));
+        return ResponseEntity.ok().body(guideService.getGuide(guideId, httpServletRequest.getRemoteAddr()));
     }
 
     @PreAuthorize("permitAll()")

@@ -47,6 +47,9 @@ public class Program extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Column(nullable = false)
+    private Long viewCount = 0L;
+
     @Builder
     private Program(Long id, String title, String subTitle, String content, float latitude, float longitude, OperateStatus status, ProgramType type) {
         this.id = id;
@@ -91,5 +94,13 @@ public class Program extends BaseEntity {
 
     public void connectMember(Member member){
         this.member = member;
+    }
+
+    public void increaseViewCount(Long viewCount) {
+        this.viewCount += viewCount;
+    }
+
+    public void decreaseViewCount(Long viewCount) {
+        this.viewCount -= viewCount;
     }
 }

@@ -6,6 +6,7 @@ import com.festival.domain.program.dto.ProgramPageRes;
 import com.festival.domain.program.dto.ProgramReq;
 import com.festival.domain.program.dto.ProgramRes;
 import com.festival.domain.program.service.ProgramService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -51,8 +52,8 @@ public class ProgramController {
 
     @PreAuthorize("permitAll()")
     @GetMapping("/{programId}")
-    public ResponseEntity<ProgramRes> getProgram(@PathVariable Long programId) {
-        return ResponseEntity.ok().body(programService.getProgram(programId));
+    public ResponseEntity<ProgramRes> getProgram(@PathVariable Long programId, HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok().body(programService.getProgram(programId, httpServletRequest.getRemoteAddr()));
     }
 
     @PreAuthorize("permitAll()")

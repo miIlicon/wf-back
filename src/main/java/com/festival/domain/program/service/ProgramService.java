@@ -5,9 +5,9 @@ import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
+import com.festival.common.redis.RedisService;
 import com.festival.common.util.SecurityUtils;
 import com.festival.domain.image.service.ImageService;
-import com.festival.domain.member.model.Member;
 import com.festival.domain.member.service.MemberService;
 import com.festival.domain.program.dto.ProgramListReq;
 import com.festival.domain.program.dto.ProgramPageRes;
@@ -21,9 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.festival.common.exception.ErrorCode.*;
 
@@ -36,13 +34,13 @@ public class ProgramService {
 
     private final ImageService imageService;
     private final MemberService memberService;
+    private final RedisService redisService;
 
     @Transactional
     public Long createProgram(ProgramReq programReq) {
         Program program = Program.of(programReq);
         program.setImage(imageService.createImage(programReq.getMainFile(), programReq.getSubFiles(), programReq.getType()));
         program.connectMember(memberService.getAuthenticationMember());
-
         return programRepository.save(program).getId();
     }
 
@@ -70,8 +68,11 @@ public class ProgramService {
         program.changeStatus(OperateStatus.TERMINATE);
     }
 
-    public ProgramRes getProgram(Long programId) {
+    public ProgramRes getProgram(Long programId, String ipAddress) {
         Program program = programRepository.findById(programId).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_PROGRAM));
+        if(!redisService.isDuplicateAccess(ipAddress, program.getId())) {
+            redisService.increaseRedisViewCount("Program_Id_" + program.getId());
+        }
         return ProgramRes.of(program);
     }
 
@@ -83,6 +84,18 @@ public class ProgramService {
                 .pageable(pageable)
                 .build()
         );
+    }
+
+    @Transactional
+    public void increaseProgramViewCount(Long id, Long viewCount) {
+        Program program = programRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_PROGRAM));
+        program.increaseViewCount(viewCount);
+    }
+
+    @Transactional
+    public void decreaseProgramViewCount(Long id, Long viewCount) {
+        Program program = programRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_PROGRAM));
+        program.decreaseViewCount(viewCount);
     }
 
     private Program checkingDeletedStatus(Optional<Program> program) {
