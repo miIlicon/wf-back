@@ -5,6 +5,7 @@ import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.BadRequestException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
+import com.festival.common.redis.RedisService;
 import com.festival.common.util.SecurityUtils;
 import com.festival.domain.booth.controller.dto.BoothListReq;
 import com.festival.domain.booth.controller.dto.BoothPageRes;
@@ -13,6 +14,7 @@ import com.festival.domain.booth.controller.dto.BoothRes;
 import com.festival.domain.booth.model.Booth;
 import com.festival.domain.booth.repository.BoothRepository;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
+import com.festival.domain.guide.model.Guide;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +35,7 @@ import static com.festival.common.exception.ErrorCode.*;
 public class BoothService {
 
     private final BoothRepository boothRepository;
-
+    private final RedisService redisService;
     private final ImageService imageService;
     private final MemberService memberService;
 
@@ -68,9 +70,12 @@ public class BoothService {
         booth.changeStatus(OperateStatus.TERMINATE);
     }
 
-    @Transactional(readOnly = true)
-    public BoothRes getBooth(Long id, String ip) {
-        return BoothRes.of(boothRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BOOTH)));
+    public BoothRes getBooth(Long id, String ipAddress) {
+        Booth booth = boothRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BOOTH));
+        if(!redisService.isDuplicateAccess(ipAddress, booth.getId())) {
+            redisService.increaseRedisViewCount("Booth_Id_" + booth.getId());
+        }
+        return BoothRes.of(booth);
     }
 
     @Transactional(readOnly = true)
@@ -87,6 +92,22 @@ public class BoothService {
     public void increaseBoothViewCount(Long id, Long viewCount) {
         Booth booth = boothRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BOOTH));
         booth.increaseViewCount(viewCount);
+    }
+
+    @Transactional
+    public void decreaseBoothViewCount(Long id, Long viewCount) {
+        Booth booth = boothRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BOOTH));
+        booth.decreaseViewCount(viewCount);
+    }
+
+    private Booth checkingDeletedStatus(Optional<Booth> booth) {
+        if (booth.isEmpty()) {
+            throw new NotFoundException(NOT_FOUND_BOOTH);
+        }
+        if (booth.get().getStatus() == OperateStatus.TERMINATE) {
+            throw new AlreadyDeleteException(ALREADY_DELETED);
+        }
+        return booth.get();
     }
 
 }

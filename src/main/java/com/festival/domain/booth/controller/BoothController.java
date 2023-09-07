@@ -52,7 +52,7 @@ public class BoothController {
     @PreAuthorize("permitAll()")
     @GetMapping("/{boothId}")
     public ResponseEntity<BoothRes> getBooth(@PathVariable("boothId") Long id, HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok().body(boothService.getBooth(id, httpServletRequest.getHeader("X-Forwarded-For")));
+        return ResponseEntity.ok().body(boothService.getBooth(id,httpServletRequest.getLocalAddr()));
     }
 
     @PreAuthorize("permitAll()")
