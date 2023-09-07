@@ -46,6 +46,9 @@ public class Booth extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Column(nullable = false)
+    private Long viewCount = 0L;
+
     @Builder
     private Booth(String title, String subTitle, String content, float latitude, float longitude, OperateStatus status, BoothType type) {
         this.title = title;
@@ -87,5 +90,13 @@ public class Booth extends BaseEntity {
 
     public void changeStatus(OperateStatus status) {
         this.status = status;
+    }
+
+    public void increaseViewCount(Long viewCount) {
+        this.viewCount += viewCount;
+    }
+
+    public void decreaseViewCount(Long viewCount) {
+        this.viewCount -= viewCount;
     }
 }

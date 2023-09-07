@@ -83,14 +83,10 @@ public class BoothService {
 
     }
 
-    private Booth checkingDeletedStatus(Optional<Booth> booth) {
-        if (booth.isEmpty()) {
-            throw new NotFoundException(NOT_FOUND_BOOTH);
-        }
-        if (booth.get().getStatus() == OperateStatus.TERMINATE) {
-            throw new AlreadyDeleteException(ALREADY_DELETED);
-        }
-        return booth.get();
+    @Transactional
+    public void increaseBoothViewCount(Long id, Long viewCount) {
+        Booth booth = boothRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BOOTH));
+        booth.increaseViewCount(viewCount);
     }
 
 }
