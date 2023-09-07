@@ -2,7 +2,6 @@ package com.festival.domain.booth.service;
 
 import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
-import com.festival.common.exception.custom_exception.BadRequestException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.common.redis.RedisService;
@@ -14,18 +13,14 @@ import com.festival.domain.booth.controller.dto.BoothRes;
 import com.festival.domain.booth.model.Booth;
 import com.festival.domain.booth.repository.BoothRepository;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
-import com.festival.domain.guide.model.Guide;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.service.MemberService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.festival.common.exception.ErrorCode.*;
 
@@ -72,7 +67,7 @@ public class BoothService {
 
     public BoothRes getBooth(Long id, String ipAddress) {
         Booth booth = boothRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BOOTH));
-        if(!redisService.isDuplicateAccess(ipAddress, booth.getId())) {
+        if(redisService.isDuplicateAccess(ipAddress, "Booth_" + booth.getId())) {
             redisService.increaseRedisViewCount("Booth_Id_" + booth.getId());
         }
         return BoothRes.of(booth);

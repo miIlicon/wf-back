@@ -68,7 +68,7 @@ public class GuideService {
 
     public GuideRes getGuide(Long id, String ipAddress){
         Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_GUIDE));
-        if(!redisService.isDuplicateAccess(ipAddress, guide.getId())) {
+        if(redisService.isDuplicateAccess(ipAddress, "Guide" + guide.getId())) {
             redisService.increaseRedisViewCount("Guide_Id_" + guide.getId());
         }
         return GuideRes.of(guide);
