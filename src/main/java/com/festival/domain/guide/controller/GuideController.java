@@ -24,19 +24,15 @@ public class GuideController {
 
     @PreAuthorize("hasAuthority({'ADMIN'})")
     @PostMapping
-    public ResponseEntity<Long> createGuide(@Valid GuideReq guideReq) throws Exception {
-        if (!validationUtils.isGuideValid(guideReq)) {
-            throw new Exception();
-        }
+    public ResponseEntity<Long> createGuide(@Valid GuideReq guideReq) {
+        validationUtils.isGuideValid(guideReq);
         return ResponseEntity.ok().body(guideService.createGuide(guideReq));
     }
 
     @PreAuthorize("hasAuthority({'ADMIN'})")
     @PutMapping("/{guideId}")
-    public ResponseEntity<Long> updateGuide(@PathVariable Long guideId, @Valid GuideReq guideReq) throws Exception {
-        if (!validationUtils.isGuideValid(guideReq)) {
-            throw new Exception();
-        }
+    public ResponseEntity<Long> updateGuide(@PathVariable Long guideId, @Valid GuideReq guideReq) {
+        validationUtils.isGuideValid(guideReq);
         return ResponseEntity.ok().body(guideService.updateGuide(guideId, guideReq));
     }
 

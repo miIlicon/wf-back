@@ -24,19 +24,15 @@ public class BoothController {
 
     @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PostMapping
-    public ResponseEntity<Long> createBooth(@Valid BoothReq boothReq) throws Exception {
-        if (!validationUtils.isBoothValid(boothReq)) {
-            throw new Exception();
-        }
+    public ResponseEntity<Long> createBooth(@Valid BoothReq boothReq) {
+        validationUtils.isBoothValid(boothReq);
         return ResponseEntity.ok().body(boothService.createBooth(boothReq));
     }
 
     @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PutMapping("/{boothId}")
-    public ResponseEntity<Long> updateBooth(@Valid BoothReq boothReq, @PathVariable("boothId") Long id) throws Exception {
-        if (!validationUtils.isBoothValid(boothReq)) {
-            throw new Exception();
-        }
+    public ResponseEntity<Long> updateBooth(@Valid BoothReq boothReq, @PathVariable("boothId") Long id) {
+        validationUtils.isBoothValid(boothReq);
         return ResponseEntity.ok().body(boothService.updateBooth(boothReq, id));
     }
 

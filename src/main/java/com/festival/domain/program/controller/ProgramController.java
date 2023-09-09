@@ -14,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/program")
@@ -26,20 +24,15 @@ public class ProgramController {
 
     @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PostMapping
-    public ResponseEntity<Long> createProgram(@Valid ProgramReq programReqDto) throws Exception {
-        if (!validationUtils.isProgramValid(programReqDto)) {
-            throw new Exception();
-        }
+    public ResponseEntity<Long> createProgram(@Valid ProgramReq programReqDto) {
+        validationUtils.isProgramValid(programReqDto);
         return ResponseEntity.ok().body(programService.createProgram(programReqDto));
     }
 
     @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
     @PutMapping("/{programId}")
-    public ResponseEntity<Long> updateProgram(@PathVariable Long programId,
-                                       @Valid ProgramReq programReqDto) throws Exception {
-        if (!validationUtils.isProgramValid(programReqDto)) {
-            throw new Exception();
-        }
+    public ResponseEntity<Long> updateProgram(@PathVariable Long programId, @Valid ProgramReq programReqDto) {
+        validationUtils.isProgramValid(programReqDto);
         return ResponseEntity.ok().body(programService.updateProgram(programId, programReqDto));
     }
 
