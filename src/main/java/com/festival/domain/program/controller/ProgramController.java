@@ -1,12 +1,10 @@
 package com.festival.domain.program.controller;
 
 import com.festival.common.util.ValidationUtils;
-import com.festival.domain.program.dto.ProgramListReq;
-import com.festival.domain.program.dto.ProgramPageRes;
-import com.festival.domain.program.dto.ProgramReq;
-import com.festival.domain.program.dto.ProgramRes;
+import com.festival.domain.program.dto.*;
 import com.festival.domain.program.service.ProgramService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +57,12 @@ public class ProgramController {
     @GetMapping("/list")
     public ResponseEntity<ProgramPageRes> getProgramList(@Valid ProgramListReq programListReqDto, Pageable pageable) {
         return ResponseEntity.ok().body(programService.getProgramList(programListReqDto, pageable));
+    }
+
+    @PreAuthorize("permitAll()")
+    @GetMapping("/search")
+    public ResponseEntity<List<ProgramSearchRes>> searchProgramList(@RequestParam(name = "keyword") String keyword) {
+        return ResponseEntity.ok().body(programService.searchProgramList(keyword));
     }
 
 }

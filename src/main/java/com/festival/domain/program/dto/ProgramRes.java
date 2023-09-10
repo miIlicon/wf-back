@@ -1,7 +1,6 @@
 package com.festival.domain.program.dto;
 
 import com.festival.domain.program.model.Program;
-import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProgramRes {
+
+    private Long id;
     private String title;
     private String subTitle;
     private String content;
@@ -26,6 +27,7 @@ public class ProgramRes {
 
     public static ProgramRes of(Program program) {
         return ProgramRes.builder()
+                .id(program.getId())
                 .title(program.getTitle())
                 .subTitle(program.getSubTitle())
                 .content(program.getContent())

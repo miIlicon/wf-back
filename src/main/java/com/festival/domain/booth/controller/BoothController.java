@@ -4,6 +4,7 @@ import com.festival.common.util.ValidationUtils;
 import com.festival.domain.booth.controller.dto.*;
 import com.festival.domain.booth.service.BoothService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -58,8 +59,8 @@ public class BoothController {
     }
 
     @PreAuthorize("permitAll()")
-    @GetMapping("/list")
-    public ResponseEntity<BoothPageRes> getBoothList(@Valid BoothListReq boothListReq, Pageable pageable) {
-        return ResponseEntity.ok().body(boothService.getBoothList(boothListReq, pageable));
+    @GetMapping("/search")
+    public ResponseEntity<List<BoothSearchRes>> searchBoothList(@RequestParam(name = "keyword") String keyword){
+        return ResponseEntity.ok().body(boothService.searchBoothList(keyword));
     }
 }

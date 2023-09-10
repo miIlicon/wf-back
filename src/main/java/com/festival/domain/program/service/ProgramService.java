@@ -7,12 +7,8 @@ import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.common.util.SecurityUtils;
 import com.festival.domain.image.service.ImageService;
-import com.festival.domain.member.model.Member;
 import com.festival.domain.member.service.MemberService;
-import com.festival.domain.program.dto.ProgramListReq;
-import com.festival.domain.program.dto.ProgramPageRes;
-import com.festival.domain.program.dto.ProgramReq;
-import com.festival.domain.program.dto.ProgramRes;
+import com.festival.domain.program.dto.*;
 import com.festival.domain.program.model.Program;
 import com.festival.domain.program.repository.ProgramRepository;
 import com.festival.domain.program.service.vo.ProgramSearchCond;
@@ -23,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.festival.common.exception.ErrorCode.*;
 
@@ -85,6 +80,10 @@ public class ProgramService {
         );
     }
 
+    public List<ProgramSearchRes> searchProgramList(String keyword) {
+        return keyword.isEmpty() ? null : programRepository.searchProgramList(keyword);
+    }
+
     private Program checkingDeletedStatus(Optional<Program> program) {
         if (program.isEmpty()) {
             throw new NotFoundException(NOT_FOUND_PROGRAM);
@@ -94,4 +93,5 @@ public class ProgramService {
         }
         return program.get();
     }
+
 }

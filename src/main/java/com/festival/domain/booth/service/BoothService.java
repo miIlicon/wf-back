@@ -76,17 +76,11 @@ public class BoothService {
                 .type(boothListReq.getType())
                 .pageable(pageable)
                 .build());
-
     }
 
-    private Booth checkingDeletedStatus(Optional<Booth> booth) {
-        if (booth.isEmpty()) {
-            throw new NotFoundException(NOT_FOUND_BOOTH);
-        }
-        if (booth.get().getStatus() == OperateStatus.TERMINATE) {
-            throw new AlreadyDeleteException(ALREADY_DELETED);
-        }
-        return booth.get();
+    @Transactional(readOnly = true)
+    public List<BoothSearchRes> searchBoothList(String keyword) {
+        return keyword.isEmpty() ? null : boothRepository.searchBoothList(keyword);
     }
 
     private Booth checkingDeletedStatus(Optional<Booth> booth) {
