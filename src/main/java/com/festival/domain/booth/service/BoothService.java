@@ -6,10 +6,7 @@ import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.common.redis.RedisService;
 import com.festival.common.util.SecurityUtils;
-import com.festival.domain.booth.controller.dto.BoothListReq;
-import com.festival.domain.booth.controller.dto.BoothPageRes;
-import com.festival.domain.booth.controller.dto.BoothReq;
-import com.festival.domain.booth.controller.dto.BoothRes;
+import com.festival.domain.booth.controller.dto.*;
 import com.festival.domain.booth.model.Booth;
 import com.festival.domain.booth.repository.BoothRepository;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
@@ -20,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.festival.common.exception.ErrorCode.*;
@@ -30,6 +28,7 @@ import static com.festival.common.exception.ErrorCode.*;
 public class BoothService {
 
     private final BoothRepository boothRepository;
+
     private final RedisService redisService;
     private final ImageService imageService;
     private final MemberService memberService;
@@ -83,13 +82,16 @@ public class BoothService {
 
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
+    public List<BoothSearchRes> searchBoothList(String keyword) {
+        return boothRepository.searchBoothList(keyword);
+    }
+
     public void increaseBoothViewCount(Long id, Long viewCount) {
         Booth booth = boothRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BOOTH));
         booth.increaseViewCount(viewCount);
     }
 
-    @Transactional
     public void decreaseBoothViewCount(Long id, Long viewCount) {
         Booth booth = boothRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BOOTH));
         booth.decreaseViewCount(viewCount);

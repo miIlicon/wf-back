@@ -50,10 +50,13 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
     private static BooleanExpression eqType(String type) {
         return type == null ? null : booth.type.eq(BoothType.valueOf(type));
     }
+
     private static BooleanExpression statusEq(String status) {
         return booth.status.stringValue().eq(status);
     }
+
     private static BooleanExpression eqStatus(String status) {
         return status == null ? null : booth.status.stringValue().eq(status);
     }
+
 }
