@@ -1,9 +1,13 @@
-package com.festival.domain.booth.repository;
+package com.festival.domain.booth.repository.impl;
 
 import com.festival.domain.booth.controller.dto.BoothPageRes;
+import com.festival.domain.booth.controller.dto.BoothSearchRes;
+import com.festival.domain.booth.controller.dto.QBoothSearchRes;
 import com.festival.domain.booth.model.Booth;
 import com.festival.domain.booth.model.BoothType;
+import com.festival.domain.booth.repository.BoothRepositoryCustom;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -45,6 +49,27 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
 
         Page<Booth> page = PageableExecutionUtils.getPage(result, boothListSearchCond.getPageable(), countQuery::fetchOne);
         return BoothPageRes.of(page);
+    }
+
+    @Override
+    public List<BoothSearchRes> searchBoothList(String keyword) {
+       return queryFactory
+               .select(new QBoothSearchRes(
+                        booth.id,
+                        booth.title,
+                        booth.subTitle,
+                        booth.status.stringValue(),
+                        booth.image.mainFilePath
+                ))
+                .from(booth)
+                .where(
+                        eqKeyword(keyword)
+                )
+                .fetch();
+    }
+
+    private static BooleanExpression eqKeyword(String keyword) {
+        return booth.title.contains(keyword).or(booth.subTitle.contains(keyword));
     }
 
     private static BooleanExpression eqType(String type) {
