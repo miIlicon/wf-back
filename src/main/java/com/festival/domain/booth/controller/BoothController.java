@@ -1,10 +1,7 @@
 package com.festival.domain.booth.controller;
 
 import com.festival.common.util.ValidationUtils;
-import com.festival.domain.booth.controller.dto.BoothListReq;
-import com.festival.domain.booth.controller.dto.BoothPageRes;
-import com.festival.domain.booth.controller.dto.BoothReq;
-import com.festival.domain.booth.controller.dto.BoothRes;
+import com.festival.domain.booth.controller.dto.*;
 import com.festival.domain.booth.service.BoothService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -13,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -53,5 +52,10 @@ public class BoothController {
     @GetMapping("/list")
     public ResponseEntity<BoothPageRes> getBoothList(@Valid BoothListReq boothListReq, Pageable pageable) {
         return ResponseEntity.ok().body(boothService.getBoothList(boothListReq, pageable));
+    }
+    @PreAuthorize("permitAll()")
+    @GetMapping("/search")
+    public ResponseEntity<List<BoothSearchRes>> searchBoothList(@RequestParam(name = "keyword") String keyword){
+        return ResponseEntity.ok().body(boothService.searchBoothList(keyword));
     }
 }

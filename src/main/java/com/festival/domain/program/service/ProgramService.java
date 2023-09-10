@@ -9,10 +9,7 @@ import com.festival.common.redis.RedisService;
 import com.festival.common.util.SecurityUtils;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.service.MemberService;
-import com.festival.domain.program.dto.ProgramListReq;
-import com.festival.domain.program.dto.ProgramPageRes;
-import com.festival.domain.program.dto.ProgramReq;
-import com.festival.domain.program.dto.ProgramRes;
+import com.festival.domain.program.dto.*;
 import com.festival.domain.program.model.Program;
 import com.festival.domain.program.repository.ProgramRepository;
 import com.festival.domain.program.service.vo.ProgramSearchCond;
@@ -21,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.festival.common.exception.ErrorCode.*;
@@ -84,6 +82,10 @@ public class ProgramService {
                 .pageable(pageable)
                 .build()
         );
+    }
+
+    public List<ProgramSearchRes> searchProgramList(String keyword) {
+        return programRepository.searchProgramList(keyword);
     }
 
     @Transactional

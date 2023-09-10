@@ -28,7 +28,6 @@ public class GuideRes {
         this.subFilePaths = subFilePaths;
     }
 
-
     public static GuideRes of(Guide guide) {
         return GuideRes.builder()
                 .id(guide.getId())
