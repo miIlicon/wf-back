@@ -1,7 +1,10 @@
-package com.festival.domain.program.repository;
+package com.festival.domain.program.repository.impl;
 
 import com.festival.domain.program.dto.ProgramPageRes;
+import com.festival.domain.program.dto.ProgramSearchRes;
+import com.festival.domain.program.dto.QProgramSearchRes;
 import com.festival.domain.program.model.Program;
+import com.festival.domain.program.repository.ProgramRepositoryCustom;
 import com.festival.domain.program.service.vo.ProgramSearchCond;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -54,4 +57,27 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
         Page<Program> page = PageableExecutionUtils.getPage(result, programSearchCond.getPageable(), countQuery::fetchOne);
         return ProgramPageRes.of(page);
     }
+
+    @Override
+    public List<ProgramSearchRes> searchProgramList(String keyword) {
+        return queryFactory
+                .select(new QProgramSearchRes(
+                        program.id,
+                        program.title,
+                        program.subTitle,
+                        program.status.stringValue(),
+                        program.image.mainFilePath
+                ))
+                .from(program)
+                .where(
+                        keywordEqTitleOrSubTitle(keyword)
+                )
+                .fetch();
+    }
+
+    private static BooleanExpression keywordEqTitleOrSubTitle(String keyword) {
+        return program.title.contains(keyword)
+                .or(program.subTitle.contains(keyword));
+    }
+
 }
