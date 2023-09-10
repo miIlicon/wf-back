@@ -2,17 +2,14 @@ package com.festival.domain.booth.controller.dto;
 
 import com.festival.domain.booth.model.Booth;
 import com.querydsl.core.annotations.QueryProjection;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class BoothRes {
 
@@ -49,9 +46,6 @@ public class BoothRes {
         this.mainFilePath = mainFilePath;
         this.subFilePaths = subFilePaths;
     }
-
-
-
 
     public static BoothRes of(Booth booth){
         return BoothRes.builder()
