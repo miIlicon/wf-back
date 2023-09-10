@@ -6,10 +6,7 @@ import com.festival.common.exception.custom_exception.BadRequestException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.common.util.SecurityUtils;
-import com.festival.domain.booth.controller.dto.BoothListReq;
-import com.festival.domain.booth.controller.dto.BoothPageRes;
-import com.festival.domain.booth.controller.dto.BoothReq;
-import com.festival.domain.booth.controller.dto.BoothRes;
+import com.festival.domain.booth.controller.dto.*;
 import com.festival.domain.booth.model.Booth;
 import com.festival.domain.booth.repository.BoothRepository;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
@@ -92,4 +89,13 @@ public class BoothService {
         return booth.get();
     }
 
+    private Booth checkingDeletedStatus(Optional<Booth> booth) {
+        if (booth.isEmpty()) {
+            throw new NotFoundException(NOT_FOUND_BOOTH);
+        }
+        if (booth.get().getStatus() == OperateStatus.TERMINATE) {
+            throw new AlreadyDeleteException(ALREADY_DELETED);
+        }
+        return booth.get();
+    }
 }

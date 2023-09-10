@@ -1,10 +1,7 @@
 package com.festival.domain.booth.controller;
 
 import com.festival.common.util.ValidationUtils;
-import com.festival.domain.booth.controller.dto.BoothListReq;
-import com.festival.domain.booth.controller.dto.BoothPageRes;
-import com.festival.domain.booth.controller.dto.BoothReq;
-import com.festival.domain.booth.controller.dto.BoothRes;
+import com.festival.domain.booth.controller.dto.*;
 import com.festival.domain.booth.service.BoothService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +49,12 @@ public class BoothController {
     @GetMapping("/{boothId}")
     public ResponseEntity<BoothRes> getBooth(@PathVariable("boothId") Long id) {
         return ResponseEntity.ok().body(boothService.getBooth(id));
+    }
+
+    @PreAuthorize("permitAll()")
+    @GetMapping("/list")
+    public ResponseEntity<BoothPageRes> getBoothList(@Valid BoothListReq boothListReq, Pageable pageable) {
+        return ResponseEntity.ok().body(boothService.getBoothList(boothListReq, pageable));
     }
 
     @PreAuthorize("permitAll()")
