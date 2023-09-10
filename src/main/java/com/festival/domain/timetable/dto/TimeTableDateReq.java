@@ -17,5 +17,4 @@ public class TimeTableDateReq {
     @NotNull(message = "상태를 선택 해주세요.")
     private String status;
 
-    private int offset;
 }
