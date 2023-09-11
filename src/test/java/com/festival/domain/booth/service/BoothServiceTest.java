@@ -5,6 +5,7 @@ import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
+import com.festival.common.redis.RedisService;
 import com.festival.domain.booth.controller.dto.BoothListReq;
 import com.festival.domain.booth.controller.dto.BoothPageRes;
 import com.festival.domain.booth.controller.dto.BoothReq;
@@ -53,6 +54,9 @@ class BoothServiceTest {
 
     @Mock
     private ImageService imageService;
+
+    @Mock
+    private RedisService redisService;
 
     @DisplayName("부스를 생성한 후 boothId를 반환한다.")
     @Test

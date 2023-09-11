@@ -5,6 +5,7 @@ import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
+import com.festival.common.redis.RedisService;
 import com.festival.domain.guide.dto.GuideReq;
 import com.festival.domain.guide.dto.GuideRes;
 import com.festival.domain.guide.model.Guide;
@@ -38,10 +39,15 @@ class GuideServiceTest {
 
     @Mock
     private GuideRepository guideRepository;
+
     @Mock
     private MemberService memberService;
+
     @Mock
     private ImageService imageService;
+
+    @Mock
+    private RedisService redisService;
 
     @DisplayName("존재하지 않는 가이드를 업데이트하면 NotFoundException을 반환한다.")
     @Test
