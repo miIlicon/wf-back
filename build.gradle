@@ -65,6 +65,9 @@ dependencies {
     // redis
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.4.10'
 
+    // Embedded Redis
+    testImplementation ('it.ozimov:embedded-redis:0.7.2') { exclude group: "org.slf4j", module: "slf4j-simple" }
+
 }
 
 tasks.named('test') {
