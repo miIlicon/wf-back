@@ -1,18 +1,12 @@
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://withfestval.cevuktsbhaoe.ap-northeast-2.rds.amazonaws.com:5432/withFestval
-    username: postgres
-    password: millicon!0303
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://mariadb_1:3306/withfestival?characterEncoding=UTF-8&serverTimezone=UTC
   jpa:
     hibernate:
       ddl-auto: create
-cloud:
-  aws:
-    s3:
-      bucket: millicon
-    region:
-      static: ap-northeast-2
-    credentials:
-      accessKey:
-      secretKey:
+
+custom:
+  redis:
+    host: redis_1
+    port: 6379
