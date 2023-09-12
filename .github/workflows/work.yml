@@ -79,11 +79,18 @@ jobs:
           tags: withfestival:${{ needs.tag.outputs.tag_name }}
 
   deploy:
-    name: 도커 이미지 실행
+    name: 원격 서버에 배포
     runs-on: ubuntu-latest
     needs: docker
     steps:
-      - name: Docker 이미지 실행
-        run: |
-          docker run -d --name withfestival-app withfestival:${{ needs.tag.outputs.tag_name }}
-      
+      - name: 원격 서버에 배포하기
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker pull withfestival:${{ needs.tag.outputs.tag_name }}
+            docker stop withfestival-app || true
+            docker rm withfestival-app || true
+            docker run -d --name withfestival-app withfestival:${{ needs.tag.outputs.tag_name }}
