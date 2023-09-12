@@ -60,5 +60,5 @@ jobs:
             docker stop withfestival-app || true
             docker rm withfestival-app || true
             docker pull ${{ secrets.DOCKER_REPO }}/withfestival
-            docker run --name=festival_1 --network docker-net --restart unless-stopped \
+            docker run --name=withfestival-app --network docker-net --restart unless-stopped \
             -p 80:8080 -e TZ=Asia/Seoul -d ${{ secrets.DOCKER_REPO }}/withfestival
