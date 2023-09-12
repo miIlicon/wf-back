@@ -12,7 +12,7 @@ on:
       
 jobs:
   build:
-    name: 빌드
+    name: 이미지 빌드 및 도커허브 푸시
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -39,7 +39,7 @@ jobs:
           retention-days: 1 
       - name: 도커 이미지 빌드 및 푸시
         run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
           docker build -t ${{ secrets.DOCKER_REPO }}/withfestival .
           docker push ${{ secrets.DOCKER_REPO }}/withfestival
           
@@ -56,7 +56,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: 2226
           script: |
-            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
             docker stop withfestival-app || true
             docker rm withfestival-app || true
             docker pull ${{ secrets.DOCKER_REPO }}/withfestival
