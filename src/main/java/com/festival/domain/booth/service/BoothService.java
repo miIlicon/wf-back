@@ -75,9 +75,9 @@ public class BoothService {
     @Transactional
     public BoothRes getBoothQuery(Long id, String ipAddress) {
         Booth booth = boothRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BOOTH));
-        if(redisService.isDuplicateAccess(ipAddress, "Booth_" + booth.getId())) {
-            booth.increaseViewCount(1L);
-        }
+        
+        booth.increaseViewCount(1L);
+        
         return BoothRes.of(booth);
     }
 
