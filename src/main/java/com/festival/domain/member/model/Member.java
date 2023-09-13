@@ -33,7 +33,6 @@ public class Member extends AuthDetailsEntity {
         return member;
     }
 
-
     public void update(MemberJoinReq memberJoinReq) {
         this.username = memberJoinReq.getUsername();
         this.password = memberJoinReq.getPassword();

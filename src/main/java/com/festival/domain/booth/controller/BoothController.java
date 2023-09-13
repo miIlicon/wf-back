@@ -49,6 +49,12 @@ public class BoothController {
     }
 
     @PreAuthorize("permitAll()")
+    @GetMapping("/query/{boothId}")
+    public ResponseEntity<BoothRes> getBoothQuery(@PathVariable("boothId") Long id, HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok().body(boothService.getBoothQuery(id,httpServletRequest.getRemoteAddr()));
+    }
+
+    @PreAuthorize("permitAll()")
     @GetMapping("/list")
     public ResponseEntity<BoothPageRes> getBoothList(@Valid BoothListReq boothListReq, Pageable pageable) {
         return ResponseEntity.ok().body(boothService.getBoothList(boothListReq, pageable));

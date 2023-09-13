@@ -72,6 +72,15 @@ public class BoothService {
         return BoothRes.of(booth);
     }
 
+    @Transactional
+    public BoothRes getBoothQuery(Long id, String ipAddress) {
+        Booth booth = boothRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BOOTH));
+        if(redisService.isDuplicateAccess(ipAddress, "Booth_" + booth.getId())) {
+            booth.increaseViewCount(1L);
+        }
+        return BoothRes.of(booth);
+    }
+
     @Transactional(readOnly = true)
     public BoothPageRes getBoothList(BoothListReq boothListReq, Pageable pageable) {
         return boothRepository.getList(BoothListSearchCond.builder()
