@@ -22,6 +22,7 @@ public abstract class AuthDetailsEntity implements UserDetails {
     protected String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "member_roles", joinColumns = @JoinColumn(name = "member_id"))
     @Enumerated(EnumType.STRING)
     protected List<MemberRole> memberRoles = new ArrayList<>();
 
