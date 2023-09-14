@@ -59,7 +59,7 @@ public class Data {
                             .lastModifiedBy("user")
                             .createdBy("user")
                             .build());
-
+                    cnt += 1;
                 }
                 boothJdbcRepository.insertBoothList(boothList);
             }
