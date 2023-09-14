@@ -66,7 +66,7 @@ public class Data {
 
             long executionTime = System.currentTimeMillis() - start;
             System.out.println("===================== BulkInsert Success =====================");
-            System.out.println("수행 시간 : " + executionTime);
+            System.out.println("수행 시간 : " + executionTime + " ms");
         };
     }
 }
