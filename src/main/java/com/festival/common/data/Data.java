@@ -42,7 +42,7 @@ public class Data {
             int cnt = 1;
             long start = System.currentTimeMillis();
             
-            for(int i = 0; i < 1000; i++){
+            for(int i = 0; i < 100; i++){
                 List<BulkInsertBooth> boothList = new ArrayList<>();
                 for(int j = 0;j < 1000; j++){
 
