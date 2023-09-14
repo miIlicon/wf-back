@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-@Profile({"dev", "test"})
+@Profile({"dev", "prod"})
 @Configuration
 @Transactional
 public class Data {
@@ -42,7 +42,7 @@ public class Data {
             int cnt = 1;
             long start = System.currentTimeMillis();
             
-            for(int i = 0; i < 1; i++){
+            for(int i = 0; i < 1000; i++){
                 List<BulkInsertBooth> boothList = new ArrayList<>();
                 for(int j = 0;j < 1000; j++){
 
@@ -63,7 +63,7 @@ public class Data {
                 }
                 boothJdbcRepository.insertBoothList(boothList);
             }
-            
+
             long executionTime = System.currentTimeMillis() - start;
             System.out.println("===================== BulkInsert Success =====================");
             System.out.println("수행 시간 : " + executionTime);
