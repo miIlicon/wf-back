@@ -34,10 +34,10 @@ public class Data {
             if (initDataDone) return;
 
             initDataDone = true;
-            memberService.join(MemberJoinReq.of("user", "1234", "ADMIN"));
-            imageRepository.save(Image.builder()
+            Long memberId = memberService.join(MemberJoinReq.of("user", "1234", "ADMIN"));
+            Long imageId = imageRepository.save(Image.builder()
                     .mainFilePath("")
-                    .subFilePaths(List.of("")).build());
+                    .subFilePaths(List.of("")).build()).getId();
 
             int cnt = 1;
             long start = System.currentTimeMillis();
@@ -54,8 +54,8 @@ public class Data {
                             .longitude(50L)
                             .latitude(50L)
                             .type("PUB")
-                            .imageId(1L)
-                            .memberId(1L)
+                            .imageId(imageId)
+                            .memberId(memberId)
                             .lastModifiedBy("user")
                             .createdBy("user")
                             .build());
