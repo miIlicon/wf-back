@@ -116,4 +116,11 @@ public class BoothService {
         return booth.get();
     }
 
+    public BoothRes getBoothByTitle(String title, String remoteAddr) {
+        Booth booth = boothRepository.getBoothByTitle(title);
+        if(redisService.isDuplicateAccess(remoteAddr, "Booth_" + booth.getId())) {
+            redisService.increaseRedisViewCount("Booth_Id_" + booth.getId());
+        }
+        return BoothRes.of(booth);
+    }
 }

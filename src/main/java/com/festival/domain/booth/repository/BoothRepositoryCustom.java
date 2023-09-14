@@ -11,4 +11,6 @@ import java.util.List;
 public interface BoothRepositoryCustom {
     BoothPageRes getList(BoothListSearchCond boothListSearchCond);
     List<BoothSearchRes> searchBoothList(String keyword);
+
+
 }
