@@ -47,6 +47,11 @@ public class BoothController {
     public ResponseEntity<BoothRes> getBooth(@PathVariable("boothId") Long id, HttpServletRequest httpServletRequest) {
         return ResponseEntity.ok().body(boothService.getBooth(id,httpServletRequest.getRemoteAddr()));
     }
+    @PreAuthorize("permitAll()")
+    @GetMapping()
+    public ResponseEntity<BoothRes> getBoothByTitle(@RequestParam("boothTitle") String title, HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok().body(boothService.getBoothByTitle(title,httpServletRequest.getRemoteAddr()));
+    }
 
     @PreAuthorize("permitAll()")
     @GetMapping("/query/{boothId}")
