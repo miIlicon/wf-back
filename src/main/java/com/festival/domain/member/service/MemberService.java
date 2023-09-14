@@ -36,12 +36,12 @@ public class MemberService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Transactional
-    public void join(MemberJoinReq memberJoinReq) {
+    public Long join(MemberJoinReq memberJoinReq) {
         if (isLoginIdSave(memberJoinReq.getUsername())) {
             throw new DuplicationException(DUPLICATION_ID);
         }
         Member member = Member.of(memberJoinReq, passwordEncoder.encode(memberJoinReq.getPassword()));
-        Member savedMember = memberRepository.save(member);
+        return memberRepository.save(member).getId();
     }
 
     public JwtTokenRes login(MemberLoginReq loginReq) {
