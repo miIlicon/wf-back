@@ -42,9 +42,9 @@ public class Data {
             int cnt = 1;
             long start = System.currentTimeMillis();
             
-            for(int i = 0; i < 100; i++){
+            for(int i = 0; i < 1; i++){
                 List<BulkInsertBooth> boothList = new ArrayList<>();
-                for(int j = 0;j < 100; j++){
+                for(int j = 0;j < 1000; j++){
 
                     boothList.add(BulkInsertBooth.builder()
                             .title("testTitle" + cnt)
