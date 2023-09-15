@@ -123,4 +123,9 @@ public class BoothService {
         }
         return BoothRes.of(booth);
     }
+
+    public Long getBoothRedis(String remoteAddr) {
+        return redisService.getData("Booth_Id_1");
+
+    }
 }
