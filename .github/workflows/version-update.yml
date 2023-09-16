@@ -16,15 +16,15 @@ jobs:
       - name: Determine Version Increment
         id: vars
         run: |
-          LABELS_JSON="${{ toJson(github.event.pull_request.labels) }}"
-          echo "Detected Labels JSON: $LABELS_JSON"
-          if echo $LABELS_JSON | grep -q "\"name\":\"major\""; then
+          LABELS=$(echo '${{ github.event.pull_request.labels.*.name }}')
+          echo "Detected Labels: $LABELS"
+          if echo $LABELS | grep -q "major"; then
             echo "Detected major label"
             echo "::set-output name=INCREMENT::major"
-          elif echo $LABELS_JSON | grep -q "\"name\":\"minor\""; then
+          elif echo $LABELS | grep -q "minor"; then
             echo "Detected minor label"
             echo "::set-output name=INCREMENT::minor"
-          elif echo $LABELS_JSON | grep -q "\"name\":\"patch\""; then
+          elif echo $LABELS | grep -q "patch"; then
             echo "Detected patch label"
             echo "::set-output name=INCREMENT::patch"
           else
