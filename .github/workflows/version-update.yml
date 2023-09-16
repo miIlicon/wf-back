@@ -1,0 +1,38 @@
+name: Update Version based on PR label
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  version-update:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Determine Version Increment
+        id: vars
+        run: |
+          LABELS=$(echo '${{ github.event.pull_request.labels.*.name }}')
+          if echo $LABELS | grep -q "major"; then
+            echo "::set-output name=INCREMENT::major"
+          elif echo $LABELS | grep -q "minor"; then
+            echo "::set-output name=INCREMENT::minor"
+          elif echo $LABELS | grep -q "patch"; then
+            echo "::set-output name=INCREMENT::patch"
+          else
+            echo "::set-output name=INCREMENT::"
+          fi
+
+      - name: Update Project Version with Gradle
+        if: steps.vars.outputs.INCREMENT
+        run: |
+          ./gradlew updateVersion --increment=${{ steps.vars.outputs.INCREMENT }}
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git commit -m "chore: update project version based on PR label"
+          git push
