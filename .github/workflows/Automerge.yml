@@ -16,7 +16,7 @@ jobs:
     - name: automerge
       uses: pascalgn/automerge-action@v0.14.3
       env:
-        GITHUB_TOKEN: "${{ secrets.PERSONAL_TOKEN }}"
+        GITHUB_TOKEN: "${{ secrets.MY_GITHUB_TOKEN }}"
         MERGE_METHOD: "squash" # or "merge" or "rebase"
         MERGE_COMMIT_MESSAGE: "automerge: {pullRequest.title}"
         MERGE_LABELS: "automerge,!block merge" # Only merge when the label "automerge" is set and "block merge" is not set
