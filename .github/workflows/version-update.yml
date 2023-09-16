@@ -17,13 +17,18 @@ jobs:
         id: vars
         run: |
           LABELS=$(echo '${{ github.event.pull_request.labels.*.name }}')
+          echo "Detected Labels: $LABELS"
           if echo $LABELS | grep -q "major"; then
+            echo "Detected major label"
             echo "::set-output name=INCREMENT::major"
           elif echo $LABELS | grep -q "minor"; then
+            echo "Detected minor label"
             echo "::set-output name=INCREMENT::minor"
           elif echo $LABELS | grep -q "patch"; then
+            echo "Detected patch label"
             echo "::set-output name=INCREMENT::patch"
           else
+            echo "No version label detected"
             echo "::set-output name=INCREMENT::"
           fi
 
