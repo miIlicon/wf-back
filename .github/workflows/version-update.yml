@@ -29,6 +29,9 @@ jobs:
 
       - name: Debug PR labels
         run: echo "${{ toJson(github.event.pull_request.labels) }}"
+        
+      - name: Debug INCREMENT
+        run: echo ${{ steps.vars.outputs.INCREMENT }}
 
       - name: Update Project Version with Gradle
         if: steps.vars.outputs.INCREMENT
