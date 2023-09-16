@@ -49,19 +49,9 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         if: steps.vars.outputs.INCREMENT
         run: |
-          BRANCH_NAME="version-update-${GITHUB_RUN_ID}"
-          git checkout -b $BRANCH_NAME
           ./gradlew updateVersion -Pincrement=${{ steps.vars.outputs.INCREMENT }}
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add .
           git commit -m "chore: update project version based on PR label"
-          git push origin $BRANCH_NAME
-          
-      - name: Create PR and add automerge label
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        run: |
-          PR_URL=$(gh pr create -B development -H $BRANCH_NAME -t "chore: auto PR for version update" -b "This PR was automatically created by GitHub Actions." | grep -o 'https://github.com/[a-zA-Z0-9_-]*/[a-zA-Z0-9_-]*[0-9]')
-          PR_NUMBER=$(basename $PR_URL)
-          gh pr edit $PR_NUMBER --add-label automerge
+          git push
