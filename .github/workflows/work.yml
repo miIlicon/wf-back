@@ -8,7 +8,7 @@ on:
       - 'build.gradle'
       - 'Dockerfile'
     branches:
-      - 'development'
+      - 'main'
       
 jobs:
   build:
