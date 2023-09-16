@@ -13,10 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Save PR labels to file
+        run: echo '${{ toJson(github.event.pull_request.labels) }}' > pr_labels.json
+      
       - name: Determine Version Increment
         id: vars
         run: |
-          LABELS="${{ github.event.pull_request.labels.*.name }}"
+          LABELS=$(jq -r '.[].name' pr_labels.json | tr '\n' ' ')
           echo "Detected Labels: $LABELS"
           if echo $LABELS | grep -q "major"; then
             echo "Detected major label"
