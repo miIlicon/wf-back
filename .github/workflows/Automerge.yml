@@ -1,0 +1,24 @@
+name: Automerge
+
+on: 
+  pull_request:
+    types:
+      - opened
+      - synchronize
+  pull_request_review:
+    types:
+      - submitted
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+    steps:
+    - name: automerge
+      uses: pascalgn/automerge-action@v0.14.3
+      env:
+        GITHUB_TOKEN: "${{ secrets.PERSONAL_TOKEN }}"
+        MERGE_METHOD: "squash" # or "merge" or "rebase"
+        MERGE_COMMIT_MESSAGE: "automerge: {pullRequest.title}"
+        MERGE_LABELS: "automerge,!block merge" # Only merge when the label "automerge" is set and "block merge" is not set
+        MERGE_RETRIES: "6"
+        MERGE_RETRY_SLEEP: "10000" # 10 seconds
