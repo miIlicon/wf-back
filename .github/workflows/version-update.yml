@@ -16,7 +16,7 @@ jobs:
       - name: Determine Version Increment
         id: vars
         run: |
-          LABELS=$(echo '${{ github.event.pull_request.labels.*.name }}')
+          LABELS="${{ github.event.pull_request.labels.*.name }}"
           echo "Detected Labels: $LABELS"
           if echo $LABELS | grep -q "major"; then
             echo "Detected major label"
