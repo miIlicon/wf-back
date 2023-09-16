@@ -62,5 +62,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
-          gh pr create --base development --head $BRANCH_NAME --title "chore: auto PR for version update" --body "This PR was automatically created by GitHub Actions."
-          gh pr edit $BRANCH_NAME --add-label automerge
+          PR_URL=$(gh pr create --base development --head $BRANCH_NAME --title "chore: auto PR for version update" --body "This PR was automatically created by GitHub Actions." | grep -o 'https://github.com/[a-zA-Z0-9_-]*/[a-zA-Z0-9_-]*[0-9]')
+          PR_NUMBER=$(basename $PR_URL)
+          gh pr edit $PR_NUMBER --add-label automerge
