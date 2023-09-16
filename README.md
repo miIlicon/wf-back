@@ -18,6 +18,4 @@ AWS - EC2, S3, RDS
 PostgreSQL
 
 ## 아키텍처
-![WithFestival](https://github.com/miIlicon/WithFestival-BackEnd/assets/77851079/7d26e73a-c015-4759-8ebd-5d47035ac1d4)
-
-
+![WithFestival](https://github.com/miIlicon/WithFestival-BackEnd/assets/77851079/c02489ce-b267-43ec-bdea-b5266d7f367a)
