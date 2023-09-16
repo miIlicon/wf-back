@@ -46,7 +46,7 @@ jobs:
       
       - name: Update Project Version with Gradle
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         if: steps.vars.outputs.INCREMENT
         run: |
           ./gradlew updateVersion -Pincrement=${{ steps.vars.outputs.INCREMENT }}
