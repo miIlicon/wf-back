@@ -5,7 +5,6 @@ plugins {
 }
 
 group = 'com'
-version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 configurations {
@@ -19,16 +18,154 @@ repositories {
 }
 
 dependencies {
+    // Spring
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    compileOnly 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.8'
+
+    // DB
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5'
     runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // lombok
+    compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.projectlombok:lombok'
+
+    // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // Querydsl
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+
+    // Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // Jwt
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+
+    // S3Bucket
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.282'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.11.1000'
+
+    // redis
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.4.10'
+
+    // Embedded Redis
+    testImplementation ('it.ozimov:embedded-redis:0.7.2') { exclude group: "org.slf4j", module: "slf4j-simple" }
+
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+def getYmlVersion() {
+    def ymlFile = file('src/main/resources/application.yml')
+    def versionLine = ymlFile.text.split('\n').find { it.startsWith('version: ') }
+    return versionLine ? versionLine.split(' ')[1] : '0.0.1'
+}
+
+version = getYmlVersion() + '-SNAPSHOT'
+
+jar {
+    enabled = false
+}
+
+tasks.register('updateVersion') {
+    doLast {
+        def currentVersion = ''
+        def ymlFile = file('src/main/resources/application.yml')
+        ymlFile.text.split('\n').each {
+            if (it.startsWith('version: ')) {
+                currentVersion = it.split(' ')[1]
+            }
+        }
+
+        if (!currentVersion) {
+            println "No current version found in application.yml"
+            return
+        }
+
+        def increment = project.properties['increment']
+        def newVersion = ''
+
+        switch (increment) {
+            case 'major':
+                newVersion = "${(currentVersion.split("\\.")[0].toInteger() + 1)}.0.0"
+                break
+            case 'minor':
+                newVersion = "${currentVersion.split("\\.")[0]}.${(currentVersion.split("\\.")[1].toInteger() + 1)}.0"
+                break
+            case 'patch':
+                newVersion = "${currentVersion.split("\\.")[0]}.${currentVersion.split("\\.")[1]}.${(currentVersion.split("\\.")[2].toInteger() + 1)}"
+                break
+            default:
+                println "No increment specified"
+                return
+        }
+
+        ymlFile.text = ymlFile.text.replace("version: $currentVersion", "version: $newVersion")
+    }
+}
+
+//
+//def frontendDir = "$projectDir/src/main/withfestival-front"
+//
+//sourceSets {
+//    main {
+//        resources { srcDirs = ["$projectDir/src/main/resources"]
+//        }
+//    }
+//}
+//
+//processResources { dependsOn "copyReactBuildFiles" }
+//
+//task installReact(type: Exec) {
+//    workingDir "$frontendDir"
+//    inputs.dir "$frontendDir"
+//    group = BasePlugin.BUILD_GROUP
+//    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+//        commandLine "npm.cmd", "install", "-g", "nvm"
+//        commandLine "nvm", "install", "16.15.0"
+//        commandLine "nvm", "use", "16.15.0"
+//        commandLine "npm.cmd", "audit", "fix"
+//        commandLine 'npm.cmd', 'install'
+//    } else {
+//        commandLine "wget", "-qO-", "https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh", "|", "bash"
+//        commandLine "/bin/bash", "-c", "source ~/.nvm/nvm.sh && nvm install 16.15.0 && nvm use 16.15.0"
+//        commandLine "npm", "audit", "fix"
+//        commandLine 'npm', 'install'
+//    }
+//}
+//
+//task buildReact(type: Exec) {
+//    dependsOn "installReact"
+//    workingDir "$frontendDir"
+//    inputs.dir "$frontendDir"
+//    group = BasePlugin.BUILD_GROUP
+//    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+//        commandLine "npm.cmd", "run-script", "build"
+//    } else {
+//        commandLine 'bash', '-c', 'source ~/.nvm/nvm.sh && nvm use 16.15.0 && npm run-script build'
+//    }
+//}
+//
+//task copyReactBuildFiles(type: Copy) {
+//    dependsOn "buildReact"
+//    from "$frontendDir/build"
+//    into "$projectDir/src/main/resources/static"
+//}

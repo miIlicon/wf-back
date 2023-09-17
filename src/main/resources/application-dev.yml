@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:dev
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      show_sql: false
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+custom:
+  redis:
+    host: localhost
+    port: 6379
+
+logging.level:
+  org.hibernate.SQL: debug
+  org.hibernate.type: trace

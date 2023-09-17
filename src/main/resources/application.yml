@@ -1,0 +1,16 @@
+version: 0.0.2
+
+spring:
+  profiles:
+    active: dev
+    include: secret
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 20MB
+
+  data:
+    redis:
+      repositories:
+        enabled: false
