@@ -15,7 +15,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v2/booth")
+@RequestMapping(value = "/api/v2/booth", produces = "application/json", consumes = "multipart/form-data")
 public class BoothController {
 
     private final BoothService boothService;

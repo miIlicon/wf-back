@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v2/program")
+@RequestMapping(value = "/api/v2/program", produces = "application/json", consumes = "multipart/form-data")
 public class ProgramController {
 
     private final ProgramService programService;

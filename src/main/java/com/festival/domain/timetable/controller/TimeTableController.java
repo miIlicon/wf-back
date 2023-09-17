@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v2/timetable")
+@RequestMapping(value = "/api/v2/timetable", produces = "application/json", consumes = "multipart/form-data")
 public class TimeTableController {
 
     private final TimeTableService timeTableService;

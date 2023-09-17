@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v2/member")
+@RequestMapping(value = "/api/v2/member", produces = "application/json", consumes = "multipart/form-data")
 public class MemberController {
 
     private final MemberService memberService;
