@@ -246,6 +246,7 @@ class GuideIntegrationTest extends ControllerTestSupport {
         assertThat(findGuide.getStatus()).isEqualTo(OperateStatus.TERMINATE);
     }
 
+    @WithMockUser(username = "testUser", roles = "ADMIN")
     @DisplayName("안내사항 게시물이 존재하지 않는데 삭제를 시도하면 NotFoundException을 반환한다.")
     @Test
     void deleteNotFound() throws Exception {

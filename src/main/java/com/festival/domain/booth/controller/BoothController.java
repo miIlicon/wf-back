@@ -21,21 +21,21 @@ public class BoothController {
     private final BoothService boothService;
     private final ValidationUtils validationUtils;
 
-    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or  hasRole('ROLE_MANAGER')")
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<Long> createBooth(@Valid BoothReq boothReq) {
         validationUtils.isBoothValid(boothReq);
         return ResponseEntity.ok().body(boothService.createBooth(boothReq));
     }
 
-    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or  hasRole('ROLE_MANAGER')")
     @PutMapping(value = "/{boothId}", consumes = "multipart/form-data")
     public ResponseEntity<Long> updateBooth(@Valid BoothReq boothReq, @PathVariable("boothId") Long id) {
         validationUtils.isBoothValid(boothReq);
         return ResponseEntity.ok().body(boothService.updateBooth(boothReq, id));
     }
 
-    @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or  hasRole('ROLE_MANAGER')")
     @DeleteMapping("/{boothId}")
     public ResponseEntity<Void> deleteBooth(@PathVariable("boothId") Long id) {
         boothService.deleteBooth(id);

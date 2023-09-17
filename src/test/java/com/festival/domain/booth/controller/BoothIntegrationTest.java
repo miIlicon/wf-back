@@ -335,6 +335,7 @@ class BoothIntegrationTest extends ControllerTestSupport {
     }
 
     @DisplayName("존재하지 않는 축제부스 게시물은 삭제할 수 없다.")
+    @WithMockUser(username = "testUser", roles = "ADMIN")
     @Test
     void deleteBoothNotFound() throws Exception {
         //when //then
@@ -347,6 +348,7 @@ class BoothIntegrationTest extends ControllerTestSupport {
     }
 
     @DisplayName("축제부스 게시물 중에 하나를 조회한다.")
+    @WithMockUser(username = "testUser", roles = "ADMIN")
     @Test
     void getBooth() throws Exception {
         //given

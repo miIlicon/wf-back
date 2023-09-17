@@ -284,6 +284,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
     }
 
     @DisplayName("존재하지 않는 프로그램 게시물은 삭제할 수 없다.")
+    @WithMockUser(username = "testUser", roles = "ADMIN")
     @Test
     void deleteProgramNotFound() throws Exception {
         //when //then
