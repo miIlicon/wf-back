@@ -16,21 +16,21 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v2/guide", produces = "application/json", consumes = "multipart/form-data")
+@RequestMapping("/api/v2/guide")
 public class GuideController {
 
     private final GuideService guideService;
     private final ValidationUtils validationUtils;
 
     @PreAuthorize("hasAuthority({'ADMIN'})")
-    @PostMapping
+    @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<Long> createGuide(@Valid GuideReq guideReq) {
         validationUtils.isGuideValid(guideReq);
         return ResponseEntity.ok().body(guideService.createGuide(guideReq));
     }
 
     @PreAuthorize("hasAuthority({'ADMIN'})")
-    @PutMapping("/{guideId}")
+    @PutMapping(value = "/{guideId}", consumes = "multipart/form-data")
     public ResponseEntity<Long> updateGuide(@PathVariable Long guideId, @Valid GuideReq guideReq) {
         validationUtils.isGuideValid(guideReq);
         return ResponseEntity.ok().body(guideService.updateGuide(guideId, guideReq));

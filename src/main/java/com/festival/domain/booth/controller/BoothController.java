@@ -15,21 +15,21 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/api/v2/booth", produces = "application/json", consumes = "multipart/form-data")
+@RequestMapping(value = "/api/v2/booth")
 public class BoothController {
 
     private final BoothService boothService;
     private final ValidationUtils validationUtils;
 
     @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
-    @PostMapping
+    @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<Long> createBooth(@Valid BoothReq boothReq) {
         validationUtils.isBoothValid(boothReq);
         return ResponseEntity.ok().body(boothService.createBooth(boothReq));
     }
 
     @PreAuthorize("hasAuthority({'ADMIN', 'MANAGER'})")
-    @PutMapping("/{boothId}")
+    @PutMapping(value = "/{boothId}", consumes = "multipart/form-data")
     public ResponseEntity<Long> updateBooth(@Valid BoothReq boothReq, @PathVariable("boothId") Long id) {
         validationUtils.isBoothValid(boothReq);
         return ResponseEntity.ok().body(boothService.updateBooth(boothReq, id));

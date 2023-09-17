@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v2/timetable", produces = "application/json", consumes = "multipart/form-data")
+@RequestMapping("/api/v2/timetable")
 public class TimeTableController {
 
     private final TimeTableService timeTableService;
@@ -29,7 +29,7 @@ public class TimeTableController {
     }
 
     @PreAuthorize("hasAuthority({'ADMIN'})")
-    @PutMapping("/{timeTableId}")
+    @PutMapping(value = "/{timeTableId}")
     public ResponseEntity<Long> updateTimeTable(@PathVariable Long timeTableId,
                                                 @Valid TimeTableReq timeTableReq) {
         validationUtils.isTimeTableValid(timeTableReq);
