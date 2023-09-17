@@ -5,7 +5,6 @@ plugins {
 }
 
 group = 'com'
-version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 configurations {
@@ -72,6 +71,18 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+def getYmlVersion() {
+    def ymlFile = file('src/main/resources/application.yml')
+    def versionLine = ymlFile.text.split('\n').find { it.startsWith('version: ') }
+    return versionLine ? versionLine.split(' ')[1] : '0.0.1'
+}
+
+version = getYmlVersion() + '-SNAPSHOT'
+
+jar {
+    enabled = false
 }
 
 tasks.register('updateVersion') {
