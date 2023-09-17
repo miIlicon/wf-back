@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v2/guide")
+@RequestMapping(value = "/api/v2/guide", produces = "application/json", consumes = "multipart/form-data")
 public class GuideController {
 
     private final GuideService guideService;
