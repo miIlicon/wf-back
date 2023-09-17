@@ -97,6 +97,7 @@ class BambooForestIntegrationTest extends ControllerTestSupport {
     }
 
     @DisplayName("대나무숲 게시물이 존재하지 않으면, NotFoundException을 발생시킨다.")
+    @WithMockUser(username = "testUser", roles = "ADMIN")
     @Test
     void deleteBambooNotFound() throws Exception {
         //when //then
