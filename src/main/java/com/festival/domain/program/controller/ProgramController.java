@@ -21,21 +21,21 @@ public class ProgramController {
     private final ProgramService programService;
     private final ValidationUtils validationUtils;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') or  hasRole('ROLE_MANAGER'})")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or  hasRole('ROLE_MANAGER')")
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<Long> createProgram(@Valid ProgramReq programReqDto) {
         validationUtils.isProgramValid(programReqDto);
         return ResponseEntity.ok().body(programService.createProgram(programReqDto));
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') or  hasRole('ROLE_MANAGER'})")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or  hasRole('ROLE_MANAGER')")
     @PutMapping(value = "/{programId}", consumes = "multipart/form-data")
     public ResponseEntity<Long> updateProgram(@PathVariable Long programId, @Valid ProgramReq programReqDto) {
         validationUtils.isProgramValid(programReqDto);
         return ResponseEntity.ok().body(programService.updateProgram(programId, programReqDto));
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') or  hasRole('ROLE_MANAGER'})")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or  hasRole('ROLE_MANAGER')")
     @DeleteMapping("/{programId}")
     public ResponseEntity<Void> deleteProgram(@PathVariable Long programId) {
         programService.deleteProgram(programId);
