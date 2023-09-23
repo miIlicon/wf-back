@@ -27,7 +27,7 @@ public class BambooForestController {
         return ResponseEntity.ok().body(bambooForestService.createBamBooForest(bamBooForestReq));
     }
 
-    @PreAuthorize("hasAuthority({'ROLE_ADMIN'})")
+    @PreAuthorize("hasRole({'ADMIN'})")
     @DeleteMapping("/{bamBooForestId}")
     public ResponseEntity<Void> deleteBamBooForest(@PathVariable Long bamBooForestId) {
         bambooForestService.deleteBamBooForest(bamBooForestId);
