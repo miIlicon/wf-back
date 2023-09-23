@@ -17,13 +17,13 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/api/v2/booth")
+@RequestMapping("/api/v2/booth")
 public class BoothController {
 
     private final BoothService boothService;
     private final ValidationUtils validationUtils;
 
-    @PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<Long> createBooth(@Valid BoothReq boothReq) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -31,14 +31,14 @@ public class BoothController {
         return ResponseEntity.ok().body(boothService.createBooth(boothReq));
     }
 
-    @PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @PutMapping(value = "/{boothId}", consumes = "multipart/form-data")
     public ResponseEntity<Long> updateBooth(@Valid BoothReq boothReq, @PathVariable("boothId") Long id) {
         validationUtils.isBoothValid(boothReq);
         return ResponseEntity.ok().body(boothService.updateBooth(boothReq, id));
     }
 
-    @PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @DeleteMapping("/{boothId}")
     public ResponseEntity<Void> deleteBooth(@PathVariable("boothId") Long id) {
         boothService.deleteBooth(id);

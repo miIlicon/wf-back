@@ -15,7 +15,6 @@ public class TestRedisConfig {
 
     private RedisServer redisServer;
 
-
     @Value("${custom.redis.port}")
     private int redisPort;
 
