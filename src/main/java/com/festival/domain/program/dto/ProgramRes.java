@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class ProgramRes {
     private Long id;
     private String title;
@@ -23,6 +21,20 @@ public class ProgramRes {
     private String type;
     private String mainFilePath;
     private List<String> subFilePaths;
+
+    @Builder
+    private ProgramRes(Long id, String title, String subTitle, String content, Float latitude, Float longitude, String status, String type, String mainFilePath, List<String> subFilePaths) {
+        this.id = id;
+        this.title = title;
+        this.subTitle = subTitle;
+        this.content = content;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.status = status;
+        this.type = type;
+        this.mainFilePath = mainFilePath;
+        this.subFilePaths = subFilePaths;
+    }
 
     public static ProgramRes of(Program program) {
         return ProgramRes.builder()

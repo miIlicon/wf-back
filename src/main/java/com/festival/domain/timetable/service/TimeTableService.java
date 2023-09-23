@@ -61,10 +61,12 @@ public class TimeTableService {
     }
 
     public List<TimeTableRes> getTimeTableList(TimeTableDateReq timeTableDateReq) {
-        TimeTableSearchCond timeTableSearchCond = new TimeTableSearchCond(
-                timeTableDateReq.getStartTime(), timeTableDateReq.getEndTime(),
-                timeTableDateReq.getStatus()
-        );
+        TimeTableSearchCond timeTableSearchCond =TimeTableSearchCond.builder()
+                .startTime(timeTableDateReq.getStartTime())
+                .endTime(timeTableDateReq.getEndTime())
+                .status(timeTableDateReq.getStatus()).build();
+
+
         return timeTableRepository.getList(timeTableSearchCond);
     }
 

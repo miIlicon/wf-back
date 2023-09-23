@@ -8,9 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Data
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class ProgramReq {
 
     @NotBlank(message = "제목을 입력해주세요.")
@@ -40,4 +38,16 @@ public class ProgramReq {
     @NotNull(message = "서브 이미지를 선택해주세요")
     private List<MultipartFile> subFiles;
 
+    @Builder
+    private ProgramReq(String title, String subTitle, String content, Float latitude, Float longitude, String type, String status, MultipartFile mainFile, List<MultipartFile> subFiles) {
+        this.title = title;
+        this.subTitle = subTitle;
+        this.content = content;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.type = type;
+        this.status = status;
+        this.mainFile = mainFile;
+        this.subFiles = subFiles;
+    }
 }
