@@ -34,7 +34,11 @@ public class Data {
             if (initDataDone) return;
 
             initDataDone = true;
-            Long memberId = memberService.join(MemberJoinReq.of("user", "1234", "ADMIN"));
+            Long memberId = memberService.join(MemberJoinReq.builder()
+                    .username("user")
+                    .password("1234")
+                    .memberRole("ADMIN")
+                    .build());
             Long imageId = imageRepository.save(Image.builder()
                     .mainFilePath("")
                     .subFilePaths(List.of("")).build()).getId();
