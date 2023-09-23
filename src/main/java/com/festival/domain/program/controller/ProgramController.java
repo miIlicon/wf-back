@@ -15,27 +15,27 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v2/program")
+@RequestMapping("/api/v2/program")
 public class ProgramController {
 
     private final ProgramService programService;
     private final ValidationUtils validationUtils;
 
-    @PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<Long> createProgram(@Valid ProgramReq programReqDto) {
         validationUtils.isProgramValid(programReqDto);
         return ResponseEntity.ok().body(programService.createProgram(programReqDto));
     }
 
-    @PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @PutMapping(value = "/{programId}", consumes = "multipart/form-data")
     public ResponseEntity<Long> updateProgram(@PathVariable Long programId, @Valid ProgramReq programReqDto) {
         validationUtils.isProgramValid(programReqDto);
         return ResponseEntity.ok().body(programService.updateProgram(programId, programReqDto));
     }
 
-    @PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @DeleteMapping("/{programId}")
     public ResponseEntity<Void> deleteProgram(@PathVariable Long programId) {
         programService.deleteProgram(programId);

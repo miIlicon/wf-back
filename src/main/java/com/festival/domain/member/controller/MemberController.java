@@ -8,25 +8,27 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v2/member", produces = "application/json", consumes = "multipart/form-data")
+@RequestMapping("/api/v2/member")
 public class MemberController {
 
     private final MemberService memberService;
 
     @PreAuthorize("isAnonymous()")
     @PostMapping("/join")
-    public ResponseEntity<Void> join(@Valid MemberJoinReq memberJoinReq) {
+    public ResponseEntity<Void> joinMember(@Valid MemberJoinReq memberJoinReq) {
         memberService.join(memberJoinReq);
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("isAnonymous()")
     @PostMapping("/login")
-    public ResponseEntity<JwtTokenRes> login(@Valid MemberLoginReq loginReq) {
+    public ResponseEntity<JwtTokenRes> loginMember(@Valid MemberLoginReq loginReq) {
         return ResponseEntity.ok().body(memberService.login(loginReq));
     }
 }

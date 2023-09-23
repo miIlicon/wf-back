@@ -29,7 +29,7 @@ public class TimeTableController {
     }
 
     @PreAuthorize("hasRole({'ADMIN'})")
-    @PutMapping(value = "/{timeTableId}")
+    @PutMapping("/{timeTableId}")
     public ResponseEntity<Long> updateTimeTable(@PathVariable Long timeTableId,
                                                 @Valid TimeTableReq timeTableReq) {
         validationUtils.isTimeTableValid(timeTableReq);
