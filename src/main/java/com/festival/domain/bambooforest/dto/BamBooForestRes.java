@@ -4,13 +4,17 @@ import com.festival.domain.bambooforest.model.BamBooForest;
 import lombok.*;
 
 @Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class BamBooForestRes {
 
     private Long id;
     private String content;
+
+    @Builder
+    public BamBooForestRes(Long id, String content) {
+        this.id = id;
+        this.content = content;
+    }
 
     public static BamBooForestRes of(BamBooForest bamBooForest){
         return BamBooForestRes.builder()

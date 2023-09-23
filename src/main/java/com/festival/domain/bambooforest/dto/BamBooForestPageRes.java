@@ -8,9 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class BamBooForestPageRes {
 
     private List<BamBooForestRes> forestResList;
@@ -18,6 +16,15 @@ public class BamBooForestPageRes {
     private int totalPage;
     private int pageNumber;
     private int pageSize;
+
+    @Builder
+    public BamBooForestPageRes(List<BamBooForestRes> forestResList, long totalCount, int totalPage, int pageNumber, int pageSize) {
+        this.forestResList = forestResList;
+        this.totalCount = totalCount;
+        this.totalPage = totalPage;
+        this.pageNumber = pageNumber;
+        this.pageSize = pageSize;
+    }
 
     public static BamBooForestPageRes of(Page<BamBooForest> page){
         return BamBooForestPageRes.builder()
