@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Builder
 public class BoothPageRes {
 
     private List<BoothRes> boothResList;
@@ -18,6 +16,15 @@ public class BoothPageRes {
     private int totalPage;
     private int pageNumber;
     private int pageSize;
+
+    @Builder
+    private BoothPageRes(List<BoothRes> boothResList, long totalCount, int totalPage, int pageNumber, int pageSize) {
+        this.boothResList = boothResList;
+        this.totalCount = totalCount;
+        this.totalPage = totalPage;
+        this.pageNumber = pageNumber;
+        this.pageSize = pageSize;
+    }
 
     public static BoothPageRes of(Page<Booth> page){
         return BoothPageRes.builder()
@@ -28,6 +35,5 @@ public class BoothPageRes {
                 .pageSize(page.getSize())
                 .build();
     }
-
 
 }

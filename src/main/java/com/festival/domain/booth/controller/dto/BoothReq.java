@@ -2,18 +2,13 @@ package com.festival.domain.booth.controller.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@Data
-@Builder
+@Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class BoothReq {
 
     @NotBlank(message = "제목을 입력해주세요")
@@ -42,5 +37,18 @@ public class BoothReq {
 
     @NotNull(message = "서브 이미지를 선택해주세요")
     private List<MultipartFile> subFiles;
+
+    @Builder
+    private BoothReq(String title, String subTitle, String content, float latitude, float longitude, String type, String status, MultipartFile mainFile, List<MultipartFile> subFiles) {
+        this.title = title;
+        this.subTitle = subTitle;
+        this.content = content;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.type = type;
+        this.status = status;
+        this.mainFile = mainFile;
+        this.subFiles = subFiles;
+    }
 
 }

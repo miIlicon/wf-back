@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Builder
 public class ProgramPageRes {
 
     private List<ProgramRes> programList;
@@ -18,6 +16,15 @@ public class ProgramPageRes {
     private int totalPage;
     private int pageNumber;
     private int pageSize;
+
+    @Builder
+    private ProgramPageRes(List<ProgramRes> programList, long totalCount, int totalPage, int pageNumber, int pageSize) {
+        this.programList = programList;
+        this.totalCount = totalCount;
+        this.totalPage = totalPage;
+        this.pageNumber = pageNumber;
+        this.pageSize = pageSize;
+    }
 
     public static ProgramPageRes of(Page<Program> page){
         return ProgramPageRes.builder()

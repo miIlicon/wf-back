@@ -1,10 +1,12 @@
 package com.festival.domain.booth.controller.dto;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
+@Getter
+@NoArgsConstructor
 public class BoothListReq {
 
     @NotNull(message = "상태를 선택 해주세요.")

@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Builder
 public class GuidePageRes {
 
     private List<GuideRes> guideResList;
@@ -18,6 +16,15 @@ public class GuidePageRes {
     private int totalPage;
     private int pageNumber;
     private int pageSize;
+
+    @Builder
+    private GuidePageRes(List<GuideRes> guideResList, long totalCount, int totalPage, int pageNumber, int pageSize) {
+        this.guideResList = guideResList;
+        this.totalCount = totalCount;
+        this.totalPage = totalPage;
+        this.pageNumber = pageNumber;
+        this.pageSize = pageSize;
+    }
 
     public static GuidePageRes of(Page<Guide> page){
         return GuidePageRes.builder()
