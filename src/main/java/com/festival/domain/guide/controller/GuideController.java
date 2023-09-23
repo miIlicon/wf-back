@@ -22,21 +22,21 @@ public class GuideController {
     private final GuideService guideService;
     private final ValidationUtils validationUtils;
 
-    @PreAuthorize("hasAuthority({'ROLE_ADMIN'})")
+    @PreAuthorize("hasRole({'ADMIN'})")
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<Long> createGuide(@Valid GuideReq guideReq) {
         validationUtils.isGuideValid(guideReq);
         return ResponseEntity.ok().body(guideService.createGuide(guideReq));
     }
 
-    @PreAuthorize("hasAuthority({'ROLE_ADMIN'})")
+    @PreAuthorize("hasRole({'ADMIN'})")
     @PutMapping(value = "/{guideId}", consumes = "multipart/form-data")
     public ResponseEntity<Long> updateGuide(@PathVariable Long guideId, @Valid GuideReq guideReq) {
         validationUtils.isGuideValid(guideReq);
         return ResponseEntity.ok().body(guideService.updateGuide(guideId, guideReq));
     }
 
-    @PreAuthorize("hasAuthority({'ROLE_ADMIN'})")
+    @PreAuthorize("hasRole({'ADMIN'})")
     @DeleteMapping("/{guideId}")
     public ResponseEntity<Void> deleteGuide(@PathVariable Long guideId) {
         guideService.deleteGuide(guideId);

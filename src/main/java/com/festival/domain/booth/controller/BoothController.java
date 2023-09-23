@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,21 +23,22 @@ public class BoothController {
     private final BoothService boothService;
     private final ValidationUtils validationUtils;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') or  hasRole('ROLE_MANAGER')")
+    @PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<Long> createBooth(@Valid BoothReq boothReq) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         validationUtils.isBoothValid(boothReq);
         return ResponseEntity.ok().body(boothService.createBooth(boothReq));
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') or  hasRole('ROLE_MANAGER')")
+    @PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
     @PutMapping(value = "/{boothId}", consumes = "multipart/form-data")
     public ResponseEntity<Long> updateBooth(@Valid BoothReq boothReq, @PathVariable("boothId") Long id) {
         validationUtils.isBoothValid(boothReq);
         return ResponseEntity.ok().body(boothService.updateBooth(boothReq, id));
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') or  hasRole('ROLE_MANAGER')")
+    @PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
     @DeleteMapping("/{boothId}")
     public ResponseEntity<Void> deleteBooth(@PathVariable("boothId") Long id) {
         boothService.deleteBooth(id);
