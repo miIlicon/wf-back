@@ -14,6 +14,7 @@ import com.festival.domain.program.model.Program;
 import com.festival.domain.program.repository.ProgramRepository;
 import com.festival.domain.program.service.vo.ProgramSearchCond;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,12 +75,12 @@ public class ProgramService {
         return ProgramRes.of(program);
     }
 
-    public ProgramPageRes getProgramList(ProgramListReq programListReqDto, Pageable pageable) {
+    public ProgramPageRes getProgramList(ProgramListReq programListReq) {
         return programRepository.getList(
                 ProgramSearchCond.builder()
-                .status(programListReqDto.getStatus())
-                .type(programListReqDto.getType())
-                .pageable(pageable)
+                .status(programListReq.getStatus())
+                .type(programListReq.getType())
+                .pageable(PageRequest.of(programListReq.getPage(), programListReq.getSize()))
                 .build()
         );
     }

@@ -6,6 +6,7 @@ import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.common.redis.RedisService;
 import com.festival.common.util.SecurityUtils;
+import com.festival.domain.guide.dto.GuideListReq;
 import com.festival.domain.guide.dto.GuidePageRes;
 import com.festival.domain.guide.dto.GuideReq;
 import com.festival.domain.guide.dto.GuideRes;
@@ -15,6 +16,7 @@ import com.festival.domain.guide.repository.vo.GuideSearchCond;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,10 +76,10 @@ public class GuideService {
         return GuideRes.of(guide);
     }
 
-    public GuidePageRes getGuideList(String status, Pageable pageable) {
+    public GuidePageRes getGuideList(GuideListReq guideListReq) {
         GuideSearchCond guideSearchCond = GuideSearchCond.builder()
-                .status(status)
-                .pageable(pageable)
+                .status(guideListReq.getStatus())
+                .pageable(PageRequest.of(guideListReq.getPage(), guideListReq.getSize()))
                 .build();
         return guideRepository.getList(guideSearchCond);
     }
