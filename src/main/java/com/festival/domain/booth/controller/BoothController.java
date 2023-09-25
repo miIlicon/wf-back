@@ -5,6 +5,7 @@ import com.festival.domain.booth.controller.dto.*;
 import com.festival.domain.booth.service.BoothService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +45,13 @@ public class BoothController {
     }
 
     //@PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    @PutMapping(value = "/{boothId}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> updateBoothOperateStatus(@NotNull @RequestParam("operateStatus") String operateStatus, @PathVariable("boothId") Long id) {
+        return ResponseEntity.ok().body((Long) boothService.updateBoothOperateStatus(operateStatus, id));
+    }
+
+
+    //@PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @DeleteMapping(value = "/{boothId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteBooth(@PathVariable("boothId") Long id) {
         boothService.deleteBooth(id);
@@ -55,6 +63,7 @@ public class BoothController {
     public ResponseEntity<BoothRes> getBooth(@PathVariable("boothId") Long id, HttpServletRequest httpServletRequest) {
         return ResponseEntity.ok().body(boothService.getBooth(id,httpServletRequest.getRemoteAddr()));
     }
+
 
     //@PreAuthorize("permitAll()")
     @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)

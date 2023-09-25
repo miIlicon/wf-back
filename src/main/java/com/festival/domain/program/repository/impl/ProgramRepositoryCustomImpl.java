@@ -6,7 +6,9 @@ import com.festival.domain.program.dto.QProgramSearchRes;
 import com.festival.domain.program.model.Program;
 import com.festival.domain.program.repository.ProgramRepositoryCustom;
 import com.festival.domain.program.service.vo.ProgramSearchCond;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -23,10 +25,6 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
 
     public ProgramRepositoryCustomImpl(EntityManager entityManager) {
         this.queryFactory = new JPAQueryFactory(entityManager);
-    }
-
-    private static BooleanExpression StatusEq(String status) {
-        return status == null ? null : program.operateStatus.stringValue().eq(status);
     }
 
     private static BooleanExpression TypeEq(String type) {

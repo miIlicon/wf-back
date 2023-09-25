@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum OperateStatus {
 
     OPERATE("OPERATE"),
-    TERMINATE("TERMINATE");
+    TERMINATE("TERMINATE"),
+    UPCOMING("UPCOMING");
 
     private String value;
 
@@ -18,7 +19,8 @@ public enum OperateStatus {
         return switch (status) {
             case "OPERATE" -> OperateStatus.OPERATE;
             case "TERMINATE" -> OperateStatus.TERMINATE;
-            default -> null;
+            case "UPCOMING" -> OperateStatus.UPCOMING;
+            default -> throw new InvalidException(ErrorCode.INVALID_STATUS);
         };
     }
 }

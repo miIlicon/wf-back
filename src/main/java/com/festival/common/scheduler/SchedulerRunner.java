@@ -45,4 +45,10 @@ public class SchedulerRunner {
         }
 
     }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    public void updateOperateStatus() {
+        programService.settingProgramStatus();
+        boothService.settingBoothStatus();
+    }
 }

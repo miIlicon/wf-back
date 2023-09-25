@@ -39,8 +39,18 @@ public class ProgramReq {
     @NotNull(message = "서브 이미지를 선택해주세요")
     private List<MultipartFile> subFiles;
 
+    @NotNull(message = "시작 시간을 선택해주세요.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate startDate;
+
+    @NotNull(message = "종료 시간을 선택해주세요.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate endDate;
+
     @Builder
-    private ProgramReq(String title, String subTitle, String content, Float latitude, Float longitude, String type, String status, MultipartFile mainFile, List<MultipartFile> subFiles) {
+    private ProgramReq(String title, String subTitle, String content, Float latitude, Float longitude, String type, String operateStatus,
+                       MultipartFile mainFile, List<MultipartFile> subFiles,
+                       LocalDate startDate, LocalDate endDate) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;

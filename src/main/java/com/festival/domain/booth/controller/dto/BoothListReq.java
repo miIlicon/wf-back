@@ -11,9 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BoothListReq {
 
-    @NotNull(message = "상태를 선택 해주세요.")
-    private String status;
-
     @NotNull(message = "타입을 선택 해주세요.")
     private String type;
 
@@ -21,8 +18,9 @@ public class BoothListReq {
     private int page;
 
     @Builder
-    private BoothListReq(String status, String type) {
-        this.status = status;
+    private BoothListReq(String type, int size, int page) {
         this.type = type;
+        this.page = page;
+        this.size = size;
     }
 }
