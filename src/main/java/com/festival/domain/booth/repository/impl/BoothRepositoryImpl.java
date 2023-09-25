@@ -7,6 +7,7 @@ import com.festival.domain.booth.model.Booth;
 import com.festival.domain.booth.model.BoothType;
 import com.festival.domain.booth.repository.BoothRepositoryCustom;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
@@ -71,12 +72,13 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
                         booth.subTitle,
                         booth.operateStatus.stringValue(),
                         booth.image.mainFilePath
-                ))
-                .from(booth)
-                .where(
-                        eqKeyword(keyword)
-                )
-                .fetch();
+               ))
+               .from(booth)
+               .where(
+                       eqKeyword(keyword)
+               )
+               .orderBy(booth.viewCount.desc(), operateStatusAsc)
+               .fetch();
     }
 
     private static BooleanExpression eqKeyword(String keyword) {

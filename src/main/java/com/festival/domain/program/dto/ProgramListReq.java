@@ -12,9 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ProgramListReq {
 
-    @NotNull(message = "상태를 선택해주세요.")
-    String status;
-
     @NotNull(message = "타입을 선택해주세요.")
     String type;
 
@@ -23,10 +20,10 @@ public class ProgramListReq {
     int size;
 
     @Builder
-    private ProgramListReq(String status, String type, int page, int size) {
-        this.status = status;
+    private ProgramListReq(String type, int page, int size) {
         this.type = type;
         this.page = page;
         this.size = size;
     }
+
 }

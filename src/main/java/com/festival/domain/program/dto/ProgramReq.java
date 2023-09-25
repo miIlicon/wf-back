@@ -2,9 +2,14 @@ package com.festival.domain.program.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -30,13 +35,13 @@ public class ProgramReq {
     @NotNull(message = "타입을 입력해주세요.")
     private String type;
 
-    @NotNull(message = "상태를 입력해주세요.")
-    private String status;
+    @NotNull(message = "운영 상태를 선택해주세요.")
+    private String operateStatus;
 
-    @NotNull(message = "썸네일 이미지를 선택해주세요")
+    @NotNull(message = "썸네일 이미지를 선택해주세요.")
     private MultipartFile mainFile;
 
-    @NotNull(message = "서브 이미지를 선택해주세요")
+    @NotNull(message = "서브 이미지를 선택해주세요.")
     private List<MultipartFile> subFiles;
 
     @NotNull(message = "시작 시간을 선택해주세요.")
@@ -57,8 +62,11 @@ public class ProgramReq {
         this.latitude = latitude;
         this.longitude = longitude;
         this.type = type;
-        this.status = status;
+        this.operateStatus = operateStatus;
         this.mainFile = mainFile;
         this.subFiles = subFiles;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
+
 }

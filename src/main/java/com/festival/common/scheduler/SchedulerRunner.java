@@ -43,7 +43,6 @@ public class SchedulerRunner {
                 }
             }
         }
-
     }
 
     @Scheduled(cron = "0 0 0 * * *")

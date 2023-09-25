@@ -1,5 +1,7 @@
 package com.festival.common.base;
 
+import com.festival.common.exception.ErrorCode;
+import com.festival.common.exception.custom_exception.InvalidException;
 import lombok.Getter;
 
 @Getter

@@ -42,7 +42,7 @@ public class ValidationUtils {
         checkNumberRange(booth.getLongitude(), -180, 180);
         String[] typeList = {"FOOD_TRUCK", "FLEA_MARKET", "PUB"};
         checkTypeItem(typeList, booth.getType());
-        checkStatus(booth.getStatus());
+        checkStatus(booth.getOperateStatus());
     }
 
     public void isProgramValid(ProgramReq program) {
@@ -53,7 +53,7 @@ public class ValidationUtils {
         checkNumberRange(program.getLongitude(), -180, 180);
         String[] typeList = {"EVENT", "GAME"};
         checkTypeItem(typeList, program.getType());
-        checkStatus(program.getStatus());
+        checkStatus(program.getOperateStatus());
     }
 
     public void isTimeTableValid(TimeTableReq timeTable) {

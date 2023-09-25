@@ -23,6 +23,12 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
 
     private JPAQueryFactory queryFactory;
 
+    private final OrderSpecifier<Integer> operateStatusASC = new CaseBuilder()
+            .when(program.operateStatus.stringValue().eq("OPERATE")).then(1)
+            .when(program.operateStatus.stringValue().eq("UPCOMING")).then(2)
+            .otherwise(3)
+            .asc();
+
     public ProgramRepositoryCustomImpl(EntityManager entityManager) {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
@@ -37,18 +43,17 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
                 .selectFrom(program)
                 .join(program.image).fetchJoin()
                 .where(
-                        StatusEq(programSearchCond.getStatus()),
                         TypeEq(programSearchCond.getType())
                 )
                 .offset(programSearchCond.getPageable().getOffset())
                 .limit(programSearchCond.getPageable().getPageSize())
+                .orderBy(operateStatusASC, program.viewCount.desc())
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory
                 .select(program.count())
                 .from(program)
                 .where(
-                        StatusEq(programSearchCond.getStatus()),
                         TypeEq(programSearchCond.getType())
                 );
 
@@ -70,6 +75,7 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
                 .where(
                         keywordEqTitleOrSubTitle(keyword)
                 )
+                .orderBy(operateStatusASC, program.viewCount.desc())
                 .fetch();
     }
 

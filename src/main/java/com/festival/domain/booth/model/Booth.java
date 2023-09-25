@@ -114,7 +114,7 @@ public class Booth extends BaseEntity {
         this.content =  boothReq.getContent();
         this.latitude = boothReq.getLatitude();
         this.longitude = boothReq.getLongitude();
-        this.operateStatus = OperateStatus.checkStatus(boothReq.getStatus());
+        this.operateStatus = OperateStatus.checkStatus(boothReq.getOperateStatus());
         this.type = BoothType.handleType(boothReq.getType());
     }
 

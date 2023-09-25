@@ -3,7 +3,6 @@ package com.festival.domain.program.controller;
 import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.NotFoundException;
-import com.festival.domain.guide.dto.GuidePageRes;
 import com.festival.domain.image.model.Image;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.program.dto.ProgramPageRes;
@@ -26,6 +25,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.festival.domain.member.model.MemberRole.ADMIN;
@@ -97,7 +97,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                                 .param("latitude", String.valueOf(programReq.getLatitude()))
                                 .param("longitude", String.valueOf(programReq.getLongitude()))
                                 .param("type", programReq.getType())
-                                .param("status", programReq.getStatus())
+                                .param("status", programReq.getOperateStatus())
                                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 )
                 .andDo(print())
@@ -137,7 +137,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .status("OPERATE")
                 .mainFile(mainFile)
                 .build();
-        Program program = Program.of(programReq);
+        Program program = Program.of(programReq, LocalDate.now());
         program.connectMember(member);
         Program savedProgram = programRepository.saveAndFlush(program);
 
@@ -179,7 +179,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .status("OPERATE")
                 .mainFile(mainFile)
                 .build();
-        Program program = Program.of(programReq);
+        Program program = Program.of(programReq, LocalDate.now());
         program.connectMember(member);
         Program savedProgram = programRepository.saveAndFlush(program);
 
@@ -231,7 +231,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .status("OPERATE")
                 .mainFile(mainFile)
                 .build();
-        Program program = Program.of(programReq);
+        Program program = Program.of(programReq, LocalDate.now());
         program.connectMember(member);
         Program savedProgram = programRepository.saveAndFlush(program);
 
@@ -271,7 +271,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .status("OPERATE")
                 .mainFile(mainFile)
                 .build();
-        Program program = Program.of(programReq);
+        Program program = Program.of(programReq, LocalDate.now());
         program.connectMember(member);
         Program savedProgram = programRepository.saveAndFlush(program);
 
@@ -316,7 +316,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .status("OPERATE")
                 .mainFile(mainFile)
                 .build();
-        Program program = Program.of(programReq);
+        Program program = Program.of(programReq, LocalDate.now());
         program.connectMember(member);
         Image image = Image.builder()
                 .mainFilePath("mainFilePath")
@@ -341,7 +341,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .containsExactly(programReq.getTitle(), programReq.getSubTitle(),
                         programReq.getContent(),
                         programReq.getLatitude(), programReq.getLongitude(),
-                        programReq.getStatus(), programReq.getType());
+                        programReq.getOperateStatus(), programReq.getType());
     }
 
     @DisplayName("프로그램 게시물을 목록조회한다. 페이지당 게시물은 6개이다.")
@@ -370,27 +370,27 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .status("OPERATE")
                 .mainFile(mainFile)
                 .build();
-        Program program1 = Program.of(programReq);
+        Program program1 = Program.of(programReq, LocalDate.now());
         program1.connectMember(member);
         program1.setImage(image);
-        Program program2 = Program.of(programReq);
+        Program program2 = Program.of(programReq, LocalDate.now());
         program2.connectMember(member);
         program2.setImage(image);
-        Program program3 = Program.of(programReq);
+        Program program3 = Program.of(programReq, LocalDate.now());
         program3.connectMember(member);
         program3.setImage(image);
-        Program program4 = Program.of(programReq);
+        Program program4 = Program.of(programReq, LocalDate.now());
         program4.connectMember(member);
         program4.setImage(image);
-        Program program5 = Program.of(programReq);
+        Program program5 = Program.of(programReq, LocalDate.now());
         program5.connectMember(member);
         program5.setImage(image);
 
-        Program program6 = Program.of(programReq);
+        Program program6 = Program.of(programReq, LocalDate.now());
         program6.connectMember(member);
         program6.setImage(image);
 
-        Program program7 = Program.of(programReq);
+        Program program7 = Program.of(programReq, LocalDate.now());
         program7.connectMember(member);
         program7.setImage(image);
 
@@ -418,27 +418,27 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                         tuple(programReq.getTitle(), programReq.getSubTitle(),
                                 programReq.getContent(),
                                 programReq.getLatitude(), programReq.getLongitude(),
-                                programReq.getStatus(), programReq.getType()),
+                                programReq.getOperateStatus(), programReq.getType()),
                         tuple(programReq.getTitle(), programReq.getSubTitle(),
                                 programReq.getContent(),
                                 programReq.getLatitude(), programReq.getLongitude(),
-                                programReq.getStatus(), programReq.getType()),
+                                programReq.getOperateStatus(), programReq.getType()),
                         tuple(programReq.getTitle(), programReq.getSubTitle(),
                                 programReq.getContent(),
                                 programReq.getLatitude(), programReq.getLongitude(),
-                                programReq.getStatus(), programReq.getType()),
+                                programReq.getOperateStatus(), programReq.getType()),
                         tuple(programReq.getTitle(), programReq.getSubTitle(),
                                 programReq.getContent(),
                                 programReq.getLatitude(), programReq.getLongitude(),
-                                programReq.getStatus(), programReq.getType()),
+                                programReq.getOperateStatus(), programReq.getType()),
                         tuple(programReq.getTitle(), programReq.getSubTitle(),
                                 programReq.getContent(),
                                 programReq.getLatitude(), programReq.getLongitude(),
-                                programReq.getStatus(), programReq.getType()),
+                                programReq.getOperateStatus(), programReq.getType()),
                         tuple(programReq.getTitle(), programReq.getSubTitle(),
                                 programReq.getContent(),
                                 programReq.getLatitude(), programReq.getLongitude(),
-                                programReq.getStatus(), programReq.getType())
+                                programReq.getOperateStatus(), programReq.getType())
                 );
 
         assertThat(programPageRes).isNotNull()
