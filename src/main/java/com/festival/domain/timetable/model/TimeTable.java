@@ -1,7 +1,6 @@
 package com.festival.domain.timetable.model;
 
 import com.festival.common.base.BaseEntity;
-import com.festival.common.base.OperateStatus;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.timetable.dto.TimeTableReq;
 import jakarta.persistence.*;
@@ -9,7 +8,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 

@@ -3,12 +3,11 @@ package com.festival.domain.bambooforest.repository.impl;
 import com.festival.domain.bambooforest.dto.BamBooForestPageRes;
 import com.festival.domain.bambooforest.model.BamBooForest;
 import com.festival.domain.bambooforest.repository.BamBooForestRepositoryCustom;
-import com.festival.domain.bambooforest.service.vo.BamBooForestSearchCond;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
@@ -24,27 +23,19 @@ public class BamBooForestRepositoryImpl implements BamBooForestRepositoryCustom 
     }
 
     @Override
-    public BamBooForestPageRes getList(BamBooForestSearchCond bamBooForestSearchCond) {
+    public BamBooForestPageRes getList(Pageable pageable) {
         List<BamBooForest> result = queryFactory
                 .selectFrom(bamBooForest)
-                .where(
-                        statusEq(bamBooForestSearchCond.getStatus())
-                )
-                .offset(bamBooForestSearchCond.getPageable().getOffset())
-                .limit(bamBooForestSearchCond.getPageable().getPageSize())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory
                 .select(bamBooForest.count())
-                .from(bamBooForest)
-                .where(
-                        statusEq(bamBooForestSearchCond.getStatus())
-                );
-        Page<BamBooForest> page = PageableExecutionUtils.getPage(result, bamBooForestSearchCond.getPageable(), countQuery::fetchOne);
+                .from(bamBooForest);
+
+        Page<BamBooForest> page = PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
         return BamBooForestPageRes.of(page);
     }
 
-    private static BooleanExpression statusEq(String status) {
-        return bamBooForest.status.stringValue().eq(status);
-    }
 }

@@ -32,7 +32,6 @@ public class ValidationUtils {
         checkStrLength(guide.getContent(), 1, 300);
         String[] typeList = {"NOTICE"};
         checkTypeItem(typeList, guide.getType());
-        checkStatus(guide.getStatus());
     }
 
     public void isBoothValid(BoothReq booth) {
@@ -61,13 +60,11 @@ public class ValidationUtils {
         checkItemPattern(timeTable.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), DATE_PATTERN);
         checkItemPattern(timeTable.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), DATE_PATTERN);
         checkStrLength(timeTable.getTitle(), 1, 30);
-        checkStatus(timeTable.getStatus());
     }
 
     public void isBamBooForestValid(BamBooForestReq bamBooForest) {
         checkStrLength(bamBooForest.getContent(), 1, 200);
         checkItemPattern(bamBooForest.getContact(), EMAIL_REGEX);
-        checkStatus(bamBooForest.getStatus());
     }
 
     private void checkStrLength(String str, int min, int max) {

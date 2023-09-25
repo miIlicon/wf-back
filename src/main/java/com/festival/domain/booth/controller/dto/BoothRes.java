@@ -45,7 +45,7 @@ public class BoothRes {
                 .content(booth.getContent())
                 .latitude(booth.getLatitude())
                 .longitude(booth.getLongitude())
-                .status(booth.getStatus().getValue())
+                .status(booth.getOperateStatus().getValue())
                 .type(booth.getType().getValue())
                 .mainFilePath(booth.getImage().getMainFilePath())
                 .subFilePaths(booth.getImage().getSubFilePaths()).build();

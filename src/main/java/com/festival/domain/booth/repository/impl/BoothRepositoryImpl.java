@@ -58,7 +58,7 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
                         booth.id,
                         booth.title,
                         booth.subTitle,
-                        booth.status.stringValue(),
+                        booth.operateStatus.stringValue(),
                         booth.image.mainFilePath
                 ))
                 .from(booth)
@@ -77,11 +77,11 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
     }
 
     private static BooleanExpression statusEq(String status) {
-        return booth.status.stringValue().eq(status);
+        return booth.operateStatus.stringValue().eq(status);
     }
 
     private static BooleanExpression eqStatus(String status) {
-        return status == null ? null : booth.status.stringValue().eq(status);
+        return status == null ? null : booth.operateStatus.stringValue().eq(status);
     }
 
 }

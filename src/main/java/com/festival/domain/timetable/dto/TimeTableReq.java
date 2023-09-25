@@ -24,14 +24,10 @@ public class TimeTableReq {
     @NotBlank(message = "제목을 입력 해주세요.")
     private String title;
 
-    @NotNull(message = "상태를 선택 해주세요.")
-    private String status;
-
     @Builder
     private TimeTableReq(LocalDateTime startTime, LocalDateTime endTime, String title, String status) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.title = title;
-        this.status = status;
     }
 }

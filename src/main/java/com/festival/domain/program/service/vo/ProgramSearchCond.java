@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 @Getter
 public class ProgramSearchCond {
+
     private String status;
     private String type;
     private Pageable pageable;

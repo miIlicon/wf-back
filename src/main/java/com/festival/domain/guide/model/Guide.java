@@ -34,19 +34,17 @@ public class Guide extends BaseEntity {
     private Long viewCount = 0L;
 
     @Builder
-    private Guide(String title, String content, GuideType type, OperateStatus status) {
+    private Guide(String title, String content, boolean deleted) {
         this.title = title;
         this.content = content;
-        this.type = type;
-        this.status = status;
+        this.deleted = deleted;
     }
 
     public static Guide of(GuideReq guideReq) {
         return Guide.builder()
                 .title(guideReq.getTitle())
                 .content(guideReq.getContent())
-                .type(settingType(guideReq.getType()))
-                .status(settingStatus(guideReq.getStatus()))
+                .deleted(false)
                 .build();
     }
 
@@ -68,8 +66,8 @@ public class Guide extends BaseEntity {
         this.member = member;
     }
 
-    public void changeStatus(OperateStatus status) {
-        this.status = status;
+    public void deletedGuide() {
+        this.deleted = true;
     }
 
     private static GuideType settingType(String guideType) {
