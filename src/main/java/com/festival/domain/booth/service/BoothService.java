@@ -103,7 +103,7 @@ public class BoothService {
         if (booth.isEmpty()) {
             throw new NotFoundException(NOT_FOUND_BOOTH);
         }
-        if (booth.get().getStatus() == OperateStatus.TERMINATE) {
+        if (booth.get().isDeleted() == true) {
             throw new AlreadyDeleteException(ALREADY_DELETED);
         }
         return booth.get();
