@@ -50,16 +50,20 @@ public class Program extends BaseEntity {
     @Column(nullable = false)
     private Long viewCount = 0L;
 
+    @Enumerated(EnumType.STRING)
+    private OperateStatus operateStatus;
+
     @Builder
-    private Program(Long id, String title, String subTitle, String content, float latitude, float longitude, OperateStatus status, ProgramType type) {
+    private Program(Long id, String title, String subTitle, String content, float latitude, float longitude, OperateStatus operateStatus, ProgramType type, boolean deleted) {
         this.id = id;
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.status = status;
+        this.operateStatus = operateStatus;
         this.type = type;
+        this.deleted = deleted;
     }
 
     public static Program of(ProgramReq programReq) {
@@ -69,8 +73,9 @@ public class Program extends BaseEntity {
                 .content(programReq.getContent())
                 .latitude(programReq.getLatitude())
                 .longitude(programReq.getLongitude())
-                .status(OperateStatus.checkStatus(programReq.getStatus()))
+                .operateStatus(OperateStatus.checkStatus(programReq.getStatus()))
                 .type(ProgramType.handleType(programReq.getType()))
+                .deleted(false)
                 .build();
     }
 
@@ -80,12 +85,20 @@ public class Program extends BaseEntity {
         this.content = programReqDto.getContent();
         this.latitude = programReqDto.getLatitude();
         this.longitude = programReqDto.getLongitude();
-        this.status = OperateStatus.checkStatus(programReqDto.getStatus());
+        this.operateStatus = OperateStatus.checkStatus(programReqDto.getStatus());
         this.type = ProgramType.handleType(programReqDto.getType());
     }
 
-    public void changeStatus(OperateStatus newStatus) {
-        this.status = newStatus;
+    public void changeStatus() {
+        if (this.operateStatus == OperateStatus.OPERATE) {
+            this.operateStatus = OperateStatus.TERMINATE;
+        } else {
+            this.operateStatus = OperateStatus.OPERATE;
+        }
+    }
+
+    public void deletedProgram() {
+        this.deleted = true;
     }
 
     public void setImage(Image uploadImage) {

@@ -15,7 +15,6 @@ import com.festival.domain.program.repository.ProgramRepository;
 import com.festival.domain.program.service.vo.ProgramSearchCond;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +56,11 @@ public class ProgramService {
     }
 
     @Transactional
+    public void changeProgramStatusWithDate() {
+
+    }
+
+    @Transactional
     public void deleteProgram(Long programId) {
         Program program = checkingDeletedStatus(programRepository.findById(programId));
 
@@ -64,7 +68,7 @@ public class ProgramService {
             throw new ForbiddenException(ErrorCode.FORBIDDEN_DELETE);
         }
 
-        program.changeStatus(OperateStatus.TERMINATE);
+        program.deletedProgram();
     }
 
     public ProgramRes getProgram(Long programId, String ipAddress) {
@@ -105,7 +109,7 @@ public class ProgramService {
         if (program.isEmpty()) {
             throw new NotFoundException(NOT_FOUND_PROGRAM);
         }
-        if (program.get().getStatus() == OperateStatus.TERMINATE) {
+        if (program.get().isDeleted()) {
             throw new AlreadyDeleteException(ALREADY_DELETED);
         }
         return program.get();
