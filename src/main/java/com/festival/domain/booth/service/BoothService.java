@@ -62,7 +62,8 @@ public class BoothService {
         if (!SecurityUtils.checkingRole(booth.getMember(), memberService.getAuthenticationMember())) {
             throw new ForbiddenException(FORBIDDEN_DELETE);
         }
-        booth.changeStatus(OperateStatus.TERMINATE);
+
+        booth.deleteBooth();
     }
 
     public BoothRes getBooth(Long id, String ipAddress) {
@@ -70,15 +71,6 @@ public class BoothService {
         if(redisService.isDuplicateAccess(ipAddress, "Booth_" + booth.getId())) {
             redisService.increaseRedisViewCount("Booth_Id_" + booth.getId());
         }
-        return BoothRes.of(booth);
-    }
-
-    @Transactional
-    public BoothRes getBoothQuery(Long id, String ipAddress) {
-        Booth booth = boothRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BOOTH));
-
-        booth.increaseViewCount(1L);
-
         return BoothRes.of(booth);
     }
 
@@ -111,7 +103,7 @@ public class BoothService {
         if (booth.isEmpty()) {
             throw new NotFoundException(NOT_FOUND_BOOTH);
         }
-        if (booth.get().getStatus() == OperateStatus.TERMINATE) {
+        if (booth.get().isDeleted() == true) {
             throw new AlreadyDeleteException(ALREADY_DELETED);
         }
         return booth.get();

@@ -1,7 +1,6 @@
 package com.festival.domain.program.dto;
 
 import com.festival.domain.program.model.Program;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,7 +42,7 @@ public class ProgramRes {
                 .subTitle(program.getSubTitle())
                 .content(program.getContent())
                 .type(program.getType().toString())
-                .status(program.getStatus().toString())
+                .status(program.getOperateStatus().toString())
                 .longitude(program.getLongitude())
                 .latitude(program.getLatitude())
                 .mainFilePath(program.getImage().getMainFilePath())

@@ -36,6 +36,9 @@ public class Booth extends BaseEntity {
     private float longitude;
 
     @Column(nullable = false)
+    private OperateStatus operateStatus;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private BoothType type;
 
@@ -50,14 +53,15 @@ public class Booth extends BaseEntity {
     private Long viewCount = 0L;
 
     @Builder
-    private Booth(String title, String subTitle, String content, float latitude, float longitude, OperateStatus status, BoothType type) {
+    private Booth(String title, String subTitle, String content, float latitude, float longitude,boolean deleted, OperateStatus operateStatus, BoothType type) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.status = status;
+        this.operateStatus = operateStatus;
         this.type = type;
+        this.deleted = deleted;
     }
 
     public static Booth of(BoothReq boothReq){
@@ -67,7 +71,8 @@ public class Booth extends BaseEntity {
                 .content(boothReq.getContent())
                 .latitude(boothReq.getLatitude())
                 .longitude(boothReq.getLongitude())
-                .status(OperateStatus.checkStatus(boothReq.getStatus()))
+                .operateStatus(OperateStatus.checkStatus(boothReq.getStatus()))
+                .deleted(false)
                 .type(BoothType.handleType(boothReq.getType())).build();
     }
     public void setImage(Image image){
@@ -84,12 +89,18 @@ public class Booth extends BaseEntity {
         this.content =  boothReq.getContent();
         this.latitude = boothReq.getLatitude();
         this.longitude = boothReq.getLongitude();
-        this.status = OperateStatus.checkStatus(boothReq.getStatus());
+        this.operateStatus = OperateStatus.checkStatus(boothReq.getStatus());
         this.type = BoothType.handleType(boothReq.getType());
     }
 
-    public void changeStatus(OperateStatus status) {
-        this.status = status;
+    public void changeStatus() {
+        if(this.operateStatus.getValue().equals("OPERATE"))
+            this.operateStatus = OperateStatus.TERMINATE;
+        else
+            this.operateStatus = OperateStatus.OPERATE;
+    }
+    public void deleteBooth(){
+        this.deleted = true;
     }
 
     public void increaseViewCount(Long viewCount) {
