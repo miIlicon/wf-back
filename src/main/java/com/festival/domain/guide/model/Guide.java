@@ -30,9 +30,6 @@ public class Guide extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Image image;
-
     @Column(nullable = false)
     private Long viewCount = 0L;
 
@@ -65,10 +62,6 @@ public class Guide extends BaseEntity {
 
     public void decreaseViewCount(Long viewCount) {
         this.viewCount -= viewCount;
-    }
-
-    public void setImage(Image image){
-        this.image = image;
     }
 
     public void connectMember(Member member) {

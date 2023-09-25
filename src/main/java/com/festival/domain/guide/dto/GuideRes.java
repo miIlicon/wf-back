@@ -15,17 +15,13 @@ public class GuideRes {
     private String title;
     private String content;
     private String type;
-    private String mainFilePath;
-    private List<String> subFilePaths;
 
     @Builder
-    private GuideRes(Long id, String title, String content, String type, String mainFilePath, List<String> subFilePaths) {
+    private GuideRes(Long id, String title, String content, String type) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.type = type;
-        this.mainFilePath = mainFilePath;
-        this.subFilePaths = subFilePaths;
     }
 
     public static GuideRes of(Guide guide) {
@@ -34,8 +30,6 @@ public class GuideRes {
                 .title(guide.getTitle())
                 .content(guide.getContent())
                 .type(guide.getType().getValue())
-                .mainFilePath(guide.getImage().getMainFilePath())
-                .subFilePaths(guide.getImage().getSubFilePaths())
                 .build();
     }
 }

@@ -34,21 +34,21 @@ public class ProgramController {
 
     //@PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
     @PutMapping(value = "/{programId}", produces = APPLICATION_JSON_VALUE, consumes = MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Long> updateProgram(@PathVariable Long programId, @Valid ProgramReq programReq) {
+    public ResponseEntity<Long> updateProgram(@PathVariable("programId") Long programId, @Valid ProgramReq programReq) {
         validationUtils.isProgramValid(programReq);
         return ResponseEntity.ok().body(programService.updateProgram(programId, programReq));
     }
 
     //@PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
     @DeleteMapping(value = "/{programId}", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteProgram(@PathVariable Long programId) {
+    public ResponseEntity<Void> deleteProgram(@PathVariable("programId") Long programId) {
         programService.deleteProgram(programId);
         return ResponseEntity.ok().build();
     }
 
     //@PreAuthorize("permitAll()")
     @GetMapping(value = "/{programId}", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProgramRes> getProgram(@PathVariable Long programId, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<ProgramRes> getProgram(@PathVariable("programId") Long programId, HttpServletRequest httpServletRequest) {
         return ResponseEntity.ok().body(programService.getProgram(programId, httpServletRequest.getRemoteAddr()));
     }
 

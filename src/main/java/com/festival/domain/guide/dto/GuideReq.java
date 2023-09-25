@@ -24,17 +24,12 @@ public class GuideReq {
     @NotNull(message = "상태값을 입력해주세요")
     private String status;
 
-    private MultipartFile mainFile;
-
-    private List<MultipartFile> subFiles;
-
     @Builder
-    private GuideReq(String title, String content, String type, String status, MultipartFile mainFile, List<MultipartFile> subFiles) {
+    private GuideReq(String title, String content, String type, String status) {
         this.title = title;
         this.content = content;
         this.type = type;
         this.status = status;
-        this.mainFile = mainFile;
-        this.subFiles = subFiles;
     }
+
 }
