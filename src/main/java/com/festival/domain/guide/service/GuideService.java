@@ -13,11 +13,9 @@ import com.festival.domain.guide.dto.GuideRes;
 import com.festival.domain.guide.model.Guide;
 import com.festival.domain.guide.repository.GuideRepository;
 import com.festival.domain.guide.repository.vo.GuideSearchCond;
-import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,14 +31,11 @@ public class GuideService {
     private final GuideRepository guideRepository;
 
     private final MemberService memberService;
-    private final ImageService imageService;
-
     private final RedisService redisService;
 
     @Transactional
     public Long createGuide(GuideReq guideReq) {
         Guide guide = Guide.of(guideReq);
-        guide.setImage(imageService.createImage(guideReq.getMainFile(), guideReq.getSubFiles(), guideReq.getType()));
         guide.connectMember(memberService.getAuthenticationMember());
         return guideRepository.save(guide).getId();
     }
@@ -52,8 +47,8 @@ public class GuideService {
         if (!SecurityUtils.checkingAdminRole(memberService.getAuthenticationMember().getMemberRoles())) {
             throw new ForbiddenException(FORBIDDEN_UPDATE);
         }
+
         guide.update(guideReq);
-        settingImage(guideReq, guide);
         return guide.getId();
     }
 
@@ -94,15 +89,6 @@ public class GuideService {
     public void decreaseGuideViewCount(Long id, Long viewCount) {
         Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_GUIDE));
         guide.decreaseViewCount(viewCount);
-    }
-
-    private void settingImage(GuideReq guideReq, Guide guide) {
-        if (guide.getImage() != null) {
-            imageService.deleteImage(guide.getImage());
-        }
-        if (guideReq.getMainFile() != null || guideReq.getSubFiles() != null) {
-            guide.setImage(imageService.createImage(guideReq.getMainFile(), guideReq.getSubFiles(), guideReq.getType()));
-        }
     }
 
     private Guide checkingDeletedStatus(Optional<Guide> guide) {

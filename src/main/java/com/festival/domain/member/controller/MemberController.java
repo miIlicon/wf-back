@@ -19,14 +19,14 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @PreAuthorize("isAnonymous()")
+    //@PreAuthorize("isAnonymous()")
     @PostMapping("/join")
     public ResponseEntity<Void> joinMember(@Valid MemberJoinReq memberJoinReq) {
         memberService.join(memberJoinReq);
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("isAnonymous()")
+    //@PreAuthorize("isAnonymous()")
     @PostMapping("/login")
     public ResponseEntity<JwtTokenRes> loginMember(@Valid MemberLoginReq loginReq) {
         return ResponseEntity.ok().body(memberService.login(loginReq));
