@@ -40,14 +40,14 @@ public class GuideController {
         return ResponseEntity.ok().body(guideService.updateGuide(guideId, guideReq));
     }
 
-    @PreAuthorize("hasRole({'ADMIN'})")
+    //@PreAuthorize("hasRole({'ADMIN'})")
     @DeleteMapping(value = "/{guideId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteGuide(@PathVariable Long guideId) {
         guideService.deleteGuide(guideId);
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("permitAll()")
+    //@PreAuthorize("permitAll()")
     @GetMapping(value = "/{guideId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<GuideRes> getGuide(@PathVariable Long guideId, HttpServletRequest httpServletRequest) {
         return ResponseEntity.ok().body(guideService.getGuide(guideId, httpServletRequest.getRemoteAddr()));
