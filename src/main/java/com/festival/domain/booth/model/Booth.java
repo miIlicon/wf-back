@@ -6,10 +6,15 @@ import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.image.model.Image;
 import com.festival.domain.member.model.Member;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -52,8 +57,16 @@ public class Booth extends BaseEntity {
     @Column(nullable = false)
     private Long viewCount = 0L;
 
+    @NotNull(message = "시작 시간을 입력 해주세요.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate startDate;
+
+    @NotNull(message = "종료 시간을 입력 해주세요.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate endDate;
+
     @Builder
-    private Booth(String title, String subTitle, String content, float latitude, float longitude, boolean deleted, OperateStatus operateStatus, BoothType type) {
+    private Booth(String title, String subTitle, String content, float latitude, float longitude, boolean deleted, OperateStatus operateStatus, BoothType type, LocalDate startDate, LocalDate endDate) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
@@ -71,12 +84,24 @@ public class Booth extends BaseEntity {
                 .content(boothReq.getContent())
                 .latitude(boothReq.getLatitude())
                 .longitude(boothReq.getLongitude())
-                .operateStatus(OperateStatus.checkStatus(boothReq.getStatus()))
+                .operateStatus(resolveOperateStatus(LocalDate.now(), boothReq.getOperateStatus(), boothReq.getStartDate(), boothReq.getEndDate()))
+                .startDate(boothReq.getStartDate())
+                .endDate(boothReq.getEndDate())
                 .deleted(false)
                 .type(BoothType.handleType(boothReq.getType())).build();
     }
     public void setImage(Image image){
         this.image = image;
+    }
+
+    private static OperateStatus resolveOperateStatus(LocalDate currentDate,String operateStatus, LocalDate startDate, LocalDate endDate){
+        if(currentDate.isBefore(startDate))
+            return OperateStatus.UPCOMING;
+        else if (currentDate.isAfter(endDate)) {
+            return OperateStatus.TERMINATE;
+        }
+        return OperateStatus.checkStatus(operateStatus);
+
     }
 
     public void connectMember(Member member){
@@ -89,15 +114,12 @@ public class Booth extends BaseEntity {
         this.content =  boothReq.getContent();
         this.latitude = boothReq.getLatitude();
         this.longitude = boothReq.getLongitude();
-        this.operateStatus = OperateStatus.checkStatus(boothReq.getStatus());
+        this.operateStatus = OperateStatus.checkStatus(boothReq.getOperateStatus());
         this.type = BoothType.handleType(boothReq.getType());
     }
 
-    public void changeStatus() {
-        if(this.operateStatus.getValue().equals("OPERATE"))
-            this.operateStatus = OperateStatus.TERMINATE;
-        else
-            this.operateStatus = OperateStatus.OPERATE;
+    public void changeOperateStatus(String operateStatus) {
+        this.operateStatus = OperateStatus.checkStatus(operateStatus);
     }
     public void deleteBooth(){
         this.deleted = true;
@@ -107,7 +129,4 @@ public class Booth extends BaseEntity {
         this.viewCount += viewCount;
     }
 
-    public void decreaseViewCount(Long viewCount) {
-        this.viewCount -= viewCount;
-    }
 }

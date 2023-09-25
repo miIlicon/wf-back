@@ -5,14 +5,12 @@ import com.festival.domain.program.dto.*;
 import com.festival.domain.program.service.ProgramService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.springframework.http.MediaType.*;
@@ -29,7 +27,7 @@ public class ProgramController {
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes = MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> createProgram(@Valid ProgramReq programReq) {
         validationUtils.isProgramValid(programReq);
-        return ResponseEntity.ok().body(programService.createProgram(programReq));
+        return ResponseEntity.ok().body(programService.createProgram(programReq, LocalDate.now()));
     }
 
     //@PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
@@ -37,6 +35,12 @@ public class ProgramController {
     public ResponseEntity<Long> updateProgram(@PathVariable("programId") Long programId, @Valid ProgramReq programReq) {
         validationUtils.isProgramValid(programReq);
         return ResponseEntity.ok().body(programService.updateProgram(programId, programReq));
+    }
+
+    @PatchMapping(value = "/{programId}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> updateProgramStatus(@PathVariable("programId") Long programId,
+                                                    @NotNull @RequestParam(name = "status") String status) {
+        return ResponseEntity.ok().body(programService.updateProgramStatus(programId, status));
     }
 
     //@PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
@@ -53,7 +57,7 @@ public class ProgramController {
     }
 
     //@PreAuthorize("permitAll()")
-    @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<ProgramPageRes> getProgramList(@Valid ProgramListReq programListReq) {
         return ResponseEntity.ok().body(programService.getProgramList(programListReq));
     }

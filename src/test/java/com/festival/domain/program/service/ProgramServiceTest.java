@@ -6,20 +6,14 @@ import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 
-import com.festival.domain.image.fixture.ImageFixture;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.fixture.MemberFixture;
-import com.festival.domain.member.model.Member;
 import com.festival.domain.member.repository.MemberRepository;
 import com.festival.domain.member.service.MemberService;
-import com.festival.domain.program.dto.ProgramListReq;
 import com.festival.domain.program.dto.ProgramReq;
-import com.festival.domain.program.dto.ProgramRes;
-import com.festival.domain.program.fixture.ProgramFixture;
 import com.festival.domain.program.model.Program;
 import com.festival.domain.program.model.ProgramType;
 import com.festival.domain.program.repository.ProgramRepository;
-import com.festival.domain.program.service.vo.ProgramSearchCond;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,11 +21,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,7 +63,7 @@ class ProgramServiceTest {
                 .willReturn(getProgram());
 
         //when
-        Long programId = programService.createProgram(programReq);
+        Long programId = programService.createProgram(programReq, LocalDate.now());
 
         //then
         Assertions.assertThat(programId).isEqualTo(1L);
