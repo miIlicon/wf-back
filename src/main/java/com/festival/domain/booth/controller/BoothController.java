@@ -6,13 +6,16 @@ import com.festival.domain.booth.service.BoothService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.print.attribute.standard.Media;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -23,60 +26,42 @@ public class BoothController {
     private final BoothService boothService;
     private final ValidationUtils validationUtils;
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
-    @PostMapping(consumes = "multipart/form-data")
+    @PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> createBooth(@Valid BoothReq boothReq) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         validationUtils.isBoothValid(boothReq);
         return ResponseEntity.ok().body(boothService.createBooth(boothReq));
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
-    @PutMapping(value = "/{boothId}", consumes = "multipart/form-data")
+    @PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
+    @PutMapping(value = "/{boothId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> updateBooth(@Valid BoothReq boothReq, @PathVariable("boothId") Long id) {
         validationUtils.isBoothValid(boothReq);
         return ResponseEntity.ok().body(boothService.updateBooth(boothReq, id));
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
-    @DeleteMapping("/{boothId}")
+    @PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
+    @DeleteMapping(value = "/{boothId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteBooth(@PathVariable("boothId") Long id) {
         boothService.deleteBooth(id);
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("permitAll()")
-    @GetMapping("/{boothId}")
+    @GetMapping(value =  "/{boothId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BoothRes> getBooth(@PathVariable("boothId") Long id, HttpServletRequest httpServletRequest) {
         return ResponseEntity.ok().body(boothService.getBooth(id,httpServletRequest.getRemoteAddr()));
     }
-    @PreAuthorize("permitAll()")
-    @GetMapping()
-    public ResponseEntity<BoothRes> getBoothByTitle(@RequestParam("boothTitle") String title, HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok().body(boothService.getBoothByTitle(title,httpServletRequest.getRemoteAddr()));
-    }
 
     @PreAuthorize("permitAll()")
-    @GetMapping("/query/{boothId}")
-    public ResponseEntity<BoothRes> getBoothQuery(@PathVariable("boothId") Long id, HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok().body(boothService.getBoothQuery(id,httpServletRequest.getRemoteAddr()));
+    @GetMapping(value = "/list", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BoothPageRes> getBoothList(@Valid @RequestBody BoothListReq boothListReq) {
+        return ResponseEntity.ok().body(boothService.getBoothList(boothListReq));
     }
     @PreAuthorize("permitAll()")
-    @GetMapping("/redis")
-    public ResponseEntity<Long> getBoothQuery(HttpServletRequest httpServletRequest) {
-
-        return ResponseEntity.ok().body(boothService.getBoothRedis(httpServletRequest.getRemoteAddr()));
-    }
-
-
-    @PreAuthorize("permitAll()")
-    @GetMapping("/list")
-    public ResponseEntity<BoothPageRes> getBoothList(@Valid BoothListReq boothListReq, Pageable pageable) {
-        return ResponseEntity.ok().body(boothService.getBoothList(boothListReq, pageable));
-    }
-    @PreAuthorize("permitAll()")
-    @GetMapping("/search")
-    public ResponseEntity<List<BoothSearchRes>> searchBoothList(@RequestParam(name = "keyword") String keyword){
+    @GetMapping(value = "/search" , consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<BoothSearchRes>> searchBoothList(@RequestBody String keyword){
         return ResponseEntity.ok().body(boothService.searchBoothList(keyword));
     }
 }

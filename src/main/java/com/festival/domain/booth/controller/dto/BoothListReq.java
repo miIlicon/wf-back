@@ -17,6 +17,9 @@ public class BoothListReq {
     @NotNull(message = "타입을 선택 해주세요.")
     private String type;
 
+    private int size;
+    private int page;
+
     @Builder
     private BoothListReq(String status, String type) {
         this.status = status;

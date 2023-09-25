@@ -1,5 +1,4 @@
-package com.festival.domain.program.dto;
-
+package com.festival.domain.guide.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -10,22 +9,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProgramListReq {
+public class GuideListReq {
 
-    @NotNull(message = "상태를 선택해주세요.")
+    @NotNull(message = "상태값을 입력해주세요.")
     String status;
-
-    @NotNull(message = "타입을 선택해주세요.")
-    String type;
 
     int page;
 
     int size;
 
     @Builder
-    private ProgramListReq(String status, String type, int page, int size) {
+    private GuideListReq(String status, int page, int size) {
         this.status = status;
-        this.type = type;
         this.page = page;
         this.size = size;
     }

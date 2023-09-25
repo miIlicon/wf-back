@@ -13,6 +13,7 @@ import com.festival.domain.booth.service.vo.BoothListSearchCond;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,11 +83,11 @@ public class BoothService {
     }
 
     @Transactional(readOnly = true)
-    public BoothPageRes getBoothList(BoothListReq boothListReq, Pageable pageable) {
+    public BoothPageRes getBoothList(BoothListReq boothListReq) {
         return boothRepository.getList(BoothListSearchCond.builder()
                 .status(boothListReq.getStatus())
                 .type(boothListReq.getType())
-                .pageable(pageable)
+                .pageable(PageRequest.of(boothListReq.getPage() ,boothListReq.getSize()))
                 .build());
 
     }

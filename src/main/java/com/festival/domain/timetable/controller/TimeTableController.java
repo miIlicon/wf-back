@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/timetable")
@@ -22,30 +24,31 @@ public class TimeTableController {
     private final ValidationUtils validationUtils;
 
     @PreAuthorize("hasRole({'ADMIN'})")
-    @PostMapping
-    public ResponseEntity<Long> createTimeTable(@Valid TimeTableReq timeTableReq) {
+    @PostMapping(produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> createTimeTable(@Valid @RequestBody TimeTableReq timeTableReq) {
         validationUtils.isTimeTableValid(timeTableReq);
         return ResponseEntity.ok().body(timeTableService.createTimeTable(timeTableReq));
     }
 
     @PreAuthorize("hasRole({'ADMIN'})")
-    @PutMapping("/{timeTableId}")
+    @PutMapping(value = "/{timeTableId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> updateTimeTable(@PathVariable Long timeTableId,
-                                                @Valid TimeTableReq timeTableReq) {
+                                                @Valid @RequestBody TimeTableReq timeTableReq) {
         validationUtils.isTimeTableValid(timeTableReq);
         return ResponseEntity.ok().body(timeTableService.updateTimeTable(timeTableId, timeTableReq));
     }
 
     @PreAuthorize("hasRole({'ADMIN'})")
-    @DeleteMapping("/{timeTableId}")
+    @DeleteMapping(value = "/{timeTableId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteTimeTable(@PathVariable Long timeTableId) {
         timeTableService.deleteTimeTable(timeTableId);
         return ResponseEntity.ok().build();
     }
 
-
-    @GetMapping("/list")
-    public ResponseEntity<List<TimeTableRes>> getTimeTableList(@Valid TimeTableDateReq timeTableDateReq) {
+    @PreAuthorize("permitAll()")
+    @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<TimeTableRes>> getTimeTableList(@Valid @RequestBody TimeTableDateReq timeTableDateReq) {
         return ResponseEntity.ok().body(timeTableService.getTimeTableList(timeTableDateReq));
     }
+
 }

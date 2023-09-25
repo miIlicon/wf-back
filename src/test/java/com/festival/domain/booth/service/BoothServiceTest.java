@@ -284,7 +284,7 @@ class BoothServiceTest {
                 .build();
         Pageable pageable =  PageRequest.of(0, 3);
 
-        BoothPageRes boothPageRes = boothService.getBoothList(boothListReq, pageable);
+        BoothPageRes boothPageRes = boothService.getBoothList(boothListReq);
 
         //then
         Assertions.assertThat(boothPageRes.getBoothResList()).hasSize(1);

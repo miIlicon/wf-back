@@ -1,13 +1,16 @@
 package com.festival.domain.bambooforest.controller;
 
 import com.festival.common.util.ValidationUtils;
+import com.festival.domain.bambooforest.dto.BamBooForestListReq;
 import com.festival.domain.bambooforest.dto.BamBooForestPageRes;
 import com.festival.domain.bambooforest.dto.BamBooForestReq;
 import com.festival.domain.bambooforest.service.BamBooForestService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,22 +24,22 @@ public class BambooForestController {
     private final ValidationUtils validationUtils;
 
     @PreAuthorize("permitAll()")
-    @PostMapping
-    public ResponseEntity<Long> createBamBooForest(@Valid BamBooForestReq bamBooForestReq) {
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> createBamBooForest(@Valid @RequestBody BamBooForestReq bamBooForestReq) {
         validationUtils.isBamBooForestValid(bamBooForestReq);
         return ResponseEntity.ok().body(bambooForestService.createBamBooForest(bamBooForestReq));
     }
 
     @PreAuthorize("hasRole({'ADMIN'})")
-    @DeleteMapping("/{bamBooForestId}")
+    @DeleteMapping(value = "/{bamBooForestId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteBamBooForest(@PathVariable Long bamBooForestId) {
         bambooForestService.deleteBamBooForest(bamBooForestId);
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("permitAll()")
-    @GetMapping("/list")
-    public ResponseEntity<BamBooForestPageRes> getBamBooForestList(@NotNull(message = "상태값을 입력해주세요.") String status, Pageable pageable) {
-        return ResponseEntity.ok().body(bambooForestService.getBamBooForestList(status, pageable));
+    @GetMapping(value = "/list", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BamBooForestPageRes> getBamBooForestList(@Valid @RequestBody BamBooForestListReq bamBooForestListReq) {
+        return ResponseEntity.ok().body(bambooForestService.getBamBooForestList(bamBooForestListReq.getStatus(), PageRequest.of(bamBooForestListReq.getPage(), bamBooForestListReq.getSize())));
     }
 }
