@@ -26,7 +26,7 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
     }
 
     private static BooleanExpression StatusEq(String status) {
-        return status == null ? null : program.status.stringValue().eq(status);
+        return status == null ? null : program.operateStatus.stringValue().eq(status);
     }
 
     private static BooleanExpression TypeEq(String type) {
@@ -65,7 +65,7 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
                         program.id,
                         program.title,
                         program.subTitle,
-                        program.status.stringValue(),
+                        program.operateStatus.stringValue(),
                         program.image.mainFilePath
                 ))
                 .from(program)

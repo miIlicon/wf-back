@@ -11,16 +11,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class GuideListReq {
 
-    @NotNull(message = "상태값을 입력해주세요.")
-    String status;
-
     int page;
 
     int size;
 
     @Builder
-    private GuideListReq(String status, int page, int size) {
-        this.status = status;
+    private GuideListReq(int page, int size) {
         this.page = page;
         this.size = size;
     }

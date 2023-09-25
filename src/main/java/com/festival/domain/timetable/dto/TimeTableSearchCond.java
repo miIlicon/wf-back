@@ -12,12 +12,10 @@ public class TimeTableSearchCond {
     
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private String status;
 
     @Builder
-    private TimeTableSearchCond(LocalDateTime startTime, LocalDateTime endTime, String status) {
+    private TimeTableSearchCond(LocalDateTime startTime, LocalDateTime endTime) {
         this.startTime = startTime;
         this.endTime = endTime;
-        this.status = status;
     }
 }

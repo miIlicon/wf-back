@@ -10,9 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BamBooForestListReq {
 
-    @NotNull(message = "상태값을 입력해주세요")
-    private String status;
-
     private int size;
 
     private int page;

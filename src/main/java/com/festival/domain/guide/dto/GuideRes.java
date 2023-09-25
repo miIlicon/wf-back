@@ -14,14 +14,12 @@ public class GuideRes {
     private Long id;
     private String title;
     private String content;
-    private String type;
 
     @Builder
-    private GuideRes(Long id, String title, String content, String type) {
+    private GuideRes(Long id, String title, String content) {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.type = type;
     }
 
     public static GuideRes of(Guide guide) {
@@ -29,7 +27,6 @@ public class GuideRes {
                 .id(guide.getId())
                 .title(guide.getTitle())
                 .content(guide.getContent())
-                .type(guide.getType().getValue())
                 .build();
     }
 }

@@ -1,8 +1,8 @@
 package com.festival.domain.bambooforest.repository;
 
 import com.festival.domain.bambooforest.dto.BamBooForestPageRes;
-import com.festival.domain.bambooforest.service.vo.BamBooForestSearchCond;
+import org.springframework.data.domain.Pageable;
 
 public interface BamBooForestRepositoryCustom {
-    BamBooForestPageRes getList(BamBooForestSearchCond bamBooForestSearchCond);
+    BamBooForestPageRes getList(Pageable pageable);
 }

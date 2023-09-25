@@ -53,7 +53,7 @@ public class Booth extends BaseEntity {
     private Long viewCount = 0L;
 
     @Builder
-    private Booth(String title, String subTitle, String content, float latitude, float longitude,boolean deleted, OperateStatus operateStatus, BoothType type) {
+    private Booth(String title, String subTitle, String content, float latitude, float longitude, boolean deleted, OperateStatus operateStatus, BoothType type) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;

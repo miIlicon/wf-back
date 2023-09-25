@@ -60,7 +60,7 @@ public class GuideService {
             throw new ForbiddenException(FORBIDDEN_DELETE);
         }
 
-        guide.changeStatus(OperateStatus.TERMINATE);
+        guide.deletedGuide();
     }
 
     public GuideRes getGuide(Long id, String ipAddress){
@@ -72,11 +72,8 @@ public class GuideService {
     }
 
     public GuidePageRes getGuideList(GuideListReq guideListReq) {
-        GuideSearchCond guideSearchCond = GuideSearchCond.builder()
-                .status(guideListReq.getStatus())
-                .pageable(PageRequest.of(guideListReq.getPage(), guideListReq.getSize()))
-                .build();
-        return guideRepository.getList(guideSearchCond);
+
+        return guideRepository.getList(PageRequest.of(guideListReq.getPage(), guideListReq.getSize()));
     }
 
     @Transactional
@@ -95,7 +92,7 @@ public class GuideService {
         if (guide.isEmpty()) {
             throw new NotFoundException(NOT_FOUND_GUIDE);
         }
-        if (guide.get().getStatus().equals(OperateStatus.TERMINATE)) {
+        if (guide.get().isDeleted()) {
             throw new AlreadyDeleteException(ALREADY_DELETED);
         }
         return guide.get();

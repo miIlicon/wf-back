@@ -15,13 +15,9 @@ public class BamBooForestReq {
 
     private String contact;
 
-    @NotNull(message = "상태값을 입력해주세요")
-    private String status;
-
     @Builder
     private BamBooForestReq(String content, String contact, String status) {
         this.content = content;
         this.contact = contact;
-        this.status = status;
     }
 }

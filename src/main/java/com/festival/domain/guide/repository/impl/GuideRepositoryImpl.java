@@ -9,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
@@ -24,27 +25,19 @@ public class GuideRepositoryImpl implements GuideRepositoryCustom {
     }
 
     @Override
-    public GuidePageRes getList(GuideSearchCond guideSearchCond) {
+    public GuidePageRes getList(Pageable pageable) {
         List<Guide> result = queryFactory
                 .selectFrom(guide)
-                .where(
-                        statusEq(guideSearchCond.getStatus())
-                )
-                .offset(guideSearchCond.getPageable().getOffset())
-                .limit(guideSearchCond.getPageable().getPageSize())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory
                 .select(guide.count())
-                .from(guide)
-                .where(
-                        statusEq(guideSearchCond.getStatus())
-                );
-        Page<Guide> page = PageableExecutionUtils.getPage(result, guideSearchCond.getPageable(), countQuery::fetchOne);
+                .from(guide);
+
+        Page<Guide> page = PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
         return GuidePageRes.of(page);
     }
 
-    private static BooleanExpression statusEq(String status) {
-        return status == null ? null : guide.status.stringValue().eq(status);
-    }
 }

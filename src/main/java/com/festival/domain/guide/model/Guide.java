@@ -23,9 +23,6 @@ public class Guide extends BaseEntity {
 
     private String content;
 
-    @Enumerated(EnumType.STRING)
-    private GuideType type;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -34,26 +31,23 @@ public class Guide extends BaseEntity {
     private Long viewCount = 0L;
 
     @Builder
-    private Guide(String title, String content, GuideType type, OperateStatus status) {
+    private Guide(String title, String content, boolean deleted) {
         this.title = title;
         this.content = content;
-        this.type = type;
-        this.status = status;
+        this.deleted = deleted;
     }
 
     public static Guide of(GuideReq guideReq) {
         return Guide.builder()
                 .title(guideReq.getTitle())
                 .content(guideReq.getContent())
-                .type(settingType(guideReq.getType()))
-                .status(settingStatus(guideReq.getStatus()))
+                .deleted(false)
                 .build();
     }
 
     public void update(GuideReq guideReq) {
         this.title = guideReq.getTitle();
         this.content = guideReq.getContent();
-        this.type = settingType(guideReq.getType());
     }
 
     public void increaseViewCount(Long viewCount) {
@@ -68,12 +62,8 @@ public class Guide extends BaseEntity {
         this.member = member;
     }
 
-    public void changeStatus(OperateStatus status) {
-        this.status = status;
-    }
-
-    private static GuideType settingType(String guideType) {
-        return GuideType.checkType(guideType);
+    public void deletedGuide() {
+        this.deleted = true;
     }
 
     private static OperateStatus settingStatus(String guideStatus) {

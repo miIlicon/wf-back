@@ -1,6 +1,5 @@
 package com.festival.domain.timetable.service;
 
-import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
@@ -57,15 +56,14 @@ public class TimeTableService {
         if(!SecurityUtils.checkingAdminRole(memberService.getAuthenticationMember().getMemberRoles())) {
             throw new ForbiddenException(ErrorCode.FORBIDDEN_DELETE);
         }
-        timeTable.changeStatus(OperateStatus.TERMINATE);
+        timeTable.deleteTimeTable();
     }
 
     public List<TimeTableRes> getTimeTableList(TimeTableDateReq timeTableDateReq) {
         TimeTableSearchCond timeTableSearchCond =TimeTableSearchCond.builder()
                 .startTime(timeTableDateReq.getStartTime())
                 .endTime(timeTableDateReq.getEndTime())
-                .status(timeTableDateReq.getStatus()).build();
-
+                .build();
 
         return timeTableRepository.getList(timeTableSearchCond);
     }
@@ -75,9 +73,10 @@ public class TimeTableService {
             throw new NotFoundException(NOT_FOUND_TIMETABLE);
         }
 
-        if (timeTable.get().getStatus() == OperateStatus.TERMINATE) {
+        if (timeTable.get().isDeleted()) {
             throw new AlreadyDeleteException(ALREADY_DELETED);
         }
+
         return timeTable.get();
     }
 
