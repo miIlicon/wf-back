@@ -41,7 +41,4 @@ public class BamBooForest extends BaseEntity {
         this.deleted = true;
     }
 
-    private static OperateStatus settingStatus(String status) {
-        return OperateStatus.checkStatus(status);
-    }
 }

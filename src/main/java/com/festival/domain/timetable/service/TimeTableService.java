@@ -56,7 +56,7 @@ public class TimeTableService {
         if(!SecurityUtils.checkingAdminRole(memberService.getAuthenticationMember().getMemberRoles())) {
             throw new ForbiddenException(ErrorCode.FORBIDDEN_DELETE);
         }
-        timeTable.changeStatus(OperateStatus.TERMINATE);
+        timeTable.deleteTimeTable();
     }
 
     public List<TimeTableRes> getTimeTableList(TimeTableDateReq timeTableDateReq) {

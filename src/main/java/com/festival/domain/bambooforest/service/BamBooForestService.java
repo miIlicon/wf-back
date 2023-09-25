@@ -47,12 +47,8 @@ public class BamBooForestService {
         findBamBooForest.deletedBambooForest();
     }
 
-    public BamBooForestPageRes getBamBooForestList(String status, Pageable pageable) {
-        BamBooForestSearchCond bamBooForestSearchCond = BamBooForestSearchCond.builder()
-                .status(status)
-                .pageable(pageable)
-                .build();
-        return bamBooForestRepository.getList(bamBooForestSearchCond);
+    public BamBooForestPageRes getBamBooForestList(Pageable pageable) {
+        return bamBooForestRepository.getList(pageable);
     }
 
     private BamBooForest checkingDeletedStatus(Optional<BamBooForest> bamBooForest) {

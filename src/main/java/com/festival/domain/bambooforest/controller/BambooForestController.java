@@ -40,6 +40,6 @@ public class BambooForestController {
     //@PreAuthorize("permitAll()")
     @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<BamBooForestPageRes> getBamBooForestList(@Valid BamBooForestListReq bamBooForestListReq) {
-        return ResponseEntity.ok().body(bambooForestService.getBamBooForestList(bamBooForestListReq.getStatus(), PageRequest.of(bamBooForestListReq.getPage(), bamBooForestListReq.getSize())));
+        return ResponseEntity.ok().body(bambooForestService.getBamBooForestList(PageRequest.of(bamBooForestListReq.getPage(), bamBooForestListReq.getSize())));
     }
 }

@@ -21,15 +21,11 @@ public class GuideReq {
     @NotNull(message = "안내사항 타입을 입력 해주세요.")
     private String type;
 
-    @NotNull(message = "상태값을 입력해주세요")
-    private String status;
-
     @Builder
-    private GuideReq(String title, String content, String type, String status) {
+    private GuideReq(String title, String content, String type) {
         this.title = title;
         this.content = content;
         this.type = type;
-        this.status = status;
     }
 
 }

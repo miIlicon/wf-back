@@ -42,7 +42,5 @@ public class TimeTableRepositoryImpl implements TimeTableRepositoryCustom {
                 .and(timeTable.endTime.loe(endTime));
     }
 
-    private static BooleanExpression StatusEq(String status) {
-        return status == null ? null : timeTable.status.stringValue().eq(status);
-    }
+
 }

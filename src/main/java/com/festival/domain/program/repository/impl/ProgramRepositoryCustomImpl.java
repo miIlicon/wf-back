@@ -65,7 +65,7 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
                         program.id,
                         program.title,
                         program.subTitle,
-                        program.status.stringValue(),
+                        program.operateStatus.stringValue(),
                         program.image.mainFilePath
                 ))
                 .from(program)
