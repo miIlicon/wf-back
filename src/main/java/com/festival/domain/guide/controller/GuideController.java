@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class GuideController {
 
     @PreAuthorize("hasRole({'ADMIN'})")
     @Operation(summary = "안내사항 등록")
-    @PostMapping(produces = APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE ,produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> createGuide(@Valid GuideReq guideReq) {
         validationUtils.isGuideValid(guideReq);
         return ResponseEntity.ok().body(guideService.createGuide(guideReq));
@@ -35,7 +36,7 @@ public class GuideController {
 
     @PreAuthorize("hasRole({'ADMIN'})")
     @Operation(summary = "안내사항 수정")
-    @PutMapping(value = "/{guideId}", produces = APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{guideId}",consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> updateGuide(@PathVariable("guideId") Long guideId, @Valid GuideReq guideReq) {
         validationUtils.isGuideValid(guideReq);
         return ResponseEntity.ok().body(guideService.updateGuide(guideId, guideReq));
@@ -58,8 +59,8 @@ public class GuideController {
 
     @PreAuthorize("permitAll()")
     @Operation(summary = "안내사항 목록 조회!")
-    @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<GuidePageRes> getGuideList(@Valid @ParameterObject GuideListReq guideListReq) {
+    @GetMapping(value = "/list", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<GuidePageRes> getGuideList(@Valid GuideListReq guideListReq) {
         return ResponseEntity.ok().body(guideService.getGuideList(guideListReq));
     }
 
