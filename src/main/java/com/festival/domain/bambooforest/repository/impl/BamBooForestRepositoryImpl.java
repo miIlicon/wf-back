@@ -28,10 +28,12 @@ public class BamBooForestRepositoryImpl implements BamBooForestRepositoryCustom 
                 .selectFrom(bamBooForest)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .where(bamBooForest.deleted.eq(false))
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory
                 .select(bamBooForest.count())
+                .where(bamBooForest.deleted.eq(false))
                 .from(bamBooForest);
 
         Page<BamBooForest> page = PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);

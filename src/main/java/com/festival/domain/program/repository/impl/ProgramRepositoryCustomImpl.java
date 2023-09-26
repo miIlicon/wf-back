@@ -43,7 +43,8 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
                 .selectFrom(program)
                 .join(program.image).fetchJoin()
                 .where(
-                        TypeEq(programSearchCond.getType())
+                        TypeEq(programSearchCond.getType()),
+                        program.deleted.eq(false)
                 )
                 .offset(programSearchCond.getPageable().getOffset())
                 .limit(programSearchCond.getPageable().getPageSize())
@@ -54,7 +55,8 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
                 .select(program.count())
                 .from(program)
                 .where(
-                        TypeEq(programSearchCond.getType())
+                        TypeEq(programSearchCond.getType()),
+                        program.deleted.eq(false)
                 );
 
         Page<Program> page = PageableExecutionUtils.getPage(result, programSearchCond.getPageable(), countQuery::fetchOne);
@@ -73,7 +75,8 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
                 ))
                 .from(program)
                 .where(
-                        keywordEqTitleOrSubTitle(keyword)
+                        keywordEqTitleOrSubTitle(keyword),
+                        program.deleted.eq(false)
                 )
                 .orderBy(operateStatusASC, program.viewCount.desc())
                 .fetch();
