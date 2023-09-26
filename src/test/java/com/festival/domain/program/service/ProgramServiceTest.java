@@ -100,10 +100,7 @@ class ProgramServiceTest {
                 .isInstanceOf(AlreadyDeleteException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.ALREADY_DELETED);
-
     }
-
-
 
     @DisplayName("다른 사람이 부스를 업데이트하면 ForbiddenException을 반환한다.")
     @Test
@@ -244,7 +241,7 @@ class ProgramServiceTest {
         Program program = Program.builder()
                 .title("프로그램 게시물 제목")
                 .subTitle("프로그램 게시물 부제목")
-                .status(OperateStatus.OPERATE)
+                .operateStatus(OperateStatus.OPERATE)
                 .content("프로그램 게시물 내용")
                 .longitude(50.0f)
                 .latitude(50.0f)
@@ -257,7 +254,7 @@ class ProgramServiceTest {
         ProgramReq programReq = ProgramReq.builder()
                 .title("프로그램 게시물 제목")
                 .subTitle("프로그램 게시물 부제목")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .content("프로그램 게시물 내용")
                 .longitude(50.0f)
                 .latitude(50.0f)
@@ -271,7 +268,7 @@ class ProgramServiceTest {
         ProgramReq programReq = ProgramReq.builder()
                 .title("프로그램 게시물 제목 수정")
                 .subTitle("프로그램 게시물 부제목 수정")
-                .status("TERMINATE")
+                .operateStatus("TERMINATE")
                 .content("프로그램 게시물 내용 수정")
                 .longitude(50.0f)
                 .latitude(50.0f)

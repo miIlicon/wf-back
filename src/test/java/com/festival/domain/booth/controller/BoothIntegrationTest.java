@@ -83,7 +83,7 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("FOOD_TRUCK")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
                 .build();
 
@@ -99,7 +99,7 @@ class BoothIntegrationTest extends ControllerTestSupport {
                                 .param("content", boothReq.getContent())
                                 .param("latitude", String.valueOf(boothReq.getLatitude()))
                                 .param("longitude", String.valueOf(boothReq.getLongitude()))
-                                .param("status", boothReq.getStatus())
+                                .param("status", boothReq.getOperateStatus())
                                 .param("type", boothReq.getType())
                                 .contentType(MULTIPART_FORM_DATA)
                 )
@@ -134,7 +134,7 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("FOOD_TRUCK")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
                 .build();
         Booth booth = Booth.of(boothReq);
@@ -193,7 +193,7 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("FOOD_TRUCK")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
                 .build();
         Booth booth = Booth.of(boothReq);
@@ -279,7 +279,7 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("FOOD_TRUCK")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
                 .build();
         Booth booth = Booth.of(boothReq);
@@ -296,7 +296,7 @@ class BoothIntegrationTest extends ControllerTestSupport {
 
         // then
         Booth findBooth = boothRepository.findById(savedBooth.getId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOTH));
-        assertThat(findBooth.getStatus()).isEqualTo(OperateStatus.TERMINATE);
+        assertThat(findBooth.getOperateStatus()).isEqualTo(OperateStatus.TERMINATE);
     }
 
     @WithMockUser(username = "differentUser", roles = "MANAGER")
@@ -318,7 +318,7 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("FOOD_TRUCK")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
                 .build();
         Booth booth = Booth.of(boothReq);
@@ -366,7 +366,7 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("FOOD_TRUCK")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .build();
         Booth booth = Booth.of(boothReq);
         Image image = Image.builder()
@@ -465,7 +465,7 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("FOOD_TRUCK")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .build();
         Booth booth = Booth.of(boothReq);
         Image image = Image.builder()

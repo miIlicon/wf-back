@@ -262,8 +262,6 @@ class GuideServiceTest {
         return GuideReq.builder()
                 .title("가이드 제목 수정")
                 .content("가이드 내용 수정")
-                .type("NOTICE")
-                .status("OPERATE")
                 .build();
     }
     
