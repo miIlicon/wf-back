@@ -69,7 +69,7 @@ public class BoothService {
     }
 
     public BoothRes getBooth(Long id, String ipAddress) {
-        Booth booth = boothRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BOOTH));
+        Booth booth = checkingDeletedStatus(boothRepository.findById(id));
         if(redisService.isDuplicateAccess(ipAddress, "Booth_" + booth.getId())) {
             redisService.increaseRedisViewCount("Booth_Id_" + booth.getId());
         }
