@@ -232,6 +232,37 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 .andExpect(status().isNotFound());
     }
 
+
+    @WithMockUser(username = "testUser", roles = "ADMIN")
+    @DisplayName("축제부스 게시물의 운영상태를 변경한다..")
+    @Test
+    void updateBoothOperateStatus() throws Exception {
+        //given
+        BoothReq boothReq = getBoothReq();
+
+
+        Booth booth = Booth.of(boothReq);
+        booth.connectMember(member);
+        Booth savedBooth = boothRepository.saveAndFlush(booth);
+
+        //when
+        MvcResult mvcResult = mockMvc.perform(
+                        patch("/api/v2/booth/" + savedBooth.getId())
+                            .param("operateStatus", "OPERATE")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        //then
+        Booth findBooth = boothRepository.findById(Long.parseLong(mvcResult.getResponse().getContentAsString())).orElse(null);
+        assertThat(findBooth).isNotNull()
+                .extracting("operateStatus")
+                .isEqualTo(OperateStatus.OPERATE);
+    }
+
+
+
     @WithMockUser(username = "testUser", roles = "ADMIN")
     @DisplayName("축제부스 게시물을 하나 삭제한다.")
     @Test
