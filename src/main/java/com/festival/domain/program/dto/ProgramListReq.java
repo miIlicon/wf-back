@@ -1,6 +1,7 @@
 package com.festival.domain.program.dto;
 
 
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import lombok.Setter;
 public class ProgramListReq {
 
     @NotNull(message = "타입을 선택해주세요.")
+            @Parameter(name = "type", description = "EVENT, GAME")
     String type;
 
     int page;
