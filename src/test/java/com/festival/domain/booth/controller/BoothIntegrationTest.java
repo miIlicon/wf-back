@@ -11,6 +11,7 @@ import com.festival.domain.booth.controller.dto.BoothRes;
 import com.festival.domain.booth.model.Booth;
 import com.festival.domain.booth.model.BoothType;
 import com.festival.domain.booth.repository.BoothRepository;
+import com.festival.domain.booth.service.BoothService;
 import com.festival.domain.image.model.Image;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.util.ControllerTestSupport;
@@ -47,6 +48,9 @@ class BoothIntegrationTest extends ControllerTestSupport {
     private BoothRepository boothRepository;
 
     private Member member;
+
+    @Autowired
+    private BoothService boothService;
 
     @BeforeEach
     void setUp() {
@@ -261,6 +265,69 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 .isEqualTo(OperateStatus.OPERATE);
     }
 
+    @WithMockUser(username = "testUser", roles = "ADMIN")
+    @DisplayName("게시물 없으면 상태값을 변경할 수 없다")
+    @Test
+    void updateBoothOperateStatus2() throws Exception {
+        //given
+
+        //when & then
+        MvcResult mvcResult = mockMvc.perform(
+                        patch("/api/v2/booth/" + 1)
+                                .param("operateStatus", "OPERATE")
+                )
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+    }
+    @WithMockUser(username = "testUser", roles = "ADMIN")
+    @DisplayName("삭제된 게시물의 상태값은 변경할 수 없다")
+    @Test
+    void updateBoothOperateStatus3() throws Exception {
+        //given
+        BoothReq boothReq = getBoothReq();
+
+
+        Booth booth = Booth.of(boothReq);
+        booth.connectMember(member);
+        Booth savedBooth = boothRepository.saveAndFlush(booth);
+        boothService.deleteBooth(savedBooth.getId());
+
+        //when & then
+        MvcResult mvcResult = mockMvc.perform(
+                        patch("/api/v2/booth/" + savedBooth.getId())
+                                .param("operateStatus", "OPERATE")
+                )
+                .andDo(print())
+                .andExpect(status().is(400))
+                .andReturn();
+
+    }
+
+
+    @WithMockUser(username = "differentUser", roles = "MANAGER")
+    @DisplayName("게시물의 MAMAGER나 ADMIN이 아니면  변경할 수 없다")
+    @Test
+    void updateBoothOperateStatus4() throws Exception {
+        //given
+        BoothReq boothReq = getBoothReq();
+
+
+        Booth booth = Booth.of(boothReq);
+        booth.connectMember(member);
+        Booth savedBooth = boothRepository.saveAndFlush(booth);
+
+        //when & then
+        MvcResult mvcResult = mockMvc.perform(
+                        patch("/api/v2/booth/" + savedBooth.getId())
+                                .param("operateStatus", "OPERATE")
+                )
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andReturn();
+
+    }
 
 
     @WithMockUser(username = "testUser", roles = "ADMIN")

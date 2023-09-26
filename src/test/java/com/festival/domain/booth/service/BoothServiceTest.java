@@ -173,6 +173,96 @@ class BoothServiceTest {
         Assertions.assertThat(boothId).isEqualTo(booth.getId());
     }
 
+    //   ###############################################################
+
+    @DisplayName("삭제된 부스의 상태값을 업데이트하면 AlreadyDeletedException을 반환한다.")
+    @Test
+    void updateBoothOperateStatus() throws IOException {
+        //given
+        given(boothRepository.findById(1L))
+                .willReturn(Optional.of(DELETED_BOOTH));
+
+        //when & then
+        assertThatThrownBy(() -> boothService.updateBoothOperateStatus(OperateStatus.OPERATE.getValue(), 1L))
+                .isInstanceOf(AlreadyDeleteException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.ALREADY_DELETED);
+
+    }
+
+
+
+    @DisplayName("다른 사람이 부스 상태값을 업데이트하면 ForbiddenException을 반환한다.")
+    @Test
+    void updateBoothOperateStatus2() throws IOException {
+        //given
+        Booth booth = getBooth();
+        booth.connectMember(MemberFixture.MANAGER1);
+
+        given(boothRepository.findById(1L))
+                .willReturn(Optional.of(booth));
+        given(memberService.getAuthenticationMember())
+                .willReturn(MemberFixture.MANAGER2);
+
+        //when & then
+        assertThatThrownBy(() -> boothService.updateBoothOperateStatus(OperateStatus.OPERATE.getValue(), 1L))
+                .isInstanceOf(ForbiddenException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.FORBIDDEN_UPDATE);
+    }
+    @DisplayName("Admin이 부스 상태값을 업데이트하면 boothId를 반환한다.")
+    @Test
+    void updateBoothOperateStatus3() throws IOException {
+        //given
+        Booth booth = getBooth();
+        booth.connectMember(MemberFixture.MANAGER1);
+
+        given(boothRepository.findById(1L))
+                .willReturn(Optional.of(booth));
+        given(memberService.getAuthenticationMember())
+                .willReturn(MemberFixture.ADMIN);
+
+        //when
+        Long boothId = boothService.updateBoothOperateStatus(OperateStatus.OPERATE.getValue(), 1L);
+
+        //then
+        Assertions.assertThat(boothId).isEqualTo(booth.getId());
+    }
+    @DisplayName("부스의 관리자가 업데이트하면 boothId를 반환한다.")
+    @Test
+    void updateBoothOperateStatus4() throws IOException {
+        //given
+        Booth booth = getBooth();
+        booth.connectMember(MemberFixture.MANAGER1);
+
+        given(boothRepository.findById(1L))
+                .willReturn(Optional.of(booth));
+        given(memberService.getAuthenticationMember())
+                .willReturn(MemberFixture.MANAGER1);
+
+        //when
+        Long boothId = boothService.updateBoothOperateStatus(OperateStatus.OPERATE.getValue(), 1L);
+
+        //then
+        Assertions.assertThat(boothId).isEqualTo(booth.getId());
+    }
+    @DisplayName("존재하지 않는 부스의 상태를 업데이트하면 NotFoundException을 반환한다.")
+    @Test
+    void updateBoothOperateStatusBooth() {
+        //given
+        given(boothRepository.findById(1L))
+                .willReturn(Optional.empty());
+
+        //when & then
+        assertThatThrownBy(() ->boothService.updateBoothOperateStatus(OperateStatus.OPERATE.getValue(), 1L))
+                .isInstanceOf(NotFoundException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.NOT_FOUND_BOOTH);
+
+    }
+
+    // #####################################################################
+
     @DisplayName("존재하지 않는 부스를 삭제하면 NotFoundException을 반환한다.")
     @Test
     void deleteNotExistBooth() {
