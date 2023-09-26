@@ -29,6 +29,7 @@ public class BamBooForestRepositoryImpl implements BamBooForestRepositoryCustom 
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .where(bamBooForest.deleted.eq(false))
+                .orderBy(bamBooForest.id.desc())
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory
