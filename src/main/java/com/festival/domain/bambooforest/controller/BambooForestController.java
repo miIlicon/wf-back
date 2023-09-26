@@ -7,6 +7,7 @@ import com.festival.domain.bambooforest.dto.BamBooForestReq;
 import com.festival.domain.bambooforest.service.BamBooForestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,7 @@ public class BambooForestController {
 
     //@PreAuthorize("permitAll()")
     @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<BamBooForestPageRes> getBamBooForestList(@Valid BamBooForestListReq bamBooForestListReq) {
+    public ResponseEntity<BamBooForestPageRes> getBamBooForestList(@Valid @ParameterObject BamBooForestListReq bamBooForestListReq) {
         return ResponseEntity.ok().body(bambooForestService.getBamBooForestList(PageRequest.of(bamBooForestListReq.getPage(), bamBooForestListReq.getSize())));
     }
 }

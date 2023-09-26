@@ -9,6 +9,7 @@ import com.festival.domain.guide.service.GuideService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,7 +52,7 @@ public class GuideController {
 
     //@PreAuthorize("permitAll()")
     @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<GuidePageRes> getGuideList(@Valid GuideListReq guideListReq) {
+    public ResponseEntity<GuidePageRes> getGuideList(@Valid @ParameterObject GuideListReq guideListReq) {
         return ResponseEntity.ok().body(guideService.getGuideList(guideListReq));
     }
 

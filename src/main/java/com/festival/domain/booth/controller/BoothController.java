@@ -50,7 +50,6 @@ public class BoothController {
         return ResponseEntity.ok().body((Long) boothService.updateBoothOperateStatus(operateStatus, id));
     }
 
-
     //@PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @DeleteMapping(value = "/{boothId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteBooth(@PathVariable("boothId") Long id) {
@@ -64,12 +63,12 @@ public class BoothController {
         return ResponseEntity.ok().body(boothService.getBooth(id,httpServletRequest.getRemoteAddr()));
     }
 
-
     //@PreAuthorize("permitAll()")
     @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<BoothPageRes> getBoothList(@Valid BoothListReq boothListReq) {
         return ResponseEntity.ok().body(boothService.getBoothList(boothListReq));
     }
+
     //@PreAuthorize("permitAll()")
     @GetMapping(value = "/search", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BoothSearchRes>> searchBoothList(@RequestParam(name = "keyword") String keyword){

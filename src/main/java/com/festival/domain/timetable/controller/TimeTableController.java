@@ -25,7 +25,7 @@ public class TimeTableController {
 
     //@PreAuthorize("hasRole({'ADMIN'})")
     @PostMapping(produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Long> createTimeTable(@Valid TimeTableReq timeTableReq) {
+    public ResponseEntity<Long> createTimeTable(@Valid @ParameterObject TimeTableReq timeTableReq) {
         validationUtils.isTimeTableValid(timeTableReq);
         return ResponseEntity.ok().body(timeTableService.createTimeTable(timeTableReq));
     }
@@ -33,7 +33,7 @@ public class TimeTableController {
     //@PreAuthorize("hasRole({'ADMIN'})")
     @PutMapping(value = "/{timeTableId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> updateTimeTable(@PathVariable("timeTableId") Long timeTableId,
-                                                @Valid TimeTableReq timeTableReq) {
+                                                @Valid @ParameterObject TimeTableReq timeTableReq) {
         validationUtils.isTimeTableValid(timeTableReq);
         return ResponseEntity.ok().body(timeTableService.updateTimeTable(timeTableId, timeTableReq));
     }
