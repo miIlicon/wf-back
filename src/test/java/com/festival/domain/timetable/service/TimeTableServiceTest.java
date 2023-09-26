@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static com.festival.domain.timetable.fixture.TimeTableFixture.TERMINATED_TIMETABLE;
+import static com.festival.domain.timetable.fixture.TimeTableFixture.DELETED_TIMETABLE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -98,7 +98,6 @@ class TimeTableServiceTest {
         given(timeTableRepository.findById(1L))
                 .willReturn(Optional.empty());
 
-
         //when & then
         assertThatThrownBy(() -> timeTableService.updateTimeTable(1L, timeTableUpdateReqReq))
                 .isInstanceOf(NotFoundException.class)
@@ -112,7 +111,7 @@ class TimeTableServiceTest {
         TimeTableReq timeTableUpdateReqReq = getTimeTableUpdateReq();
 
         given(timeTableRepository.findById(1L))
-                .willReturn(Optional.of(TERMINATED_TIMETABLE));
+                .willReturn(Optional.of(DELETED_TIMETABLE));
 
         //when & then
         assertThatThrownBy(() -> timeTableService.updateTimeTable(1L, timeTableUpdateReqReq))
@@ -169,7 +168,7 @@ class TimeTableServiceTest {
     void deleteAlreadyExistsTimeTable()  {
         //given
         given(timeTableRepository.findById(1L))
-                .willReturn(Optional.of(TERMINATED_TIMETABLE));
+                .willReturn(Optional.of(DELETED_TIMETABLE));
 
         //when & then
         assertThatThrownBy(() -> timeTableService.deleteTimeTable(1L))
@@ -179,31 +178,32 @@ class TimeTableServiceTest {
     }
 
     private TimeTable getTimeTable(){
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime registerDate = LocalDateTime.of(2023, 9, 26, 10, 0);
         TimeTable timeTable = TimeTable.builder()
                 .title("동아리 공연")
-                .startTime(LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), now.getMinute()))
-                .endTime(LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 2, now.getMinute()))
+                .startTime(LocalDateTime.of(registerDate.getYear(), registerDate.getMonth(), registerDate.getDayOfMonth(), registerDate.getHour(), registerDate.getMinute()))
+                .endTime(LocalDateTime.of(registerDate.getYear(), registerDate.getMonth(), registerDate.getDayOfMonth(), registerDate.getHour() + 2, registerDate.getMinute()))
+                .deleted(false)
                 .build();
         ReflectionTestUtils.setField(timeTable, "id", 1L);
         return timeTable;
     }
 
     private TimeTableReq getTimeTableCreateReq() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime registerDate = LocalDateTime.of(2023, 9, 26, 10, 0);
         return TimeTableReq.builder()
                 .title("동아리 공연")
-                .startTime(LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), now.getMinute()))
-                .endTime(LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 2, now.getMinute()))
+                .startTime(LocalDateTime.of(registerDate.getYear(), registerDate.getMonth(), registerDate.getDayOfMonth(), registerDate.getHour(), registerDate.getMinute()))
+                .endTime(LocalDateTime.of(registerDate.getYear(), registerDate.getMonth(), registerDate.getDayOfMonth(), registerDate.getHour() + 2, registerDate.getMinute()))
                 .status("OPERATE")
                 .build();
     }
     private TimeTableReq getTimeTableUpdateReq() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime registerDate = LocalDateTime.of(2023, 9, 26, 10, 0);
         return TimeTableReq.builder()
                 .title("동아리 공연")
-                .startTime(LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), now.getMinute()))
-                .endTime(LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 2, now.getMinute()))
+                .startTime(LocalDateTime.of(registerDate.getYear(), registerDate.getMonth(), registerDate.getDayOfMonth(), registerDate.getHour(), registerDate.getMinute()))
+                .endTime(LocalDateTime.of(registerDate.getYear(), registerDate.getMonth(), registerDate.getDayOfMonth(), registerDate.getHour() + 2, registerDate.getMinute()))
                 .status("TERMINATE")
                 .build();
     }

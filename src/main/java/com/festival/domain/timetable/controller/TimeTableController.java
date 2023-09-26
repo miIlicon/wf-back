@@ -24,14 +24,14 @@ public class TimeTableController {
     private final ValidationUtils validationUtils;
 
     //@PreAuthorize("hasRole({'ADMIN'})")
-    @PostMapping(produces = APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> createTimeTable(@Valid TimeTableReq timeTableReq) {
         validationUtils.isTimeTableValid(timeTableReq);
         return ResponseEntity.ok().body(timeTableService.createTimeTable(timeTableReq));
     }
 
     //@PreAuthorize("hasRole({'ADMIN'})")
-    @PutMapping(value = "/{timeTableId}", produces = APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PutMapping(value = "/{timeTableId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> updateTimeTable(@PathVariable("timeTableId") Long timeTableId,
                                                 @Valid TimeTableReq timeTableReq) {
         validationUtils.isTimeTableValid(timeTableReq);
@@ -46,7 +46,7 @@ public class TimeTableController {
     }
 
     //@PreAuthorize("permitAll()")
-    @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TimeTableRes>> getTimeTableList(@Valid TimeTableDateReq timeTableDateReq) {
         return ResponseEntity.ok().body(timeTableService.getTimeTableList(timeTableDateReq));
     }

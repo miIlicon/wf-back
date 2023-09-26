@@ -1,6 +1,5 @@
 package com.festival.domain.timetable.controller;
 
-import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.domain.member.model.Member;
@@ -22,7 +21,6 @@ import java.util.List;
 import static com.festival.domain.member.model.MemberRole.ADMIN;
 import static com.festival.domain.member.model.MemberRole.MANAGER;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -64,7 +62,6 @@ class TimeTableIntegrationTest extends ControllerTestSupport {
         //when
         MvcResult mvcResult = mockMvc.perform(
                         post("/api/v2/timetable")
-                                .contentType(APPLICATION_FORM_URLENCODED)
                                 .param("title", timeTableReq.getTitle())
                                 .param("startTime", timeTableReq.getStartTime().toString())
                                 .param("endTime", timeTableReq.getEndTime().toString())
@@ -78,8 +75,8 @@ class TimeTableIntegrationTest extends ControllerTestSupport {
         Long timeTableId = Long.parseLong(mvcResult.getResponse().getContentAsString());
         TimeTable findTimeTable = timeTableRepository.findById(timeTableId).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_TIMETABLE));
         assertThat(findTimeTable).isNotNull()
-                .extracting("title", "startTime", "endTime", "status")
-                .containsExactly("testTitle1", registeredDateTime, registeredDateTime.plusHours(1), OperateStatus.OPERATE);
+                .extracting("title", "startTime", "endTime")
+                .containsExactly("testTitle1", registeredDateTime, registeredDateTime.plusHours(1));
     }
 
     @WithMockUser(username = "testUser", roles = "ADMIN")
@@ -98,7 +95,6 @@ class TimeTableIntegrationTest extends ControllerTestSupport {
         //when
         MvcResult mvcResult = mockMvc.perform(
                         put("/api/v2/timetable/{timeTableId}", savedTimeTable.getId())
-                                .contentType(APPLICATION_FORM_URLENCODED)
                                 .param("title", "updateTitle")
                                 .param("startTime", updatedDateTime.toString())
                                 .param("endTime", updatedDateTime.plusHours(1).toString())
@@ -112,8 +108,8 @@ class TimeTableIntegrationTest extends ControllerTestSupport {
         Long timeTableId = Long.parseLong(mvcResult.getResponse().getContentAsString());
         TimeTable findTimeTable = timeTableRepository.findById(timeTableId).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_TIMETABLE));
         assertThat(findTimeTable).isNotNull()
-                .extracting("title", "startTime", "endTime", "status")
-                .containsExactly("updateTitle", updatedDateTime, updatedDateTime.plusHours(1), OperateStatus.OPERATE);
+                .extracting("title", "startTime", "endTime")
+                .containsExactly("updateTitle", updatedDateTime, updatedDateTime.plusHours(1));
     }
 
     @WithMockUser(username = "differentUser", roles = "MANAGER")
@@ -132,7 +128,6 @@ class TimeTableIntegrationTest extends ControllerTestSupport {
         //when //then
         mockMvc.perform(
                         put("/api/v2/timetable/{timeTableId}", savedTimeTable.getId())
-                                .contentType(APPLICATION_FORM_URLENCODED)
                                 .param("title", "updateTitle")
                                 .param("startTime", updatedDateTime.toString())
                                 .param("endTime", updatedDateTime.plusHours(1).toString())
@@ -148,7 +143,6 @@ class TimeTableIntegrationTest extends ControllerTestSupport {
         //when //then
         mockMvc.perform(
                         put("/api/v2/timetable/{timeTableId}", 1L)
-                                .contentType(APPLICATION_FORM_URLENCODED)
                                 .param("title", "updateTitle")
                                 .param("startTime", LocalDateTime.of(2023, 9, 1, 12, 41, 0).toString())
                                 .param("endTime", LocalDateTime.of(2023, 9, 1, 13, 41, 0).toString())
@@ -246,7 +240,6 @@ class TimeTableIntegrationTest extends ControllerTestSupport {
                         get("/api/v2/timetable/list")
                                 .param("startTime", registeredDateTime.toString())
                                 .param("endTime", registeredDateTime.plusDays(1).toString())
-                                .param("status", "OPERATE")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -265,7 +258,6 @@ class TimeTableIntegrationTest extends ControllerTestSupport {
                 .title("testTitle" + count)
                 .startTime(registeredDateTime)
                 .endTime(registeredDateTime.plusHours(1))
-                .status("OPERATE")
                 .build();
     }
 }

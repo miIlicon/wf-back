@@ -7,12 +7,14 @@ import java.time.LocalDateTime;
 
 @Getter
 public class TimeTableFixture {
-    private static LocalDateTime now = LocalDateTime.now();
 
-    public static final TimeTable TERMINATED_TIMETABLE = TimeTable.builder()
+    private static LocalDateTime registeredDate = LocalDateTime.of(2023, 9, 26, 10, 0);
+
+    public static final TimeTable DELETED_TIMETABLE = TimeTable.builder()
             .title("동아리 공연")
-            .startTime(LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), now.getMinute()))
-            .endTime(LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 2, now.getMinute()))
+            .startTime(LocalDateTime.of(registeredDate.getYear(), registeredDate.getMonth(), registeredDate.getDayOfMonth(), registeredDate.getHour(), registeredDate.getMinute()))
+            .endTime(LocalDateTime.of(registeredDate.getYear(), registeredDate.getMonth(), registeredDate.getDayOfMonth(), registeredDate.getHour() + 2, registeredDate.getMinute()))
+            .deleted(true)
             .build();
 
 }
