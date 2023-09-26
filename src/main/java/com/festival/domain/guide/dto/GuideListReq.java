@@ -1,6 +1,5 @@
 package com.festival.domain.guide.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

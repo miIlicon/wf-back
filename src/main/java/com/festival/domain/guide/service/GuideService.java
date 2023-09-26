@@ -1,6 +1,5 @@
 package com.festival.domain.guide.service;
 
-import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
@@ -12,7 +11,6 @@ import com.festival.domain.guide.dto.GuideReq;
 import com.festival.domain.guide.dto.GuideRes;
 import com.festival.domain.guide.model.Guide;
 import com.festival.domain.guide.repository.GuideRepository;
-import com.festival.domain.guide.repository.vo.GuideSearchCond;
 import com.festival.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
