@@ -62,7 +62,9 @@ public class ValidationUtils {
 
     public void isBamBooForestValid(BamBooForestReq bamBooForest) {
         checkStrLength(bamBooForest.getContent(), 1, 200);
-        checkItemPattern(bamBooForest.getContact(), EMAIL_REGEX);
+        if (!bamBooForest.getContact().isBlank()) {
+            checkItemPattern(bamBooForest.getContact(), EMAIL_REGEX);
+        }
     }
 
     private void checkStrLength(String str, int min, int max) {

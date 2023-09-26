@@ -10,9 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -27,7 +25,7 @@ public class BambooForestController {
 
     //@PreAuthorize("permitAll()")
     @Operation(summary = "대나무숲 글 등록")
-    @PostMapping(produces = APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> createBamBooForest(@Valid BamBooForestReq bamBooForestReq) {
         validationUtils.isBamBooForestValid(bamBooForestReq);
         return ResponseEntity.ok().body(bambooForestService.createBamBooForest(bamBooForestReq));
@@ -43,7 +41,7 @@ public class BambooForestController {
 
     //@PreAuthorize("permitAll()")
     @Operation(summary = "대나무숲 목록 조회", description = "파라미터로 입력하셔야 합니다.!")
-    @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<BamBooForestPageRes> getBamBooForestList(@Valid @ParameterObject BamBooForestListReq bamBooForestListReq) {
         return ResponseEntity.ok().body(bambooForestService.getBamBooForestList(PageRequest.of(bamBooForestListReq.getPage(), bamBooForestListReq.getSize())));
     }

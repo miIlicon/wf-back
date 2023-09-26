@@ -29,7 +29,8 @@ public class TimeTableRepositoryImpl implements TimeTableRepositoryCustom {
                 ))
                 .from(timeTable)
                 .where(
-                        isWithinPeriod(timeTableSearchCond.getStartTime(), timeTableSearchCond.getEndTime())
+                        isWithinPeriod(timeTableSearchCond.getStartTime(), timeTableSearchCond.getEndTime()),
+                        timeTable.deleted.eq(false)
                 )
                 .fetch();
     }

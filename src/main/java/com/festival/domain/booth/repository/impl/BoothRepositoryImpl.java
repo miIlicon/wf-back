@@ -42,7 +42,8 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
                 .selectFrom(booth)
                 .join(booth.image).fetchJoin()
                 .where(
-                        eqType(boothListSearchCond.getType())
+                        eqType(boothListSearchCond.getType()),
+                        booth.deleted.eq(false)
                 )
                 .offset(boothListSearchCond.getPageable().getOffset())
                 .limit(boothListSearchCond.getPageable().getPageSize())
@@ -53,7 +54,8 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
                 .select(booth.count())
                 .from(booth)
                 .where(
-                        eqType(boothListSearchCond.getType())
+                        eqType(boothListSearchCond.getType()),
+                        booth.deleted.eq(false)
                 );
 
         /**
@@ -75,7 +77,8 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
                ))
                .from(booth)
                .where(
-                       eqKeyword(keyword)
+                       eqKeyword(keyword),
+                      booth.deleted.eq(false)
                )
                .orderBy(booth.viewCount.desc(), operateStatusAsc)
                .fetch();
