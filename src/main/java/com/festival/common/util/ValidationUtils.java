@@ -25,7 +25,7 @@ public class ValidationUtils {
                     "A-Z]{2,7}$";
 
     private static final String DATE_PATTERN =
-            "^([0-9]{4})-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]:([0-5][0-9])$";
+            "^([0-9]{4})-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]$";
 
     public void isGuideValid(GuideReq guide) {
         checkStrLength(guide.getContent(), 1, 300);
@@ -96,8 +96,8 @@ public class ValidationUtils {
         Pattern pattern = Pattern.compile(itemPattern);
         if (!pattern.matcher(item).matches()) {
             switch (itemPattern) {
-                case EMAIL_REGEX -> throw new InvalidException(ErrorCode.INVALID_DATE);
-                case DATE_PATTERN -> throw new InvalidException(ErrorCode.INVALID_EMAIL);
+                case DATE_PATTERN -> throw new InvalidException(ErrorCode.INVALID_DATE);
+                case EMAIL_REGEX -> throw new InvalidException(ErrorCode.INVALID_EMAIL);
             }
         }
     }
