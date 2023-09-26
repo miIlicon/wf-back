@@ -46,7 +46,7 @@ public class BoothController {
 
     //@PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @Operation(summary = "부스 운영 상태 업데이트")
-    @PutMapping(value = "/{boothId}", produces = APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/{boothId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> updateBoothOperateStatus(@NotNull @RequestParam("operateStatus") String operateStatus, @PathVariable("boothId") Long id) {
         return ResponseEntity.ok().body((Long) boothService.updateBoothOperateStatus(operateStatus, id));
     }
