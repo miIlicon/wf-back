@@ -31,6 +31,7 @@ public class BoothReq {
     private float longitude;
 
     @NotNull(message = "타입을 선택 해주세요.")
+    @Parameter(name = "type" , description = "FOOD_TRUCK, PUB, FLEA_MARKET")
     private String type;
 
     @NotNull(message = "운영 상태를 선택 해주세요.")

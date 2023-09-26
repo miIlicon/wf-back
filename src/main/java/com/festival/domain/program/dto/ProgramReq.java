@@ -1,5 +1,6 @@
 package com.festival.domain.program.dto;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -44,12 +45,14 @@ public class ProgramReq {
     @NotNull(message = "서브 이미지를 선택해주세요.")
     private List<MultipartFile> subFiles;
 
-    @NotNull(message = "시작 시간을 선택해주세요.")
+    @NotNull(message = "시작 날짜를 선택해주세요.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Parameter(name = "startTime" , description = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    @NotNull(message = "종료 시간을 선택해주세요.")
+    @NotNull(message = "종료 날짜를 선택해주세요.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Parameter(name = "endTime" , description = "yyyy-MM-dd")
     private LocalDate endDate;
 
     @Builder

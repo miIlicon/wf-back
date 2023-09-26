@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,14 +26,14 @@ public class ProgramController {
 
     //@PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes = MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Long> createProgram(@Valid ProgramReq programReq) {
+    public ResponseEntity<Long> createProgram(@Valid @ParameterObject ProgramReq programReq) {
         validationUtils.isProgramValid(programReq);
         return ResponseEntity.ok().body(programService.createProgram(programReq, LocalDate.now()));
     }
 
     //@PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
     @PutMapping(value = "/{programId}", produces = APPLICATION_JSON_VALUE, consumes = MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Long> updateProgram(@PathVariable("programId") Long programId, @Valid ProgramReq programReq) {
+    public ResponseEntity<Long> updateProgram(@PathVariable("programId") Long programId, @Valid @ParameterObject ProgramReq programReq) {
         validationUtils.isProgramValid(programReq);
         return ResponseEntity.ok().body(programService.updateProgram(programId, programReq));
     }
