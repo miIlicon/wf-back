@@ -68,7 +68,6 @@ class TimeTableIntegrationTest extends ControllerTestSupport {
                                 .param("title", timeTableReq.getTitle())
                                 .param("startTime", timeTableReq.getStartTime().toString())
                                 .param("endTime", timeTableReq.getEndTime().toString())
-                                .param("status", timeTableReq.getStatus())
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -103,7 +102,6 @@ class TimeTableIntegrationTest extends ControllerTestSupport {
                                 .param("title", "updateTitle")
                                 .param("startTime", updatedDateTime.toString())
                                 .param("endTime", updatedDateTime.plusHours(1).toString())
-                                .param("status", timeTableReq.getStatus())
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -138,7 +136,6 @@ class TimeTableIntegrationTest extends ControllerTestSupport {
                                 .param("title", "updateTitle")
                                 .param("startTime", updatedDateTime.toString())
                                 .param("endTime", updatedDateTime.plusHours(1).toString())
-                                .param("status", timeTableReq.getStatus())
                 )
                 .andDo(print())
                 .andExpect(status().isForbidden());
@@ -182,7 +179,7 @@ class TimeTableIntegrationTest extends ControllerTestSupport {
 
         //then
         TimeTable findTimeTable = timeTableRepository.findById(savedTimeTable.getId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_TIMETABLE));
-        assertThat(findTimeTable.getStatus()).isEqualTo(OperateStatus.TERMINATE);
+        assertThat(findTimeTable.isDeleted()).isEqualTo(true);
     }
 
     @WithMockUser(username = "differentUser", roles = "MANAGER")

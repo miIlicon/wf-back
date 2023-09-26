@@ -80,7 +80,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("EVENT")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
                 .build();
 
@@ -134,7 +134,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("EVENT")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
                 .build();
         Program program = Program.of(programReq, LocalDate.now());
@@ -176,7 +176,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("EVENT")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
                 .build();
         Program program = Program.of(programReq, LocalDate.now());
@@ -228,7 +228,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("EVENT")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
                 .build();
         Program program = Program.of(programReq, LocalDate.now());
@@ -268,7 +268,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("EVENT")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
                 .build();
         Program program = Program.of(programReq, LocalDate.now());
@@ -313,7 +313,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("EVENT")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
                 .build();
         Program program = Program.of(programReq, LocalDate.now());
@@ -367,7 +367,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("EVENT")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
                 .build();
         Program program1 = Program.of(programReq, LocalDate.now());

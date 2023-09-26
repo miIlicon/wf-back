@@ -280,7 +280,6 @@ class BoothServiceTest {
         //when
         BoothListReq boothListReq = BoothListReq.builder()
                 .type("PUB")
-                .status("OPERATE")
                 .build();
         Pageable pageable =  PageRequest.of(0, 3);
 
@@ -294,7 +293,7 @@ class BoothServiceTest {
         Booth booth = Booth.builder()
                 .title("부스 게시물 제목")
                 .subTitle("부스 게시물 부제목")
-                .status(OperateStatus.OPERATE)
+                .operateStatus(OperateStatus.OPERATE)
                 .content("부스 게시물 내용")
                 .longitude(50)
                 .latitude(50)
@@ -307,7 +306,7 @@ class BoothServiceTest {
         BoothReq boothReq = BoothReq.builder()
                 .title("푸드트럭 게시물 제목")
                 .subTitle("푸드트럭 게시물 부제목")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .content("푸드트럭 게시물 내용")
                 .longitude(50)
                 .latitude(50)
@@ -321,7 +320,7 @@ class BoothServiceTest {
         BoothReq boothReq = BoothReq.builder()
                 .title("변경된 제목")
                 .subTitle("변경된 부제목")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .content("변경된 내용")
                 .longitude(50)
                 .latitude(50)

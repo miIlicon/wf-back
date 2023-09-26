@@ -31,7 +31,6 @@ public class ValidationUtils {
         checkStrLength(guide.getTitle(), 1, 20);
         checkStrLength(guide.getContent(), 1, 300);
         String[] typeList = {"NOTICE"};
-        checkTypeItem(typeList, guide.getType());
     }
 
     public void isBoothValid(BoothReq booth) {
