@@ -34,5 +34,6 @@ public class ProgramFixture {
             .longitude(50)
             .latitude(50)
             .type(ProgramType.GAME)
+            .deleted(true)
             .build();
 }
