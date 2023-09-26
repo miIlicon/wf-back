@@ -44,6 +44,8 @@ class ProgramIntegrationTest extends ControllerTestSupport {
 
     private Member member;
 
+    private Member differentMember;
+
     @BeforeEach
     void setUp() {
         member = Member.builder()
@@ -53,12 +55,19 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .build();
         memberRepository.saveAndFlush(member);
 
-        Member differentMember = Member.builder()
+        differentMember = Member.builder()
                 .username("differentUser")
                 .password("12345")
                 .memberRole(MANAGER)
                 .build();
         memberRepository.saveAndFlush(differentMember);
+
+        Member differentMember2 = Member.builder()
+                .username("differentUser2")
+                .password("12345")
+                .memberRole(MANAGER)
+                .build();
+        memberRepository.saveAndFlush(differentMember2);
     }
 
     @WithMockUser(username = "testUser", roles = "ADMIN")
@@ -228,6 +237,92 @@ class ProgramIntegrationTest extends ControllerTestSupport {
     }
 
     @WithMockUser(username = "testUser", roles = "ADMIN")
+    @DisplayName("사용자는 상태값만 수정할수도 있다.")
+    @Test
+    void updateProgramStatus() throws Exception {
+        //given
+        LocalDate registeredStartDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredEndDate = LocalDate.of(2023, 10, 31);
+
+        MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
+        List<MockMultipartFile> subFiles = List.of(
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles")
+        );
+
+        ProgramReq programReq = ProgramReq.builder()
+                .title("title")
+                .subTitle("subTitle")
+                .content("content")
+                .latitude(50.0f)
+                .longitude(50.0f)
+                .type("EVENT")
+                .operateStatus("OPERATE")
+                .mainFile(mainFile)
+                .startDate(registeredStartDate)
+                .endDate(registeredEndDate)
+                .build();
+        Program program = Program.of(programReq, LocalDate.now());
+        program.connectMember(member);
+        Program savedProgram = programRepository.saveAndFlush(program);
+
+        //when
+        MvcResult mvcResult = mockMvc.perform(
+                        patch("/api/v2/program/" + savedProgram.getId())
+                                .param("status", "TERMINATE")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        //then
+        long id = Long.parseLong(mvcResult.getResponse().getContentAsString());
+        Program updatedProgram = programRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_PROGRAM));
+        assertThat(updatedProgram.getOperateStatus()).isEqualTo(OperateStatus.TERMINATE);
+    }
+
+    @WithMockUser(username = "differentUser2", roles = "MANAGER")
+    @DisplayName("권한이 없는 사용자는 상태값을 수정할 수 없다.")
+    @Test
+    void updateProgramStatusWithoutPermission() throws Exception {
+        //given
+        LocalDate registeredStartDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredEndDate = LocalDate.of(2023, 10, 31);
+
+        MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
+        List<MockMultipartFile> subFiles = List.of(
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles")
+        );
+
+        ProgramReq programReq = ProgramReq.builder()
+                .title("title")
+                .subTitle("subTitle")
+                .content("content")
+                .latitude(50.0f)
+                .longitude(50.0f)
+                .type("EVENT")
+                .operateStatus("OPERATE")
+                .mainFile(mainFile)
+                .startDate(registeredStartDate)
+                .endDate(registeredEndDate)
+                .build();
+        Program program = Program.of(programReq, LocalDate.now());
+        program.connectMember(differentMember);
+        Program savedProgram = programRepository.saveAndFlush(program);
+
+        //when //then
+        mockMvc.perform(
+                        patch("/api/v2/program/" + savedProgram.getId())
+                                .param("status", "TERMINATE")
+                )
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @WithMockUser(username = "testUser", roles = "ADMIN")
     @DisplayName("프로그램 게시물을 삭제한다.")
     @Test
     void deleteProgram() throws Exception {
@@ -261,7 +356,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
 
         //when
         mockMvc.perform(
-                    delete("/api/v2/program/" + savedProgram.getId())
+                        delete("/api/v2/program/" + savedProgram.getId())
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -305,7 +400,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
 
         //when //then
         mockMvc.perform(
-                    delete("/api/v2/program/" + savedProgram.getId())
+                        delete("/api/v2/program/" + savedProgram.getId())
                 )
                 .andDo(print())
                 .andExpect(status().isForbidden());
@@ -317,7 +412,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
     void deleteProgramNotFound() throws Exception {
         //when //then
         mockMvc.perform(
-                    delete("/api/v2/program/1")
+                        delete("/api/v2/program/1")
                 )
                 .andDo(print())
                 .andExpect(status().isNotFound());
