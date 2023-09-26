@@ -27,16 +27,16 @@ public class TimeTableController {
     private final ValidationUtils validationUtils;
 
     @PreAuthorize("hasRole({'ADMIN'})")
-    @Operation(summary = "타임테이블 등록", description = "www-x-form-urlencoded로 보내주시면 감사하겠습니다.")
-    @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = APPLICATION_JSON_VALUE)
+    @Operation(summary = "타임테이블 등록", description = "MULTIPART_FORM_DATA로 보내주시면 감사하겠습니다.")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> createTimeTable(@Valid @ParameterObject TimeTableReq timeTableReq) {
         validationUtils.isTimeTableValid(timeTableReq);
         return ResponseEntity.ok().body(timeTableService.createTimeTable(timeTableReq));
     }
 
     @PreAuthorize("hasRole({'ADMIN'})")
-    @Operation(summary = "타임테이블 수정", description = "www-x-form-urlencoded로 보내주시면 감사하겠습니다.")
-    @PutMapping(value = "/{timeTableId}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = APPLICATION_JSON_VALUE)
+    @Operation(summary = "타임테이블 수정", description = "MULTIPART_FORM_DATA로 보내주시면 감사하겠습니다.")
+    @PutMapping(value = "/{timeTableId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> updateTimeTable(@PathVariable("timeTableId") Long timeTableId,
                                                 @Valid @ParameterObject TimeTableReq timeTableReq) {
         validationUtils.isTimeTableValid(timeTableReq);

@@ -27,7 +27,7 @@ public class BambooForestController {
 
     @PreAuthorize("permitAll()")
     @Operation(summary = "대나무숲 글 등록")
-    @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> createBamBooForest(@Valid BamBooForestReq bamBooForestReq) {
         validationUtils.isBamBooForestValid(bamBooForestReq);
         return ResponseEntity.ok().body(bambooForestService.createBamBooForest(bamBooForestReq));

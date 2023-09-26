@@ -28,7 +28,7 @@ public class GuideController {
 
     @PreAuthorize("hasRole({'ADMIN'})")
     @Operation(summary = "안내사항 등록")
-    @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE ,produces = APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE ,produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> createGuide(@Valid GuideReq guideReq) {
         validationUtils.isGuideValid(guideReq);
         return ResponseEntity.ok().body(guideService.createGuide(guideReq));
@@ -36,7 +36,7 @@ public class GuideController {
 
     @PreAuthorize("hasRole({'ADMIN'})")
     @Operation(summary = "안내사항 수정")
-    @PutMapping(value = "/{guideId}",consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{guideId}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> updateGuide(@PathVariable("guideId") Long guideId, @Valid GuideReq guideReq) {
         validationUtils.isGuideValid(guideReq);
         return ResponseEntity.ok().body(guideService.updateGuide(guideId, guideReq));
