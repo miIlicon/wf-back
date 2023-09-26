@@ -73,6 +73,8 @@ public class Booth extends BaseEntity {
         this.latitude = latitude;
         this.longitude = longitude;
         this.operateStatus = operateStatus;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.type = type;
         this.deleted = deleted;
     }

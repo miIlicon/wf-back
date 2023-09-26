@@ -31,6 +31,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -266,13 +267,10 @@ class BoothServiceTest {
                 .isEqualTo(BoothRes.of(foodTruck));
     }
 
-    @DisplayName("조건에 맞는 부스 리스트 반환한다.")
+    @DisplayName("하나의 부스를 등록 후 리스트 조회하면 사이즈는 1")
     @Test
     void getBoothList(){
         //given
-        Booth pub = BoothFixture.PUB;
-        ReflectionTestUtils.setField(pub, "image", ImageFixture.IMAGE);
-
         given(boothRepository.getList(any(BoothListSearchCond.class)))
                 .willReturn(BoothPageRes.builder()
                         .boothResList(List.of(BoothRes.builder().
@@ -280,8 +278,9 @@ class BoothServiceTest {
         //when
         BoothListReq boothListReq = BoothListReq.builder()
                 .type("PUB")
+                .page(0)
+                .size(3)
                 .build();
-        Pageable pageable =  PageRequest.of(0, 3);
 
         BoothPageRes boothPageRes = boothService.getBoothList(boothListReq);
 
@@ -308,6 +307,8 @@ class BoothServiceTest {
                 .subTitle("푸드트럭 게시물 부제목")
                 .operateStatus("OPERATE")
                 .content("푸드트럭 게시물 내용")
+                .startDate(LocalDate.of(2023, 9, 15))
+                .endDate(LocalDate.of(2023, 9, 16))
                 .longitude(50)
                 .latitude(50)
                 .mainFile(generateMockImageFile("mainFile"))
