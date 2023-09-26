@@ -42,6 +42,7 @@ public class BoothFixture {
             .title("삭제된 부스")
             .subTitle("삭제된 부스 부제목")
             .operateStatus(OperateStatus.TERMINATE)
+            .deleted(true)
             .content("삭제된 부스 내용")
             .longitude(50)
             .latitude(50)

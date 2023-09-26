@@ -66,7 +66,7 @@ public class BoothController {
 
 
     //@PreAuthorize("permitAll()")
-    @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<BoothPageRes> getBoothList(@Valid BoothListReq boothListReq) {
         return ResponseEntity.ok().body(boothService.getBoothList(boothListReq));
     }
