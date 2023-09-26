@@ -362,7 +362,6 @@ class ProgramIntegrationTest extends ControllerTestSupport {
         //when
         MvcResult mvcResult = mockMvc.perform(
                         get("/api/v2/program/" + savedProgram.getId())
-                                .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
