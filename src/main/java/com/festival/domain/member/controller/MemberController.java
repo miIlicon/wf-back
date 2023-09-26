@@ -21,7 +21,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    //@PreAuthorize("isAnonymous()")
+    @PreAuthorize("isAnonymous()")
     @Operation(summary = "회원가입")
     @PostMapping("/join")
     public ResponseEntity<Void> joinMember(@Valid @ParameterObject MemberJoinReq memberJoinReq) {
@@ -29,7 +29,7 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-    //@PreAuthorize("isAnonymous()")
+    @PreAuthorize("isAnonymous()")
     @Operation(summary = "로그인")
     @PostMapping("/login")
     public ResponseEntity<JwtTokenRes> loginMember(@Valid MemberLoginReq loginReq) {
