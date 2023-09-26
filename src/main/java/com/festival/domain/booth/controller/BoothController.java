@@ -29,7 +29,7 @@ public class BoothController {
     private final ValidationUtils validationUtils;
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
-    @Operation(summary = "부스 등록")
+    @Operation(summary = "부스 등록", description = "MULTIPART_FORM_DATA로 보내주시면 감사하겠습니다.")
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes = MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> createBooth(@Valid @ParameterObject BoothReq boothReq) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -38,7 +38,7 @@ public class BoothController {
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
-    @Operation(summary = "부스 업데이트(전체)")
+    @Operation(summary = "부스 업데이트(전체)", description = "MULTIPART_FORM_DATA로 보내주시면 감사하겠습니다.")
     @PutMapping(value = "/{boothId}", produces = APPLICATION_JSON_VALUE, consumes = MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> updateBooth(@Valid @ParameterObject BoothReq boothReq, @PathVariable("boothId") Long id) {
         validationUtils.isBoothValid(boothReq);
