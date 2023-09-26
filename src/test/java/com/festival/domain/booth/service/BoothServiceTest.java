@@ -280,7 +280,6 @@ class BoothServiceTest {
         //when
         BoothListReq boothListReq = BoothListReq.builder()
                 .type("PUB")
-                .status("OPERATE")
                 .build();
         Pageable pageable =  PageRequest.of(0, 3);
 

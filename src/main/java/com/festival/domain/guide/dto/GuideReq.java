@@ -18,14 +18,11 @@ public class GuideReq {
     @NotBlank(message = "내용을 입력 해주세요.")
     private String content;
 
-    @NotNull(message = "안내사항 타입을 입력 해주세요.")
-    private String type;
 
     @Builder
-    private GuideReq(String title, String content, String type) {
+    private GuideReq(String title, String content) {
         this.title = title;
         this.content = content;
-        this.type = type;
     }
 
 }

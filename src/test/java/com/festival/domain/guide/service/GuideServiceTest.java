@@ -9,7 +9,6 @@ import com.festival.common.redis.RedisService;
 import com.festival.domain.guide.dto.GuideReq;
 import com.festival.domain.guide.dto.GuideRes;
 import com.festival.domain.guide.model.Guide;
-import com.festival.domain.guide.model.GuideType;
 import com.festival.domain.guide.repository.GuideRepository;
 import com.festival.domain.image.fixture.ImageFixture;
 import com.festival.domain.image.service.ImageService;
@@ -242,8 +241,6 @@ class GuideServiceTest {
         Guide guide = Guide.builder()
                 .title("가이드 제목")
                 .content("가이드 내용")
-                .type(GuideType.NOTICE)
-                .status(OperateStatus.OPERATE)
                 .build();
         ReflectionTestUtils.setField(guide, "id", 1L);
         return guide;
@@ -253,8 +250,6 @@ class GuideServiceTest {
         return GuideReq.builder()
                 .title("가이드 제목")
                 .content("가이드 내용")
-                .type("NOTICE")
-                .status("OPERATE")
                 .build();
         
     }
