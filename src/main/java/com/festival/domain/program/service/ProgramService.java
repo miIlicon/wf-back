@@ -90,7 +90,7 @@ public class ProgramService {
     }
 
     public ProgramRes getProgram(Long programId, String ipAddress) {
-        Program program = programRepository.findById(programId).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_PROGRAM));
+        Program program = checkingDeletedStatus(programRepository.findById(programId));
         if(redisService.isDuplicateAccess(ipAddress, "Program_" + program.getId())) {
             redisService.increaseRedisViewCount("Program_Id_" + program.getId());
         }
