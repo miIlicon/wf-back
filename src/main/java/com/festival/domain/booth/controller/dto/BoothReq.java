@@ -1,5 +1,6 @@
 package com.festival.domain.booth.controller.dto;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -31,17 +32,20 @@ public class BoothReq {
     private float longitude;
 
     @NotNull(message = "타입을 선택 해주세요.")
+    @Parameter(name = "type" , description = "FOOD_TRUCK, PUB, FLEA_MARKET")
     private String type;
 
     @NotNull(message = "운영 상태를 선택 해주세요.")
     private String operateStatus;
 
-    @NotNull(message = "시작 시간을 입력 해주세요.")
+    @NotNull(message = "시작 날짜를 입력 해주세요.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Parameter(name = "startDate" , description = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    @NotNull(message = "종료 시간을 입력 해주세요.")
+    @NotNull(message = "종료 날짜를 입력 해주세요.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Parameter(name = "endDate" , description = "yyyy-MM-dd")
     private LocalDate endDate;
 
     @NotNull(message = "썸네일 이미지를 선택해주세요")

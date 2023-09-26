@@ -55,8 +55,8 @@ public class ValidationUtils {
     }
 
     public void isTimeTableValid(TimeTableReq timeTable) {
-        checkItemPattern(timeTable.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), DATE_PATTERN);
-        checkItemPattern(timeTable.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), DATE_PATTERN);
+        checkItemPattern(timeTable.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), DATE_PATTERN);
+        checkItemPattern(timeTable.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), DATE_PATTERN);
         checkStrLength(timeTable.getTitle(), 1, 30);
     }
 

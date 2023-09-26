@@ -1,6 +1,5 @@
 package com.festival.domain.bambooforest.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,8 +9,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BamBooForestListReq {
 
-    private int size;
-
     private int page;
+
+    private int size;
 
 }
