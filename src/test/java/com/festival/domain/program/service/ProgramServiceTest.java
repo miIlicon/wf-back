@@ -5,7 +5,6 @@ import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
-
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.fixture.MemberFixture;
 import com.festival.domain.member.repository.MemberRepository;
@@ -55,15 +54,15 @@ class ProgramServiceTest {
     @DisplayName("축제 프로그램을 생성한 후 programId를 반환한다.")
     @Test
     void createProgram() throws IOException {
-
         //given
+        LocalDate registeredDate = LocalDate.of(2023, 9, 26);
         ProgramReq programReq = getProgramCreateReq();
 
         given(programRepository.save(any(Program.class)))
                 .willReturn(getProgram());
 
         //when
-        Long programId = programService.createProgram(programReq, LocalDate.now());
+        Long programId = programService.createProgram(programReq, registeredDate);
 
         //then
         Assertions.assertThat(programId).isEqualTo(1L);
@@ -186,7 +185,6 @@ class ProgramServiceTest {
                 .isInstanceOf(AlreadyDeleteException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.ALREADY_DELETED);
-
     }
 
     @DisplayName("다른 사람이 부스를 삭제하면 ForbiddenException을 반환한다.")
@@ -251,7 +249,10 @@ class ProgramServiceTest {
         return program;
     }
     private ProgramReq getProgramCreateReq() throws IOException {
-        ProgramReq programReq = ProgramReq.builder()
+        LocalDate registeredStartDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredEndDate = LocalDate.of(2023, 10, 31);
+
+        return ProgramReq.builder()
                 .title("프로그램 게시물 제목")
                 .subTitle("프로그램 게시물 부제목")
                 .operateStatus("OPERATE")
@@ -261,10 +262,14 @@ class ProgramServiceTest {
                 .mainFile(generateMockImageFile("mainFile"))
                 .subFiles(List.of(generateMockImageFile("subFile1"), generateMockImageFile("subFile1")))
                 .type("EVENT")
+                .startDate(registeredStartDate)
+                .endDate(registeredEndDate)
                 .build();
-        return programReq;
     }
     private ProgramReq getProgramUpdateReq() throws IOException {
+        LocalDate registeredStartDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredEndDate = LocalDate.of(2023, 10, 31);
+
         ProgramReq programReq = ProgramReq.builder()
                 .title("프로그램 게시물 제목 수정")
                 .subTitle("프로그램 게시물 부제목 수정")
@@ -275,6 +280,8 @@ class ProgramServiceTest {
                 .mainFile(generateMockImageFile("mainFile"))
                 .subFiles(List.of(generateMockImageFile("subFile1"), generateMockImageFile("subFile1")))
                 .type("EVENT")
+                .startDate(registeredStartDate)
+                .endDate(registeredEndDate)
                 .build();
         return programReq;
     }

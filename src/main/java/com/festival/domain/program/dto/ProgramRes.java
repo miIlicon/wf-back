@@ -16,20 +16,20 @@ public class ProgramRes {
     private String content;
     private Float latitude;
     private Float longitude;
-    private String status;
+    private String operateStatus;
     private String type;
     private String mainFilePath;
     private List<String> subFilePaths;
 
     @Builder
-    private ProgramRes(Long id, String title, String subTitle, String content, Float latitude, Float longitude, String status, String type, String mainFilePath, List<String> subFilePaths) {
+    private ProgramRes(Long id, String title, String subTitle, String content, Float latitude, Float longitude, String operateStatus, String type, String mainFilePath, List<String> subFilePaths) {
         this.id = id;
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.status = status;
+        this.operateStatus = operateStatus;
         this.type = type;
         this.mainFilePath = mainFilePath;
         this.subFilePaths = subFilePaths;
@@ -42,7 +42,7 @@ public class ProgramRes {
                 .subTitle(program.getSubTitle())
                 .content(program.getContent())
                 .type(program.getType().toString())
-                .status(program.getOperateStatus().toString())
+                .operateStatus(program.getOperateStatus().toString())
                 .longitude(program.getLongitude())
                 .latitude(program.getLatitude())
                 .mainFilePath(program.getImage().getMainFilePath())
