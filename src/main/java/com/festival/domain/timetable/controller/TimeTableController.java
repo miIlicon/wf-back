@@ -5,8 +5,10 @@ import com.festival.domain.timetable.dto.TimeTableDateReq;
 import com.festival.domain.timetable.dto.TimeTableReq;
 import com.festival.domain.timetable.dto.TimeTableRes;
 import com.festival.domain.timetable.service.TimeTableService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,7 @@ public class TimeTableController {
     private final ValidationUtils validationUtils;
 
     //@PreAuthorize("hasRole({'ADMIN'})")
+    @Operation(summary = "타임테이블 등록")
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> createTimeTable(@Valid @ParameterObject TimeTableReq timeTableReq) {
         validationUtils.isTimeTableValid(timeTableReq);
@@ -31,6 +34,7 @@ public class TimeTableController {
     }
 
     //@PreAuthorize("hasRole({'ADMIN'})")
+    @Operation(summary = "타임테이블 수정")
     @PutMapping(value = "/{timeTableId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> updateTimeTable(@PathVariable("timeTableId") Long timeTableId,
                                                 @Valid @ParameterObject TimeTableReq timeTableReq) {
@@ -39,6 +43,7 @@ public class TimeTableController {
     }
 
     //@PreAuthorize("hasRole({'ADMIN'})")
+    @Operation(summary = "타임테이블 삭제")
     @DeleteMapping(value = "/{timeTableId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteTimeTable(@PathVariable("timeTableId") Long timeTableId) {
         timeTableService.deleteTimeTable(timeTableId);
@@ -46,8 +51,9 @@ public class TimeTableController {
     }
 
     //@PreAuthorize("permitAll()")
+    @Operation(summary = "타임테이블 목록 조회")
     @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<TimeTableRes>> getTimeTableList(@Valid TimeTableDateReq timeTableDateReq) {
+    public ResponseEntity<List<TimeTableRes>> getTimeTableList(@Valid @ParameterObject TimeTableDateReq timeTableDateReq) {
         return ResponseEntity.ok().body(timeTableService.getTimeTableList(timeTableDateReq));
     }
 
