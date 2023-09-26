@@ -28,7 +28,6 @@ public class ValidationUtils {
             "^([0-9]{4})-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]:([0-5][0-9])$";
 
     public void isGuideValid(GuideReq guide) {
-        checkStrLength(guide.getTitle(), 1, 20);
         checkStrLength(guide.getContent(), 1, 300);
         String[] typeList = {"NOTICE"};
     }

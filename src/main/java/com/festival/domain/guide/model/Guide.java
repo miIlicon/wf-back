@@ -19,8 +19,6 @@ public class Guide extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
-
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,22 +29,19 @@ public class Guide extends BaseEntity {
     private Long viewCount = 0L;
 
     @Builder
-    private Guide(String title, String content, boolean deleted) {
-        this.title = title;
+    private Guide(String content, boolean deleted) {
         this.content = content;
         this.deleted = deleted;
     }
 
     public static Guide of(GuideReq guideReq) {
         return Guide.builder()
-                .title(guideReq.getTitle())
                 .content(guideReq.getContent())
                 .deleted(false)
                 .build();
     }
 
     public void update(GuideReq guideReq) {
-        this.title = guideReq.getTitle();
         this.content = guideReq.getContent();
     }
 

@@ -12,16 +12,11 @@ import java.util.List;
 @NoArgsConstructor
 public class GuideReq {
 
-    @NotBlank(message = "제목을 입력 해주세요.")
-    private String title;
-
     @NotBlank(message = "내용을 입력 해주세요.")
     private String content;
 
-
     @Builder
-    private GuideReq(String title, String content) {
-        this.title = title;
+    private GuideReq(String content) {
         this.content = content;
     }
 
