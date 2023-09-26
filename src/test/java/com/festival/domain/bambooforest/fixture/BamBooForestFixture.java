@@ -9,6 +9,7 @@ public class BamBooForestFixture {
     public static BamBooForest TERMINATED_BAMBOOFOREST = BamBooForest.builder()
             .content("대나무 숲 글 내용")
             .contact("010-1234-5678")
+            .deleted(true)
             .build();
 }
 
