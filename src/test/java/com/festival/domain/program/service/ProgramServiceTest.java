@@ -47,6 +47,7 @@ class ProgramServiceTest {
 
     @Mock
     private ImageService imageService;
+
     @Mock
     private MemberRepository memberRepository;
 
@@ -220,6 +221,7 @@ class ProgramServiceTest {
         //when && then
         programService.deleteProgram(1L);
     }
+
     @DisplayName("부스의 관리자가 업데이트하면 정상동작")
     @Test
     void deleteprogram4(){
@@ -235,6 +237,42 @@ class ProgramServiceTest {
         //when && then
         programService.deleteProgram(1L);
     }
+
+    @DisplayName("사용자는 상태값만 수정할수도 있다.")
+    @Test
+    void updateProgramStatus() throws Exception {
+        //given
+        Program program = getProgram();
+        program.connectMember(MemberFixture.MANAGER1);
+
+        given(programRepository.findById(program.getId()))
+                .willReturn(Optional.of(program));
+        given(memberService.getAuthenticationMember())
+                .willReturn(MemberFixture.MANAGER1);
+
+        //when //then
+        programService.updateProgramStatus(program.getId(), "TERMINATE");
+    }
+
+    @DisplayName("권한이 없는 사용자는 상태값을 변경할 수 없다.")
+    @Test
+    void updateProgramStatusWithoutPermission() throws Exception {
+        //given
+        Program program = getProgram();
+        program.connectMember(MemberFixture.MANAGER2);
+
+        given(programRepository.findById(program.getId()))
+                .willReturn(Optional.of(program));
+        given(memberService.getAuthenticationMember())
+                .willReturn(MemberFixture.MANAGER1);
+
+        //when //then
+        assertThatThrownBy(() -> programService.updateProgramStatus(program.getId(), OperateStatus.OPERATE.getValue()))
+                .isInstanceOf(ForbiddenException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.FORBIDDEN_UPDATE);
+    }
+
     private Program getProgram(){
         Program program = Program.builder()
                 .title("프로그램 게시물 제목")
@@ -248,6 +286,7 @@ class ProgramServiceTest {
         ReflectionTestUtils.setField(program, "id", 1L);
         return program;
     }
+
     private ProgramReq getProgramCreateReq() throws IOException {
         LocalDate registeredStartDate = LocalDate.of(2023, 9, 26);
         LocalDate registeredEndDate = LocalDate.of(2023, 10, 31);
@@ -266,6 +305,7 @@ class ProgramServiceTest {
                 .endDate(registeredEndDate)
                 .build();
     }
+
     private ProgramReq getProgramUpdateReq() throws IOException {
         LocalDate registeredStartDate = LocalDate.of(2023, 9, 26);
         LocalDate registeredEndDate = LocalDate.of(2023, 10, 31);
@@ -285,4 +325,5 @@ class ProgramServiceTest {
                 .build();
         return programReq;
     }
+
 }
