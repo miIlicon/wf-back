@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -23,7 +24,7 @@ public class BambooForestController {
     private final BamBooForestService bambooForestService;
     private final ValidationUtils validationUtils;
 
-    //@PreAuthorize("permitAll()")
+    @PreAuthorize("permitAll()")
     @Operation(summary = "대나무숲 글 등록")
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> createBamBooForest(@Valid BamBooForestReq bamBooForestReq) {
@@ -31,7 +32,7 @@ public class BambooForestController {
         return ResponseEntity.ok().body(bambooForestService.createBamBooForest(bamBooForestReq));
     }
 
-    //@PreAuthorize("hasRole({'ADMIN'})")
+    @PreAuthorize("hasRole({'ADMIN'})")
     @Operation(summary = "대나무숲 글 삭제 등록")
     @DeleteMapping(value = "/{bamBooForestId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteBamBooForest(@PathVariable("bamBooForestId") Long bamBooForestId) {
@@ -39,7 +40,7 @@ public class BambooForestController {
         return ResponseEntity.ok().build();
     }
 
-    //@PreAuthorize("permitAll()")
+    @PreAuthorize("permitAll()")
     @Operation(summary = "대나무숲 목록 조회", description = "파라미터로 입력하셔야 합니다.!")
     @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<BamBooForestPageRes> getBamBooForestList(@Valid @ParameterObject BamBooForestListReq bamBooForestListReq) {
