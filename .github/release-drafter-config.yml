@@ -2,12 +2,14 @@ name-template: "v$RESOLVED_VERSION"
 tag-template: "v$RESOLVED_VERSION"
 categories:
   - title: '🚀 Features'
-    label: '🚀 Feature'
-    label: '♻️ Refactor'
+    labels:
+      - '🚀 Feature'
+      - '♻️ Refactor'
   - title: '🐛 Bug Fixes'
     label: '🐛 BugFix'
 change-template: "- $TITLE (#$NUMBER)"
 change-title-escapes: '\<*_&'
+
 version-resolver:
   major:
     labels:

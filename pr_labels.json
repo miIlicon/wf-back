@@ -1,5 +1,14 @@
 [
   {
+    "color": "619BB9",
+    "default": false,
+    "description": "",
+    "id": 5475363163,
+    "name": "🛠 Setting",
+    "node_id": "LA_kwDOJemGmc8AAAABRltpWw",
+    "url": "https://api.github.com/repos/miIlicon/WithFestival-BackEnd/labels/%F0%9F%9B%A0%20Setting"
+  },
+  {
     "color": "253FC7",
     "default": false,
     "description": "Version patch",
