@@ -7,12 +7,11 @@ import org.springframework.data.domain.Pageable;
 @Getter
 public class GuideSearchCond {
 
-    private String status;
     private Pageable pageable;
 
     @Builder
-    private GuideSearchCond(String status, Pageable pageable) {
-        this.status = status;
+    private GuideSearchCond(Pageable pageable) {
         this.pageable = pageable;
     }
+
 }

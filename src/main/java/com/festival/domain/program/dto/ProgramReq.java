@@ -1,16 +1,21 @@
 package com.festival.domain.program.dto;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 
-@Data
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ProgramReq {
 
     @NotBlank(message = "제목을 입력해주세요.")
@@ -31,13 +36,40 @@ public class ProgramReq {
     @NotNull(message = "타입을 입력해주세요.")
     private String type;
 
-    @NotNull(message = "상태를 입력해주세요.")
-    private String status;
+    @NotNull(message = "운영 상태를 선택해주세요.")
+    private String operateStatus;
 
-    @NotNull(message = "썸네일 이미지를 선택해주세요")
+    @NotNull(message = "썸네일 이미지를 선택해주세요.")
     private MultipartFile mainFile;
 
-    @NotNull(message = "서브 이미지를 선택해주세요")
+    @NotNull(message = "서브 이미지를 선택해주세요.")
     private List<MultipartFile> subFiles;
+
+    @NotNull(message = "시작 날짜를 선택해주세요.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Parameter(name = "startTime" , description = "yyyy-MM-dd")
+    private LocalDate startDate;
+
+    @NotNull(message = "종료 날짜를 선택해주세요.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Parameter(name = "endTime" , description = "yyyy-MM-dd")
+    private LocalDate endDate;
+
+    @Builder
+    private ProgramReq(String title, String subTitle, String content, Float latitude, Float longitude, String type, String operateStatus,
+                       MultipartFile mainFile, List<MultipartFile> subFiles,
+                       LocalDate startDate, LocalDate endDate) {
+        this.title = title;
+        this.subTitle = subTitle;
+        this.content = content;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.type = type;
+        this.operateStatus = operateStatus;
+        this.mainFile = mainFile;
+        this.subFiles = subFiles;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 
 }

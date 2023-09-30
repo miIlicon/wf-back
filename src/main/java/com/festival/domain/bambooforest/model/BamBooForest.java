@@ -23,25 +23,22 @@ public class BamBooForest extends BaseEntity {
     private String contact;
 
     @Builder
-    private BamBooForest(String content, String contact, OperateStatus status) {
+    private BamBooForest(String content, String contact, boolean deleted) {
         this.content = content;
         this.contact = contact;
-        this.status = status;
+        this.deleted = deleted;
     }
 
     public static BamBooForest of(BamBooForestReq bambooForestReq) {
         return BamBooForest.builder()
                 .content(bambooForestReq.getContent())
                 .contact(bambooForestReq.getContact())
-                .status(settingStatus(bambooForestReq.getStatus()))
+                .deleted(false)
                 .build();
     }
 
-    public void changeStatus(OperateStatus bamBooForestStatus) {
-        this.status = bamBooForestStatus;
+    public void deletedBambooForest() {
+        this.deleted = true;
     }
 
-    private static OperateStatus settingStatus(String status) {
-        return OperateStatus.checkStatus(status);
-    }
 }

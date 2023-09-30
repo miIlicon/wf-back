@@ -34,7 +34,11 @@ public class Data {
             if (initDataDone) return;
 
             initDataDone = true;
-            Long memberId = memberService.join(MemberJoinReq.of("user", "1234", "ADMIN"));
+            Long memberId = memberService.join(MemberJoinReq.builder()
+                    .username("user")
+                    .password("1234")
+                    .memberRole("ADMIN")
+                    .build());
             Long imageId = imageRepository.save(Image.builder()
                     .mainFilePath("")
                     .subFilePaths(List.of("")).build()).getId();
@@ -42,6 +46,7 @@ public class Data {
             int cnt = 1;
             long start = System.currentTimeMillis();
             
+/*
             for(int i = 0; i < 1; i++){
                 List<BulkInsertBooth> boothList = new ArrayList<>();
                 for(int j = 0;j < 1000; j++){
@@ -63,6 +68,7 @@ public class Data {
                 }
                 boothJdbcRepository.insertBoothList(boothList);
             }
+*/
 
             long executionTime = System.currentTimeMillis() - start;
             System.out.println("===================== BulkInsert Success =====================");

@@ -19,44 +19,30 @@ public class Guide extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
-
     private String content;
-
-    @Enumerated(EnumType.STRING)
-    private GuideType type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Image image;
-
     @Column(nullable = false)
     private Long viewCount = 0L;
 
     @Builder
-    private Guide(String title, String content, GuideType type, OperateStatus status) {
-        this.title = title;
+    private Guide(String content, boolean deleted) {
         this.content = content;
-        this.type = type;
-        this.status = status;
+        this.deleted = deleted;
     }
 
     public static Guide of(GuideReq guideReq) {
         return Guide.builder()
-                .title(guideReq.getTitle())
                 .content(guideReq.getContent())
-                .type(settingType(guideReq.getType()))
-                .status(settingStatus(guideReq.getStatus()))
+                .deleted(false)
                 .build();
     }
 
     public void update(GuideReq guideReq) {
-        this.title = guideReq.getTitle();
         this.content = guideReq.getContent();
-        this.type = settingType(guideReq.getType());
     }
 
     public void increaseViewCount(Long viewCount) {
@@ -67,20 +53,12 @@ public class Guide extends BaseEntity {
         this.viewCount -= viewCount;
     }
 
-    public void setImage(Image image){
-        this.image = image;
-    }
-
     public void connectMember(Member member) {
         this.member = member;
     }
 
-    public void changeStatus(OperateStatus status) {
-        this.status = status;
-    }
-
-    private static GuideType settingType(String guideType) {
-        return GuideType.checkType(guideType);
+    public void deletedGuide() {
+        this.deleted = true;
     }
 
     private static OperateStatus settingStatus(String guideStatus) {

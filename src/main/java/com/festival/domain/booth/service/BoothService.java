@@ -13,10 +13,12 @@ import com.festival.domain.booth.service.vo.BoothListSearchCond;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,37 +60,28 @@ public class BoothService {
 
     public void deleteBooth(Long id) {
         Booth booth = checkingDeletedStatus(boothRepository.findById(id));
+
         if (!SecurityUtils.checkingRole(booth.getMember(), memberService.getAuthenticationMember())) {
             throw new ForbiddenException(FORBIDDEN_DELETE);
         }
-        booth.changeStatus(OperateStatus.TERMINATE);
+
+        booth.deleteBooth();
     }
 
     public BoothRes getBooth(Long id, String ipAddress) {
-        Booth booth = boothRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BOOTH));
+        Booth booth = checkingDeletedStatus(boothRepository.findById(id));
         if(redisService.isDuplicateAccess(ipAddress, "Booth_" + booth.getId())) {
             redisService.increaseRedisViewCount("Booth_Id_" + booth.getId());
         }
         return BoothRes.of(booth);
     }
 
-    @Transactional
-    public BoothRes getBoothQuery(Long id, String ipAddress) {
-        Booth booth = boothRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BOOTH));
-
-        booth.increaseViewCount(1L);
-
-        return BoothRes.of(booth);
-    }
-
     @Transactional(readOnly = true)
-    public BoothPageRes getBoothList(BoothListReq boothListReq, Pageable pageable) {
+    public BoothPageRes getBoothList(BoothListReq boothListReq) {
         return boothRepository.getList(BoothListSearchCond.builder()
-                .status(boothListReq.getStatus())
                 .type(boothListReq.getType())
-                .pageable(pageable)
+                .pageable(PageRequest.of(boothListReq.getPage() ,boothListReq.getSize()))
                 .build());
-
     }
 
     @Transactional(readOnly = true)
@@ -101,31 +94,35 @@ public class BoothService {
         booth.increaseViewCount(viewCount);
     }
 
-    public void decreaseBoothViewCount(Long id, Long viewCount) {
-        Booth booth = boothRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_BOOTH));
-        booth.decreaseViewCount(viewCount);
-    }
 
     private Booth checkingDeletedStatus(Optional<Booth> booth) {
         if (booth.isEmpty()) {
             throw new NotFoundException(NOT_FOUND_BOOTH);
         }
-        if (booth.get().getStatus() == OperateStatus.TERMINATE) {
+        if (booth.get().isDeleted()) {
             throw new AlreadyDeleteException(ALREADY_DELETED);
         }
+
         return booth.get();
     }
 
-    public BoothRes getBoothByTitle(String title, String remoteAddr) {
-        Booth booth = boothRepository.getBoothByTitle(title);
-        if(redisService.isDuplicateAccess(remoteAddr, "Booth_" + booth.getId())) {
-            redisService.increaseRedisViewCount("Booth_Id_" + booth.getId());
+    public Long updateBoothOperateStatus(String operateStatus, Long id) {
+        Booth booth = checkingDeletedStatus(boothRepository.findById(id));
+
+        if (!SecurityUtils.checkingRole(booth.getMember(), memberService.getAuthenticationMember())) {
+            throw new ForbiddenException(FORBIDDEN_UPDATE);
         }
-        return BoothRes.of(booth);
+        booth.changeOperateStatus(operateStatus);
+        return id;
+
     }
 
-    public Long getBoothRedis(String remoteAddr) {
-        return redisService.getData("Booth_Id_1");
+    public void settingBoothStatus() {
+        LocalDate registeredDate = LocalDate.now();
+        boothRepository.findByStartDateEqualsAndOperateStatusEquals(registeredDate, OperateStatus.UPCOMING.getValue())
+                .forEach(booth -> booth.changeOperateStatus(OperateStatus.OPERATE.getValue()));
 
+        boothRepository.findByEndDateEquals(registeredDate)
+                .forEach(booth -> booth.changeOperateStatus(OperateStatus.TERMINATE.getValue()));
     }
 }

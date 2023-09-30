@@ -44,7 +44,7 @@ public class JwtTokenProvider {
         Date refreshTokenTime = new Date(now.getTime() + 60 * 60 * 1000L);
 
         String accessToken = Jwts.builder()
-                .claim("roles", roles) // 권한정보
+                .claim("roles",  roles.stream().collect(Collectors.joining(","))) // 권한정보
                 .setSubject(authentication.getName()) // 아이디
                 .setExpiration(initializationAccessTime) // 만료기간
                 .signWith(SignatureAlgorithm.HS256, key)

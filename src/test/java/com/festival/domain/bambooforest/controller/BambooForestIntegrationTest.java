@@ -67,7 +67,6 @@ class BambooForestIntegrationTest extends ControllerTestSupport {
                                 .contentType(APPLICATION_FORM_URLENCODED)
                                 .param("content", request.getContent())
                                 .param("contact", request.getContact())
-                                .param("status", request.getStatus())
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -93,10 +92,11 @@ class BambooForestIntegrationTest extends ControllerTestSupport {
 
         //then
         BamBooForest findBambooForest = bamBooForestRepository.findById(savedBamBooForest.getId()).get();
-        assertThat(findBambooForest.getStatus()).isEqualTo(OperateStatus.TERMINATE);
+        assertThat(findBambooForest.isDeleted()).isEqualTo(true);
     }
 
     @DisplayName("대나무숲 게시물이 존재하지 않으면, NotFoundException을 발생시킨다.")
+    @WithMockUser(username = "testUser", roles = "ADMIN")
     @Test
     void deleteBambooNotFound() throws Exception {
         //when //then

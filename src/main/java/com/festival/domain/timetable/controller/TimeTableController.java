@@ -5,47 +5,57 @@ import com.festival.domain.timetable.dto.TimeTableDateReq;
 import com.festival.domain.timetable.dto.TimeTableReq;
 import com.festival.domain.timetable.dto.TimeTableRes;
 import com.festival.domain.timetable.service.TimeTableService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v2/timetable", produces = "application/json", consumes = "multipart/form-data")
+@RequestMapping("/api/v2/timetable")
 public class TimeTableController {
 
     private final TimeTableService timeTableService;
     private final ValidationUtils validationUtils;
 
-    @PreAuthorize("hasAuthority({'ADMIN'})")
-    @PostMapping
-    public ResponseEntity<Long> createTimeTable(@Valid TimeTableReq timeTableReq) {
+    @PreAuthorize("hasRole({'ADMIN'})")
+    @Operation(summary = "타임테이블 등록")
+    @PostMapping(produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> createTimeTable(@Valid @ParameterObject TimeTableReq timeTableReq) {
         validationUtils.isTimeTableValid(timeTableReq);
         return ResponseEntity.ok().body(timeTableService.createTimeTable(timeTableReq));
     }
 
-    @PreAuthorize("hasAuthority({'ADMIN'})")
-    @PutMapping("/{timeTableId}")
-    public ResponseEntity<Long> updateTimeTable(@PathVariable Long timeTableId,
-                                                @Valid TimeTableReq timeTableReq) {
+    @PreAuthorize("hasRole({'ADMIN'})")
+    @Operation(summary = "타임테이블 수정")
+    @PutMapping(value = "/{timeTableId}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> updateTimeTable(@PathVariable("timeTableId") Long timeTableId,
+                                                @Valid @ParameterObject TimeTableReq timeTableReq) {
         validationUtils.isTimeTableValid(timeTableReq);
         return ResponseEntity.ok().body(timeTableService.updateTimeTable(timeTableId, timeTableReq));
     }
 
-    @PreAuthorize("hasAuthority({'ADMIN'})")
-    @DeleteMapping("/{timeTableId}")
-    public ResponseEntity<Void> deleteTimeTable(@PathVariable Long timeTableId) {
+    @PreAuthorize("hasRole({'ADMIN'})")
+    @Operation(summary = "타임테이블 삭제")
+    @DeleteMapping(value = "/{timeTableId}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> deleteTimeTable(@PathVariable("timeTableId") Long timeTableId) {
         timeTableService.deleteTimeTable(timeTableId);
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasAuthority({'ADMIN'})")
-    @GetMapping("/list")
-    public ResponseEntity<List<TimeTableRes>> getTimeTableList(@Valid TimeTableDateReq timeTableDateReq) {
+    @PreAuthorize("permitAll()")
+    @Operation(summary = "타임테이블 목록 조회")
+    @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<TimeTableRes>> getTimeTableList(@Valid @ParameterObject TimeTableDateReq timeTableDateReq) {
         return ResponseEntity.ok().body(timeTableService.getTimeTableList(timeTableDateReq));
     }
+
 }

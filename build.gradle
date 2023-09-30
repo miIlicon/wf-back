@@ -2,9 +2,11 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.0.6'
     id 'io.spring.dependency-management' version '1.1.0'
+    id 'jacoco'
 }
 
 group = 'com'
+version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 configurations {
@@ -66,20 +68,12 @@ dependencies {
 
     // Embedded Redis
     testImplementation ('it.ozimov:embedded-redis:0.7.2') { exclude group: "org.slf4j", module: "slf4j-simple" }
-
+    implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
-
-def getYmlVersion() {
-    def ymlFile = file('src/main/resources/application.yml')
-    def versionLine = ymlFile.text.split('\n').find { it.startsWith('version: ') }
-    return versionLine ? versionLine.split(' ')[1] : '0.0.1'
-}
-
-version = getYmlVersion() + '-SNAPSHOT'
 
 jar {
     enabled = false
@@ -95,14 +89,8 @@ tasks.register('updateVersion') {
             }
         }
 
-        if (!currentVersion) {
-            println "No current version found in application.yml"
-            return
-        }
-
         def increment = project.properties['increment']
         def newVersion = ''
-
         switch (increment) {
             case 'major':
                 newVersion = "${(currentVersion.split("\\.")[0].toInteger() + 1)}.0.0"
@@ -119,6 +107,8 @@ tasks.register('updateVersion') {
         }
 
         ymlFile.text = ymlFile.text.replace("version: $currentVersion", "version: $newVersion")
+        def gradleFile = file('build.gradle')
+        gradleFile.text = gradleFile.text.replace("version = '${project.version}'", "version = '$newVersion-SNAPSHOT'")
     }
 }
 

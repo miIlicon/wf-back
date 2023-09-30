@@ -1,57 +1,66 @@
 package com.festival.domain.guide.controller;
 
 import com.festival.common.util.ValidationUtils;
+import com.festival.domain.guide.dto.GuideListReq;
 import com.festival.domain.guide.dto.GuidePageRes;
 import com.festival.domain.guide.dto.GuideReq;
 import com.festival.domain.guide.dto.GuideRes;
 import com.festival.domain.guide.service.GuideService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v2/guide", produces = "application/json", consumes = "multipart/form-data")
+@RequestMapping("/api/v2/guide")
 public class GuideController {
 
     private final GuideService guideService;
     private final ValidationUtils validationUtils;
 
-    @PreAuthorize("hasAuthority({'ADMIN'})")
-    @PostMapping
+    @PreAuthorize("hasRole({'ADMIN'})")
+    @Operation(summary = "안내사항 등록")
+    @PostMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> createGuide(@Valid GuideReq guideReq) {
         validationUtils.isGuideValid(guideReq);
         return ResponseEntity.ok().body(guideService.createGuide(guideReq));
     }
 
-    @PreAuthorize("hasAuthority({'ADMIN'})")
-    @PutMapping("/{guideId}")
-    public ResponseEntity<Long> updateGuide(@PathVariable Long guideId, @Valid GuideReq guideReq) {
+    @PreAuthorize("hasRole({'ADMIN'})")
+    @Operation(summary = "안내사항 수정")
+    @PutMapping(value = "/{guideId}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> updateGuide(@PathVariable("guideId") Long guideId, @Valid GuideReq guideReq) {
         validationUtils.isGuideValid(guideReq);
         return ResponseEntity.ok().body(guideService.updateGuide(guideId, guideReq));
     }
 
-    @PreAuthorize("hasAuthority({'ADMIN'})")
-    @DeleteMapping("/{guideId}")
-    public ResponseEntity<Void> deleteGuide(@PathVariable Long guideId) {
+    @PreAuthorize("hasRole({'ADMIN'})")
+    @Operation(summary = "안내사항 삭제")
+    @DeleteMapping(value = "/{guideId}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> deleteGuide(@PathVariable("guideId") Long guideId) {
         guideService.deleteGuide(guideId);
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("permitAll()")
-    @GetMapping("/{guideId}")
-    public ResponseEntity<GuideRes> getGuide(@PathVariable Long guideId, HttpServletRequest httpServletRequest) {
+    @Operation(summary = "안내사항 조회")
+    @GetMapping(value = "/{guideId}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<GuideRes> getGuide(@PathVariable("guideId") Long guideId, HttpServletRequest httpServletRequest) {
         return ResponseEntity.ok().body(guideService.getGuide(guideId, httpServletRequest.getRemoteAddr()));
     }
 
     @PreAuthorize("permitAll()")
-    @GetMapping("/list")
-    public ResponseEntity<GuidePageRes> getGuideList(@NotNull(message = "상태값을 입력해주세요") String status, Pageable pageable) {
-        return ResponseEntity.ok().body(guideService.getGuideList(status, pageable));
+    @Operation(summary = "안내사항 목록 조회!")
+    @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<GuidePageRes> getGuideList(@Valid @ParameterObject GuideListReq guideListReq) {
+        return ResponseEntity.ok().body(guideService.getGuideList(guideListReq));
     }
+
 }

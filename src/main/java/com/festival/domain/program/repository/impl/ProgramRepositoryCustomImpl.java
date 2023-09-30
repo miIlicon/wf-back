@@ -6,7 +6,9 @@ import com.festival.domain.program.dto.QProgramSearchRes;
 import com.festival.domain.program.model.Program;
 import com.festival.domain.program.repository.ProgramRepositoryCustom;
 import com.festival.domain.program.service.vo.ProgramSearchCond;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -21,12 +23,14 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
 
     private JPAQueryFactory queryFactory;
 
+    private final OrderSpecifier<Integer> operateStatusASC = new CaseBuilder()
+            .when(program.operateStatus.stringValue().eq("OPERATE")).then(1)
+            .when(program.operateStatus.stringValue().eq("UPCOMING")).then(2)
+            .otherwise(3)
+            .asc();
+
     public ProgramRepositoryCustomImpl(EntityManager entityManager) {
         this.queryFactory = new JPAQueryFactory(entityManager);
-    }
-
-    private static BooleanExpression StatusEq(String status) {
-        return status == null ? null : program.status.stringValue().eq(status);
     }
 
     private static BooleanExpression TypeEq(String type) {
@@ -39,19 +43,20 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
                 .selectFrom(program)
                 .join(program.image).fetchJoin()
                 .where(
-                        StatusEq(programSearchCond.getStatus()),
-                        TypeEq(programSearchCond.getType())
+                        TypeEq(programSearchCond.getType()),
+                        program.deleted.eq(false)
                 )
                 .offset(programSearchCond.getPageable().getOffset())
                 .limit(programSearchCond.getPageable().getPageSize())
+                .orderBy(operateStatusASC, program.viewCount.desc())
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory
                 .select(program.count())
                 .from(program)
                 .where(
-                        StatusEq(programSearchCond.getStatus()),
-                        TypeEq(programSearchCond.getType())
+                        TypeEq(programSearchCond.getType()),
+                        program.deleted.eq(false)
                 );
 
         Page<Program> page = PageableExecutionUtils.getPage(result, programSearchCond.getPageable(), countQuery::fetchOne);
@@ -65,13 +70,15 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
                         program.id,
                         program.title,
                         program.subTitle,
-                        program.status.stringValue(),
+                        program.operateStatus.stringValue(),
                         program.image.mainFilePath
                 ))
                 .from(program)
                 .where(
-                        keywordEqTitleOrSubTitle(keyword)
+                        keywordEqTitleOrSubTitle(keyword),
+                        program.deleted.eq(false)
                 )
+                .orderBy(operateStatusASC, program.viewCount.desc())
                 .fetch();
     }
 

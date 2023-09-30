@@ -1,22 +1,31 @@
 package com.festival.domain.program.dto;
 
 
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ProgramListReq {
 
-    @NotNull(message = "상태를 선택 해주세요.")
-    String status;
-
-    @NotNull(message = "타입을 선택 해주세요.")
+    @NotNull(message = "타입을 선택해주세요.")
+            @Parameter(name = "type", description = "EVENT, GAME")
     String type;
+
+    int page;
+
+    int size;
+
+    @Builder
+    private ProgramListReq(String type, int page, int size) {
+        this.type = type;
+        this.page = page;
+        this.size = size;
+    }
 
 }

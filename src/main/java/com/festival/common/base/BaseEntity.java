@@ -1,9 +1,6 @@
 package com.festival.common.base;
 
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -30,7 +27,7 @@ public abstract class BaseEntity {
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
-    @Enumerated(EnumType.STRING)
-    protected OperateStatus status;
+    @Column(nullable = false)
+    protected boolean deleted;
 
 }

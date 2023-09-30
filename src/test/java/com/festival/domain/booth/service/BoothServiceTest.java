@@ -31,6 +31,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -172,6 +173,96 @@ class BoothServiceTest {
         Assertions.assertThat(boothId).isEqualTo(booth.getId());
     }
 
+    //   ###############################################################
+
+    @DisplayName("삭제된 부스의 상태값을 업데이트하면 AlreadyDeletedException을 반환한다.")
+    @Test
+    void updateBoothOperateStatus() throws IOException {
+        //given
+        given(boothRepository.findById(1L))
+                .willReturn(Optional.of(DELETED_BOOTH));
+
+        //when & then
+        assertThatThrownBy(() -> boothService.updateBoothOperateStatus(OperateStatus.OPERATE.getValue(), 1L))
+                .isInstanceOf(AlreadyDeleteException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.ALREADY_DELETED);
+
+    }
+
+
+
+    @DisplayName("다른 사람이 부스 상태값을 업데이트하면 ForbiddenException을 반환한다.")
+    @Test
+    void updateBoothOperateStatus2() throws IOException {
+        //given
+        Booth booth = getBooth();
+        booth.connectMember(MemberFixture.MANAGER1);
+
+        given(boothRepository.findById(1L))
+                .willReturn(Optional.of(booth));
+        given(memberService.getAuthenticationMember())
+                .willReturn(MemberFixture.MANAGER2);
+
+        //when & then
+        assertThatThrownBy(() -> boothService.updateBoothOperateStatus(OperateStatus.OPERATE.getValue(), 1L))
+                .isInstanceOf(ForbiddenException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.FORBIDDEN_UPDATE);
+    }
+    @DisplayName("Admin이 부스 상태값을 업데이트하면 boothId를 반환한다.")
+    @Test
+    void updateBoothOperateStatus3() throws IOException {
+        //given
+        Booth booth = getBooth();
+        booth.connectMember(MemberFixture.MANAGER1);
+
+        given(boothRepository.findById(1L))
+                .willReturn(Optional.of(booth));
+        given(memberService.getAuthenticationMember())
+                .willReturn(MemberFixture.ADMIN);
+
+        //when
+        Long boothId = boothService.updateBoothOperateStatus(OperateStatus.OPERATE.getValue(), 1L);
+
+        //then
+        Assertions.assertThat(boothId).isEqualTo(booth.getId());
+    }
+    @DisplayName("부스의 관리자가 업데이트하면 boothId를 반환한다.")
+    @Test
+    void updateBoothOperateStatus4() throws IOException {
+        //given
+        Booth booth = getBooth();
+        booth.connectMember(MemberFixture.MANAGER1);
+
+        given(boothRepository.findById(1L))
+                .willReturn(Optional.of(booth));
+        given(memberService.getAuthenticationMember())
+                .willReturn(MemberFixture.MANAGER1);
+
+        //when
+        Long boothId = boothService.updateBoothOperateStatus(OperateStatus.OPERATE.getValue(), 1L);
+
+        //then
+        Assertions.assertThat(boothId).isEqualTo(booth.getId());
+    }
+    @DisplayName("존재하지 않는 부스의 상태를 업데이트하면 NotFoundException을 반환한다.")
+    @Test
+    void updateBoothOperateStatusBooth() {
+        //given
+        given(boothRepository.findById(1L))
+                .willReturn(Optional.empty());
+
+        //when & then
+        assertThatThrownBy(() ->boothService.updateBoothOperateStatus(OperateStatus.OPERATE.getValue(), 1L))
+                .isInstanceOf(NotFoundException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.NOT_FOUND_BOOTH);
+
+    }
+
+    // #####################################################################
+
     @DisplayName("존재하지 않는 부스를 삭제하면 NotFoundException을 반환한다.")
     @Test
     void deleteNotExistBooth() {
@@ -266,13 +357,10 @@ class BoothServiceTest {
                 .isEqualTo(BoothRes.of(foodTruck));
     }
 
-    @DisplayName("조건에 맞는 부스 리스트 반환한다.")
+    @DisplayName("하나의 부스를 등록 후 리스트 조회하면 사이즈는 1")
     @Test
     void getBoothList(){
         //given
-        Booth pub = BoothFixture.PUB;
-        ReflectionTestUtils.setField(pub, "image", ImageFixture.IMAGE);
-
         given(boothRepository.getList(any(BoothListSearchCond.class)))
                 .willReturn(BoothPageRes.builder()
                         .boothResList(List.of(BoothRes.builder().
@@ -280,11 +368,11 @@ class BoothServiceTest {
         //when
         BoothListReq boothListReq = BoothListReq.builder()
                 .type("PUB")
-                .status("OPERATE")
+                .page(0)
+                .size(3)
                 .build();
-        Pageable pageable =  PageRequest.of(0, 3);
 
-        BoothPageRes boothPageRes = boothService.getBoothList(boothListReq, pageable);
+        BoothPageRes boothPageRes = boothService.getBoothList(boothListReq);
 
         //then
         Assertions.assertThat(boothPageRes.getBoothResList()).hasSize(1);
@@ -294,7 +382,7 @@ class BoothServiceTest {
         Booth booth = Booth.builder()
                 .title("부스 게시물 제목")
                 .subTitle("부스 게시물 부제목")
-                .status(OperateStatus.OPERATE)
+                .operateStatus(OperateStatus.OPERATE)
                 .content("부스 게시물 내용")
                 .longitude(50)
                 .latitude(50)
@@ -307,8 +395,10 @@ class BoothServiceTest {
         BoothReq boothReq = BoothReq.builder()
                 .title("푸드트럭 게시물 제목")
                 .subTitle("푸드트럭 게시물 부제목")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .content("푸드트럭 게시물 내용")
+                .startDate(LocalDate.of(2023, 9, 15))
+                .endDate(LocalDate.of(2023, 9, 16))
                 .longitude(50)
                 .latitude(50)
                 .mainFile(generateMockImageFile("mainFile"))
@@ -321,7 +411,7 @@ class BoothServiceTest {
         BoothReq boothReq = BoothReq.builder()
                 .title("변경된 제목")
                 .subTitle("변경된 부제목")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .content("변경된 내용")
                 .longitude(50)
                 .latitude(50)

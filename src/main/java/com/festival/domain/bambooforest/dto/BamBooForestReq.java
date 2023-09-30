@@ -2,11 +2,11 @@ package com.festival.domain.bambooforest.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+
+@Setter
+@Getter
 @NoArgsConstructor
 public class BamBooForestReq {
 
@@ -15,13 +15,9 @@ public class BamBooForestReq {
 
     private String contact;
 
-    @NotNull(message = "상태값을 입력해주세요")
-    private String status;
-
     @Builder
     private BamBooForestReq(String content, String contact, String status) {
         this.content = content;
         this.contact = contact;
-        this.status = status;
     }
 }

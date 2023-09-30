@@ -1,4 +1,4 @@
-package com.festival.domain.util;
+package com.festival.common.redis;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -10,8 +10,8 @@ import redis.embedded.RedisServer;
 import java.net.ServerSocket;
 
 @Configuration
-@Profile("test")
-public class TestRedisConfig {
+@Profile("dev")
+public class EmbeddedRedisConfig {
 
     private RedisServer redisServer;
 
@@ -30,3 +30,4 @@ public class TestRedisConfig {
     }
 
 }
+

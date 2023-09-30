@@ -1,6 +1,5 @@
 package com.festival.domain.bambooforest.service;
 
-import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
@@ -8,7 +7,6 @@ import com.festival.domain.bambooforest.dto.BamBooForestPageRes;
 import com.festival.domain.bambooforest.dto.BamBooForestReq;
 import com.festival.domain.bambooforest.model.BamBooForest;
 import com.festival.domain.bambooforest.repository.BamBooForestRepository;
-import com.festival.domain.bambooforest.service.vo.BamBooForestSearchCond;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 import static com.festival.common.exception.ErrorCode.*;
-import static com.festival.common.exception.ErrorCode.ALREADY_DELETED;
 import static com.festival.common.util.SecurityUtils.checkingAdminRole;
 
 @Transactional(readOnly = true)
@@ -47,15 +44,11 @@ public class BamBooForestService {
             throw new ForbiddenException(FORBIDDEN_DELETE);
         }
 
-        findBamBooForest.changeStatus(OperateStatus.TERMINATE);
+        findBamBooForest.deletedBambooForest();
     }
 
-    public BamBooForestPageRes getBamBooForestList(String status, Pageable pageable) {
-        BamBooForestSearchCond bamBooForestSearchCond = BamBooForestSearchCond.builder()
-                .status(status)
-                .pageable(pageable)
-                .build();
-        return bamBooForestRepository.getList(bamBooForestSearchCond);
+    public BamBooForestPageRes getBamBooForestList(Pageable pageable) {
+        return bamBooForestRepository.getList(pageable);
     }
 
     private BamBooForest checkingDeletedStatus(Optional<BamBooForest> bamBooForest) {
@@ -63,7 +56,7 @@ public class BamBooForestService {
             throw new NotFoundException(NOT_FOUND_BAMBOO);
         }
 
-        if (bamBooForest.get().getStatus() == OperateStatus.TERMINATE) {
+        if (bamBooForest.get().isDeleted()) {
             throw new AlreadyDeleteException(ALREADY_DELETED);
         }
         return bamBooForest.get();

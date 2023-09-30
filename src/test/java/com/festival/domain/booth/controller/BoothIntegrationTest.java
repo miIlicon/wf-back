@@ -11,6 +11,7 @@ import com.festival.domain.booth.controller.dto.BoothRes;
 import com.festival.domain.booth.model.Booth;
 import com.festival.domain.booth.model.BoothType;
 import com.festival.domain.booth.repository.BoothRepository;
+import com.festival.domain.booth.service.BoothService;
 import com.festival.domain.image.model.Image;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.util.ControllerTestSupport;
@@ -27,6 +28,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.festival.domain.member.model.MemberRole.ADMIN;
@@ -46,6 +48,9 @@ class BoothIntegrationTest extends ControllerTestSupport {
     private BoothRepository boothRepository;
 
     private Member member;
+
+    @Autowired
+    private BoothService boothService;
 
     @BeforeEach
     void setUp() {
@@ -69,23 +74,10 @@ class BoothIntegrationTest extends ControllerTestSupport {
     @Test
     void createBooth() throws Exception {
         //given
-        MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
-        List<MockMultipartFile> subFiles = List.of(
-                TestImageUtils.generateMockImageFile("subFiles"),
-                TestImageUtils.generateMockImageFile("subFiles"),
-                TestImageUtils.generateMockImageFile("subFiles")
-        );
+        MockMultipartFile mainFile = getMainFile();
+        List<MockMultipartFile> subFiles = getSubFiles();
 
-        BoothReq boothReq = BoothReq.builder()
-                .title("testTitle")
-                .subTitle("testSubTitle")
-                .content("testContent")
-                .latitude(50.0f)
-                .longitude(50.0f)
-                .type("FOOD_TRUCK")
-                .status("OPERATE")
-                .mainFile(mainFile)
-                .build();
+        BoothReq boothReq = getBoothReq();
 
         //when
         MvcResult mvcResult = mockMvc.perform(
@@ -99,8 +91,11 @@ class BoothIntegrationTest extends ControllerTestSupport {
                                 .param("content", boothReq.getContent())
                                 .param("latitude", String.valueOf(boothReq.getLatitude()))
                                 .param("longitude", String.valueOf(boothReq.getLongitude()))
-                                .param("status", boothReq.getStatus())
+                                .param("status", boothReq.getOperateStatus())
                                 .param("type", boothReq.getType())
+                                .param("startDate", boothReq.getStartDate().toString())
+                                .param("endDate", boothReq.getStartDate().toString())
+                                .param("operateStatus", "OPERATE")
                                 .contentType(MULTIPART_FORM_DATA)
                 )
                 .andDo(print())
@@ -111,8 +106,8 @@ class BoothIntegrationTest extends ControllerTestSupport {
         Long boothId = Long.parseLong(mvcResult.getResponse().getContentAsString());
         Booth booth = boothRepository.findById(boothId).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOTH));
         assertThat(booth).isNotNull()
-                .extracting("title", "content", "type", "status")
-                .containsExactly(boothReq.getTitle(), boothReq.getContent(), BoothType.FOOD_TRUCK, OperateStatus.OPERATE);
+                .extracting("title", "content", "type", "operateStatus")
+                .containsExactly(boothReq.getTitle(), boothReq.getContent(), BoothType.FOOD_TRUCK, OperateStatus.TERMINATE);
     }
 
     @WithMockUser(username = "testUser", roles = "ADMIN")
@@ -120,23 +115,12 @@ class BoothIntegrationTest extends ControllerTestSupport {
     @Test
     void updateBooth() throws Exception {
         //given
-        MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
-        List<MockMultipartFile> subFiles = List.of(
-                TestImageUtils.generateMockImageFile("subFiles"),
-                TestImageUtils.generateMockImageFile("subFiles"),
-                TestImageUtils.generateMockImageFile("subFiles")
-        );
+        MockMultipartFile mainFile =getMainFile();
+        List<MockMultipartFile> subFiles = getSubFiles();
 
-        BoothReq boothReq = BoothReq.builder()
-                .title("testTitle")
-                .subTitle("testSubTitle")
-                .content("testContent")
-                .latitude(50.0f)
-                .longitude(50.0f)
-                .type("FOOD_TRUCK")
-                .status("OPERATE")
-                .mainFile(mainFile)
-                .build();
+        BoothReq boothReq = getBoothReq();
+
+
         Booth booth = Booth.of(boothReq);
         booth.connectMember(member);
         Booth savedBooth = boothRepository.saveAndFlush(booth);
@@ -152,8 +136,10 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 .param("content", "updateContent")
                 .param("latitude", String.valueOf(50.0f))
                 .param("longitude", String.valueOf(50.0f))
-                .param("type", "FOOD_TRUCK")
-                .param("status", "OPERATE")
+                .param("type", "PUB")
+                .param("operateStatus", "OPERATE")
+                .param("startDate", boothReq.getStartDate().toString())
+                .param("endDate", boothReq.getStartDate().toString())
                 .contentType(MULTIPART_FORM_DATA)
                 .with(request -> {
                     request.setMethod("PUT");
@@ -170,32 +156,22 @@ class BoothIntegrationTest extends ControllerTestSupport {
         Long boothId = Long.parseLong(mvcResult.getResponse().getContentAsString());
         Booth findBooth = boothRepository.findById(boothId).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOTH));
         assertThat(findBooth).isNotNull()
-                .extracting("title", "content", "type", "status")
-                .containsExactly("updateTitle", "updateContent", BoothType.FOOD_TRUCK, OperateStatus.OPERATE);
+                .extracting("title", "content", "type", "operateStatus")
+                .containsExactly("updateTitle", "updateContent", BoothType.PUB, OperateStatus.OPERATE);
     }
+
+
 
     @WithMockUser(username = "differentUser", roles = "MANAGER")
     @DisplayName("축제부스 게시물을 수정할 때, 다른 사용자는 수정할 권한이 없다.")
     @Test
     void updateBoothNotMine() throws Exception {
         //given
-        MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
-        List<MockMultipartFile> subFiles = List.of(
-                TestImageUtils.generateMockImageFile("subFiles"),
-                TestImageUtils.generateMockImageFile("subFiles"),
-                TestImageUtils.generateMockImageFile("subFiles")
-        );
+        MockMultipartFile mainFile = getMainFile();
+        List<MockMultipartFile> subFiles = getSubFiles();
 
-        BoothReq boothReq = BoothReq.builder()
-                .title("testTitle")
-                .subTitle("testSubTitle")
-                .content("testContent")
-                .latitude(50.0f)
-                .longitude(50.0f)
-                .type("FOOD_TRUCK")
-                .status("OPERATE")
-                .mainFile(mainFile)
-                .build();
+        BoothReq boothReq = getBoothReq();
+
         Booth booth = Booth.of(boothReq);
         booth.connectMember(member);
         Booth savedBooth = boothRepository.saveAndFlush(booth);
@@ -212,7 +188,9 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 .param("latitude", String.valueOf(50.0f))
                 .param("longitude", String.valueOf(50.0f))
                 .param("type", "FLEA_MARKET")
-                .param("status", "OPERATE")
+                .param("operateStatus", "OPERATE")
+                .param("startDate", boothReq.getStartDate().toString())
+                .param("endDate", boothReq.getStartDate().toString())
                 .contentType(MULTIPART_FORM_DATA)
                 .with(request -> {
                     request.setMethod("PUT");
@@ -229,12 +207,8 @@ class BoothIntegrationTest extends ControllerTestSupport {
     @Test
     void updateBoothNotFound() throws Exception {
         //given
-        MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
-        List<MockMultipartFile> subFiles = List.of(
-                TestImageUtils.generateMockImageFile("subFiles"),
-                TestImageUtils.generateMockImageFile("subFiles"),
-                TestImageUtils.generateMockImageFile("subFiles")
-        );
+        MockMultipartFile mainFile = getMainFile();
+        List<MockMultipartFile> subFiles = getSubFiles();
 
         //when //then
         MockHttpServletRequestBuilder builder = multipart("/api/v2/booth/1")
@@ -248,7 +222,9 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 .param("latitude", String.valueOf(50.0f))
                 .param("longitude", String.valueOf(50.0f))
                 .param("type", "FLEA_MARKET")
-                .param("status", "OPERATE")
+                .param("operateStatus", "OPERATE")
+                .param("startDate", "2023-09-15")
+                .param("endDate","2023-09-16")
                 .contentType(MULTIPART_FORM_DATA)
                 .with(request -> {
                     request.setMethod("PUT");
@@ -260,28 +236,107 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 .andExpect(status().isNotFound());
     }
 
+
+    @WithMockUser(username = "testUser", roles = "ADMIN")
+    @DisplayName("축제부스 게시물의 운영상태를 변경한다..")
+    @Test
+    void updateBoothOperateStatus() throws Exception {
+        //given
+        BoothReq boothReq = getBoothReq();
+
+
+        Booth booth = Booth.of(boothReq);
+        booth.connectMember(member);
+        Booth savedBooth = boothRepository.saveAndFlush(booth);
+
+        //when
+        MvcResult mvcResult = mockMvc.perform(
+                        patch("/api/v2/booth/" + savedBooth.getId())
+                            .param("operateStatus", "OPERATE")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        //then
+        Booth findBooth = boothRepository.findById(Long.parseLong(mvcResult.getResponse().getContentAsString())).orElse(null);
+        assertThat(findBooth).isNotNull()
+                .extracting("operateStatus")
+                .isEqualTo(OperateStatus.OPERATE);
+    }
+
+    @WithMockUser(username = "testUser", roles = "ADMIN")
+    @DisplayName("게시물 없으면 상태값을 변경할 수 없다")
+    @Test
+    void updateBoothOperateStatus2() throws Exception {
+        //given
+
+        //when & then
+        MvcResult mvcResult = mockMvc.perform(
+                        patch("/api/v2/booth/" + 1)
+                                .param("operateStatus", "OPERATE")
+                )
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+    }
+    @WithMockUser(username = "testUser", roles = "ADMIN")
+    @DisplayName("삭제된 게시물의 상태값은 변경할 수 없다")
+    @Test
+    void updateBoothOperateStatus3() throws Exception {
+        //given
+        BoothReq boothReq = getBoothReq();
+
+
+        Booth booth = Booth.of(boothReq);
+        booth.connectMember(member);
+        Booth savedBooth = boothRepository.saveAndFlush(booth);
+        boothService.deleteBooth(savedBooth.getId());
+
+        //when & then
+        MvcResult mvcResult = mockMvc.perform(
+                        patch("/api/v2/booth/" + savedBooth.getId())
+                                .param("operateStatus", "OPERATE")
+                )
+                .andDo(print())
+                .andExpect(status().is(400))
+                .andReturn();
+
+    }
+
+
+    @WithMockUser(username = "differentUser", roles = "MANAGER")
+    @DisplayName("게시물의 MAMAGER나 ADMIN이 아니면  변경할 수 없다")
+    @Test
+    void updateBoothOperateStatus4() throws Exception {
+        //given
+        BoothReq boothReq = getBoothReq();
+
+
+        Booth booth = Booth.of(boothReq);
+        booth.connectMember(member);
+        Booth savedBooth = boothRepository.saveAndFlush(booth);
+
+        //when & then
+        MvcResult mvcResult = mockMvc.perform(
+                        patch("/api/v2/booth/" + savedBooth.getId())
+                                .param("operateStatus", "OPERATE")
+                )
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andReturn();
+
+    }
+
+
     @WithMockUser(username = "testUser", roles = "ADMIN")
     @DisplayName("축제부스 게시물을 하나 삭제한다.")
     @Test
     void deleteBooth() throws Exception {
         //given
-        MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
-        List<MockMultipartFile> subFiles = List.of(
-                TestImageUtils.generateMockImageFile("subFiles"),
-                TestImageUtils.generateMockImageFile("subFiles"),
-                TestImageUtils.generateMockImageFile("subFiles")
-        );
+        BoothReq boothReq = getBoothReq();
 
-        BoothReq boothReq = BoothReq.builder()
-                .title("testTitle")
-                .subTitle("testSubTitle")
-                .content("testContent")
-                .latitude(50.0f)
-                .longitude(50.0f)
-                .type("FOOD_TRUCK")
-                .status("OPERATE")
-                .mainFile(mainFile)
-                .build();
         Booth booth = Booth.of(boothReq);
         booth.connectMember(member);
         Booth savedBooth = boothRepository.saveAndFlush(booth);
@@ -289,38 +344,24 @@ class BoothIntegrationTest extends ControllerTestSupport {
         //when
         mockMvc.perform(
                         delete("/api/v2/booth/" + savedBooth.getId())
-                                .contentType(APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
 
         // then
         Booth findBooth = boothRepository.findById(savedBooth.getId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_BOOTH));
-        assertThat(findBooth.getStatus()).isEqualTo(OperateStatus.TERMINATE);
+        assertThat(findBooth.getOperateStatus()).isEqualTo(OperateStatus.TERMINATE);
     }
+
+
 
     @WithMockUser(username = "differentUser", roles = "MANAGER")
     @DisplayName("삭제권한이 없는 게시물은 삭제할 수 없다.")
     @Test
     void deleteBoothNotMine() throws Exception {
         //given
-        MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
-        List<MockMultipartFile> subFiles = List.of(
-                TestImageUtils.generateMockImageFile("subFiles"),
-                TestImageUtils.generateMockImageFile("subFiles"),
-                TestImageUtils.generateMockImageFile("subFiles")
-        );
+        BoothReq boothReq = getBoothReq();
 
-        BoothReq boothReq = BoothReq.builder()
-                .title("testTitle")
-                .subTitle("testSubTitle")
-                .content("testContent")
-                .latitude(50.0f)
-                .longitude(50.0f)
-                .type("FOOD_TRUCK")
-                .status("OPERATE")
-                .mainFile(mainFile)
-                .build();
         Booth booth = Booth.of(boothReq);
         booth.connectMember(member);
         Booth savedBooth = boothRepository.saveAndFlush(booth);
@@ -328,44 +369,33 @@ class BoothIntegrationTest extends ControllerTestSupport {
         //when //then
         mockMvc.perform(
                         delete("/api/v2/booth/" + savedBooth.getId())
-                                .contentType(APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }
 
     @DisplayName("존재하지 않는 축제부스 게시물은 삭제할 수 없다.")
+    @WithMockUser(username = "testUser", roles = "ADMIN")
     @Test
     void deleteBoothNotFound() throws Exception {
         //when //then
         mockMvc.perform(
                         delete("/api/v2/booth/1")
-                                .contentType(APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
     @DisplayName("축제부스 게시물 중에 하나를 조회한다.")
+    @WithMockUser(username = "testUser", roles = "ADMIN")
     @Test
     void getBooth() throws Exception {
         //given
-        MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
-        List<MockMultipartFile> subFiles = List.of(
-                TestImageUtils.generateMockImageFile("subFiles"),
-                TestImageUtils.generateMockImageFile("subFiles"),
-                TestImageUtils.generateMockImageFile("subFiles")
-        );
+        MockMultipartFile mainFile = getMainFile();
+        List<MockMultipartFile> subFiles = getSubFiles();
 
-        BoothReq boothReq = BoothReq.builder()
-                .title("testTitle")
-                .subTitle("testSubTitle")
-                .content("testContent")
-                .latitude(50.0f)
-                .longitude(50.0f)
-                .type("FOOD_TRUCK")
-                .status("OPERATE")
-                .build();
+        BoothReq boothReq = getBoothReq();
+
         Booth booth = Booth.of(boothReq);
         Image image = Image.builder()
                 .mainFilePath(mainFile.getName())
@@ -378,7 +408,6 @@ class BoothIntegrationTest extends ControllerTestSupport {
         //when
         MvcResult mvcResult = mockMvc.perform(
                         get("/api/v2/booth/" + savedBooth.getId())
-                                .contentType(APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -388,7 +417,7 @@ class BoothIntegrationTest extends ControllerTestSupport {
         BoothRes findBooth = new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), BoothRes.class);
         assertThat(findBooth).isNotNull()
                 .extracting("title", "content", "type", "status")
-                .containsExactly(boothReq.getTitle(), boothReq.getContent(), "FOOD_TRUCK", "OPERATE");
+                .containsExactly(boothReq.getTitle(), boothReq.getContent(), "FOOD_TRUCK", "TERMINATE");
     }
 
     @DisplayName("존재하지 않는 축제부스 게시물은 조회할 수 없다.")
@@ -397,7 +426,6 @@ class BoothIntegrationTest extends ControllerTestSupport {
         //when //then
         mockMvc.perform(
                         get("/api/v2/booth/1")
-                                .contentType(APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -413,18 +441,16 @@ class BoothIntegrationTest extends ControllerTestSupport {
         createBoothEntity(4);
         createBoothEntity(5);
         createBoothEntity(6);
-        createBoothEntity(7);
+
 
         //when
         Pageable pageable = PageRequest.of(0, 6);
 
         MvcResult mvcResult = mockMvc.perform(
                         get("/api/v2/booth/list")
-                                .param("status", "OPERATE")
                                 .param("type", "FOOD_TRUCK")
                                 .param("page", pageable.getPageNumber() + "")
                                 .param("size", pageable.getPageSize() + "")
-                                .contentType(APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -435,17 +461,17 @@ class BoothIntegrationTest extends ControllerTestSupport {
         assertThat(boothPageRes.getBoothResList()).hasSize(6)
                 .extracting("title", "content", "type", "status")
                 .containsExactlyInAnyOrder(
-                        tuple("testTitle1", "testContent1", "FOOD_TRUCK", "OPERATE"),
-                        tuple("testTitle2", "testContent2", "FOOD_TRUCK", "OPERATE"),
-                        tuple("testTitle3", "testContent3", "FOOD_TRUCK", "OPERATE"),
-                        tuple("testTitle4", "testContent4", "FOOD_TRUCK", "OPERATE"),
-                        tuple("testTitle5", "testContent5", "FOOD_TRUCK", "OPERATE"),
-                        tuple("testTitle6", "testContent6", "FOOD_TRUCK", "OPERATE")
+                        tuple("testTitle1", "testContent1", "FOOD_TRUCK", "TERMINATE"),
+                        tuple("testTitle2", "testContent2", "FOOD_TRUCK", "TERMINATE"),
+                        tuple("testTitle3", "testContent3", "FOOD_TRUCK", "TERMINATE"),
+                        tuple("testTitle4", "testContent4", "FOOD_TRUCK", "TERMINATE"),
+                        tuple("testTitle5", "testContent5", "FOOD_TRUCK", "TERMINATE"),
+                        tuple("testTitle6", "testContent6", "FOOD_TRUCK", "TERMINATE")
                 );
 
         assertThat(boothPageRes).isNotNull()
                 .extracting("totalCount", "totalPage", "pageNumber", "pageSize")
-                .contains(7L, 2, 0, 6);
+                .contains(6L, 1, 0, 6);
     }
 
     private Booth createBoothEntity(int count) throws IOException {
@@ -462,8 +488,10 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 .content("testContent" + count)
                 .latitude(50.0f)
                 .longitude(50.0f)
+                .startDate(LocalDate.of(2023, 9, 15))
+                .endDate(LocalDate.of(2023, 9, 16))
                 .type("FOOD_TRUCK")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .build();
         Booth booth = Booth.of(boothReq);
         Image image = Image.builder()
@@ -472,6 +500,33 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 .build();
         booth.connectMember(member);
         booth.setImage(image);
+        Booth booth11 = booth;
         return boothRepository.saveAndFlush(booth);
+    }
+
+
+    private BoothReq getBoothReq(){
+        return BoothReq.builder()
+                .title("testTitle")
+                .subTitle("testSubTitle")
+                .content("testContent")
+                .latitude(50.0f)
+                .longitude(50.0f)
+                .type("FOOD_TRUCK")
+                .operateStatus("OPERATE")
+                .startDate(LocalDate.of(2023, 9, 14))
+                .endDate(LocalDate.of(2023, 9, 15))
+                .build();
+    }
+
+    private MockMultipartFile getMainFile() throws IOException {
+        return TestImageUtils.generateMockImageFile("mainFile");
+    }
+    private List<MockMultipartFile> getSubFiles() throws IOException {
+        return List.of(
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles")
+        );
     }
 }

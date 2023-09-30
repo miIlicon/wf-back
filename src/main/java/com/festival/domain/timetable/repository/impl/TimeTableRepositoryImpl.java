@@ -30,7 +30,7 @@ public class TimeTableRepositoryImpl implements TimeTableRepositoryCustom {
                 .from(timeTable)
                 .where(
                         isWithinPeriod(timeTableSearchCond.getStartTime(), timeTableSearchCond.getEndTime()),
-                        StatusEq(timeTableSearchCond.getStatus())
+                        timeTable.deleted.eq(false)
                 )
                 .fetch();
     }
@@ -43,7 +43,5 @@ public class TimeTableRepositoryImpl implements TimeTableRepositoryCustom {
                 .and(timeTable.endTime.loe(endTime));
     }
 
-    private static BooleanExpression StatusEq(String status) {
-        return status == null ? null : timeTable.status.stringValue().eq(status);
-    }
+
 }

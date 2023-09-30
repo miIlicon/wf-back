@@ -3,7 +3,6 @@ package com.festival.domain.program.controller;
 import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.NotFoundException;
-import com.festival.domain.guide.dto.GuidePageRes;
 import com.festival.domain.image.model.Image;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.program.dto.ProgramPageRes;
@@ -26,6 +25,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.festival.domain.member.model.MemberRole.ADMIN;
@@ -44,6 +44,8 @@ class ProgramIntegrationTest extends ControllerTestSupport {
 
     private Member member;
 
+    private Member differentMember;
+
     @BeforeEach
     void setUp() {
         member = Member.builder()
@@ -53,12 +55,19 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .build();
         memberRepository.saveAndFlush(member);
 
-        Member differentMember = Member.builder()
+        differentMember = Member.builder()
                 .username("differentUser")
                 .password("12345")
                 .memberRole(MANAGER)
                 .build();
         memberRepository.saveAndFlush(differentMember);
+
+        Member differentMember2 = Member.builder()
+                .username("differentUser2")
+                .password("12345")
+                .memberRole(MANAGER)
+                .build();
+        memberRepository.saveAndFlush(differentMember2);
     }
 
     @WithMockUser(username = "testUser", roles = "ADMIN")
@@ -66,6 +75,9 @@ class ProgramIntegrationTest extends ControllerTestSupport {
     @Test
     void createProgram() throws Exception {
         //given
+        LocalDate registeredStartDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredEndDate = LocalDate.of(2023, 10, 31);
+
         MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
         List<MockMultipartFile> subFiles = List.of(
                 TestImageUtils.generateMockImageFile("subFiles"),
@@ -80,8 +92,10 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("EVENT")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
+                .startDate(registeredStartDate)
+                .endDate(registeredEndDate)
                 .build();
 
         //when
@@ -97,7 +111,9 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                                 .param("latitude", String.valueOf(programReq.getLatitude()))
                                 .param("longitude", String.valueOf(programReq.getLongitude()))
                                 .param("type", programReq.getType())
-                                .param("status", programReq.getStatus())
+                                .param("operateStatus", programReq.getOperateStatus())
+                                .param("startDate", String.valueOf(programReq.getStartDate()))
+                                .param("endDate", String.valueOf(programReq.getEndDate()))
                                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 )
                 .andDo(print())
@@ -108,7 +124,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
         long id = Long.parseLong(mvcResult.getResponse().getContentAsString());
         Program program = programRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_PROGRAM));
         assertThat(program).isNotNull()
-                .extracting("title", "subTitle", "content", "latitude", "longitude", "status", "type")
+                .extracting("title", "subTitle", "content", "latitude", "longitude", "operateStatus", "type")
                 .containsExactly(programReq.getTitle(), programReq.getSubTitle(),
                         programReq.getContent(),
                         programReq.getLatitude(), programReq.getLongitude(),
@@ -120,6 +136,9 @@ class ProgramIntegrationTest extends ControllerTestSupport {
     @Test
     void updateProgram() throws Exception {
         //given
+        LocalDate registeredStartDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredEndDate = LocalDate.of(2023, 10, 31);
+
         MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
         List<MockMultipartFile> subFiles = List.of(
                 TestImageUtils.generateMockImageFile("subFiles"),
@@ -134,10 +153,12 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("EVENT")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
+                .startDate(registeredStartDate)
+                .endDate(registeredEndDate)
                 .build();
-        Program program = Program.of(programReq);
+        Program program = Program.of(programReq, LocalDate.now());
         program.connectMember(member);
         Program savedProgram = programRepository.saveAndFlush(program);
 
@@ -153,7 +174,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
         long id = Long.parseLong(mvcResult.getResponse().getContentAsString());
         Program updatedProgram = programRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_PROGRAM));
         assertThat(updatedProgram).isNotNull()
-                .extracting("title", "subTitle", "content", "latitude", "longitude", "status", "type")
+                .extracting("title", "subTitle", "content", "latitude", "longitude", "operateStatus", "type")
                 .containsExactly("updateTitle", "updateSubTitle", "updateContent", 30.0f, 30.0f, OperateStatus.OPERATE, ProgramType.GAME);
     }
 
@@ -162,6 +183,10 @@ class ProgramIntegrationTest extends ControllerTestSupport {
     @Test
     void updateProgramNotMine() throws Exception {
         //given
+        LocalDate registeredDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredStartDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredEndDate = LocalDate.of(2023, 10, 31);
+
         MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
         List<MockMultipartFile> subFiles = List.of(
                 TestImageUtils.generateMockImageFile("subFiles"),
@@ -176,10 +201,12 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("EVENT")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
+                .startDate(registeredStartDate)
+                .endDate(registeredEndDate)
                 .build();
-        Program program = Program.of(programReq);
+        Program program = Program.of(programReq, registeredDate);
         program.connectMember(member);
         Program savedProgram = programRepository.saveAndFlush(program);
 
@@ -210,10 +237,13 @@ class ProgramIntegrationTest extends ControllerTestSupport {
     }
 
     @WithMockUser(username = "testUser", roles = "ADMIN")
-    @DisplayName("프로그램 게시물을 삭제한다.")
+    @DisplayName("사용자는 상태값만 수정할수도 있다.")
     @Test
-    void deleteProgram() throws Exception {
+    void updateProgramStatus() throws Exception {
         //given
+        LocalDate registeredStartDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredEndDate = LocalDate.of(2023, 10, 31);
+
         MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
         List<MockMultipartFile> subFiles = List.of(
                 TestImageUtils.generateMockImageFile("subFiles"),
@@ -228,25 +258,112 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("EVENT")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
+                .startDate(registeredStartDate)
+                .endDate(registeredEndDate)
                 .build();
-        Program program = Program.of(programReq);
+        Program program = Program.of(programReq, LocalDate.now());
+        program.connectMember(member);
+        Program savedProgram = programRepository.saveAndFlush(program);
+
+        //when
+        MvcResult mvcResult = mockMvc.perform(
+                        patch("/api/v2/program/" + savedProgram.getId())
+                                .param("status", "TERMINATE")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        //then
+        long id = Long.parseLong(mvcResult.getResponse().getContentAsString());
+        Program updatedProgram = programRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_PROGRAM));
+        assertThat(updatedProgram.getOperateStatus()).isEqualTo(OperateStatus.TERMINATE);
+    }
+
+    @WithMockUser(username = "differentUser2", roles = "MANAGER")
+    @DisplayName("권한이 없는 사용자는 상태값을 수정할 수 없다.")
+    @Test
+    void updateProgramStatusWithoutPermission() throws Exception {
+        //given
+        LocalDate registeredStartDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredEndDate = LocalDate.of(2023, 10, 31);
+
+        MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
+        List<MockMultipartFile> subFiles = List.of(
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles")
+        );
+
+        ProgramReq programReq = ProgramReq.builder()
+                .title("title")
+                .subTitle("subTitle")
+                .content("content")
+                .latitude(50.0f)
+                .longitude(50.0f)
+                .type("EVENT")
+                .operateStatus("OPERATE")
+                .mainFile(mainFile)
+                .startDate(registeredStartDate)
+                .endDate(registeredEndDate)
+                .build();
+        Program program = Program.of(programReq, LocalDate.now());
+        program.connectMember(differentMember);
+        Program savedProgram = programRepository.saveAndFlush(program);
+
+        //when //then
+        mockMvc.perform(
+                        patch("/api/v2/program/" + savedProgram.getId())
+                                .param("status", "TERMINATE")
+                )
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @WithMockUser(username = "testUser", roles = "ADMIN")
+    @DisplayName("프로그램 게시물을 삭제한다.")
+    @Test
+    void deleteProgram() throws Exception {
+        //given
+        LocalDate registeredDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredStartDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredEndDate = LocalDate.of(2023, 10, 31);
+
+        MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
+        List<MockMultipartFile> subFiles = List.of(
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles")
+        );
+
+        ProgramReq programReq = ProgramReq.builder()
+                .title("title")
+                .subTitle("subTitle")
+                .content("content")
+                .latitude(50.0f)
+                .longitude(50.0f)
+                .type("EVENT")
+                .operateStatus("OPERATE")
+                .mainFile(mainFile)
+                .startDate(registeredStartDate)
+                .endDate(registeredEndDate)
+                .build();
+        Program program = Program.of(programReq, registeredDate);
         program.connectMember(member);
         Program savedProgram = programRepository.saveAndFlush(program);
 
         //when
         mockMvc.perform(
-                    delete("/api/v2/program/" + savedProgram.getId())
+                        delete("/api/v2/program/" + savedProgram.getId())
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
 
         //then
         Program findProgram = programRepository.findById(savedProgram.getId()).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_PROGRAM));
-        assertThat(findProgram)
-                .extracting("status")
-                .isEqualTo(OperateStatus.TERMINATE);
+        assertThat(findProgram.isDeleted()).isEqualTo(true);
     }
 
     @WithMockUser(username = "differentUser", roles = "MANAGER")
@@ -254,6 +371,10 @@ class ProgramIntegrationTest extends ControllerTestSupport {
     @Test
     void deleteProgramNotMine() throws Exception {
         //given
+        LocalDate registeredDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredStartDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredEndDate = LocalDate.of(2023, 10, 31);
+
         MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
         List<MockMultipartFile> subFiles = List.of(
                 TestImageUtils.generateMockImageFile("subFiles"),
@@ -268,27 +389,30 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("EVENT")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
+                .startDate(registeredStartDate)
+                .endDate(registeredEndDate)
                 .build();
-        Program program = Program.of(programReq);
+        Program program = Program.of(programReq, registeredDate);
         program.connectMember(member);
         Program savedProgram = programRepository.saveAndFlush(program);
 
         //when //then
         mockMvc.perform(
-                    delete("/api/v2/program/" + savedProgram.getId())
+                        delete("/api/v2/program/" + savedProgram.getId())
                 )
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }
 
     @DisplayName("존재하지 않는 프로그램 게시물은 삭제할 수 없다.")
+    @WithMockUser(username = "testUser", roles = "ADMIN")
     @Test
     void deleteProgramNotFound() throws Exception {
         //when //then
         mockMvc.perform(
-                    delete("/api/v2/program/1")
+                        delete("/api/v2/program/1")
                 )
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -298,6 +422,10 @@ class ProgramIntegrationTest extends ControllerTestSupport {
     @Test
     void getProgram() throws Exception {
         //given
+        LocalDate registeredDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredStartDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredEndDate = LocalDate.of(2023, 10, 31);
+
         MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
         List<MockMultipartFile> subFiles = List.of(
                 TestImageUtils.generateMockImageFile("subFiles"),
@@ -312,10 +440,12 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("EVENT")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
+                .startDate(registeredStartDate)
+                .endDate(registeredEndDate)
                 .build();
-        Program program = Program.of(programReq);
+        Program program = Program.of(programReq, registeredDate);
         program.connectMember(member);
         Image image = Image.builder()
                 .mainFilePath("mainFilePath")
@@ -327,7 +457,6 @@ class ProgramIntegrationTest extends ControllerTestSupport {
         //when
         MvcResult mvcResult = mockMvc.perform(
                         get("/api/v2/program/" + savedProgram.getId())
-                                .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -336,17 +465,21 @@ class ProgramIntegrationTest extends ControllerTestSupport {
         //then
         ProgramRes programRes = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ProgramRes.class);
         assertThat(programRes)
-                .extracting("title", "subTitle", "content", "latitude", "longitude", "status", "type")
+                .extracting("title", "subTitle", "content", "latitude", "longitude", "operateStatus", "type")
                 .containsExactly(programReq.getTitle(), programReq.getSubTitle(),
                         programReq.getContent(),
                         programReq.getLatitude(), programReq.getLongitude(),
-                        programReq.getStatus(), programReq.getType());
+                        programReq.getOperateStatus(), programReq.getType());
     }
 
     @DisplayName("프로그램 게시물을 목록조회한다. 페이지당 게시물은 6개이다.")
     @Test
     void getProgramList() throws Exception {
         //given
+        LocalDate registeredDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredStartDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredEndDate = LocalDate.of(2023, 10, 31);
+
         MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
         List<MockMultipartFile> subFiles = List.of(
                 TestImageUtils.generateMockImageFile("subFiles"),
@@ -366,30 +499,30 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .latitude(50.0f)
                 .longitude(50.0f)
                 .type("EVENT")
-                .status("OPERATE")
+                .operateStatus("OPERATE")
                 .mainFile(mainFile)
+                .startDate(registeredStartDate)
+                .endDate(registeredEndDate)
                 .build();
-        Program program1 = Program.of(programReq);
+        Program program1 = Program.of(programReq, registeredDate);
         program1.connectMember(member);
         program1.setImage(image);
-        Program program2 = Program.of(programReq);
+        Program program2 = Program.of(programReq, registeredDate);
         program2.connectMember(member);
         program2.setImage(image);
-        Program program3 = Program.of(programReq);
+        Program program3 = Program.of(programReq, registeredDate);
         program3.connectMember(member);
         program3.setImage(image);
-        Program program4 = Program.of(programReq);
+        Program program4 = Program.of(programReq, registeredDate);
         program4.connectMember(member);
         program4.setImage(image);
-        Program program5 = Program.of(programReq);
+        Program program5 = Program.of(programReq, registeredDate);
         program5.connectMember(member);
         program5.setImage(image);
-
-        Program program6 = Program.of(programReq);
+        Program program6 = Program.of(programReq, registeredDate);
         program6.connectMember(member);
         program6.setImage(image);
-
-        Program program7 = Program.of(programReq);
+        Program program7 = Program.of(programReq, registeredDate);
         program7.connectMember(member);
         program7.setImage(image);
 
@@ -412,32 +545,32 @@ class ProgramIntegrationTest extends ControllerTestSupport {
         //then
         ProgramPageRes programPageRes = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ProgramPageRes.class);
         assertThat(programPageRes.getProgramList()).hasSize(6)
-                .extracting("title", "subTitle", "content", "latitude", "longitude", "status", "type")
+                .extracting("title", "subTitle", "content", "latitude", "longitude", "operateStatus", "type")
                 .containsExactly(
                         tuple(programReq.getTitle(), programReq.getSubTitle(),
                                 programReq.getContent(),
                                 programReq.getLatitude(), programReq.getLongitude(),
-                                programReq.getStatus(), programReq.getType()),
+                                programReq.getOperateStatus(), programReq.getType()),
                         tuple(programReq.getTitle(), programReq.getSubTitle(),
                                 programReq.getContent(),
                                 programReq.getLatitude(), programReq.getLongitude(),
-                                programReq.getStatus(), programReq.getType()),
+                                programReq.getOperateStatus(), programReq.getType()),
                         tuple(programReq.getTitle(), programReq.getSubTitle(),
                                 programReq.getContent(),
                                 programReq.getLatitude(), programReq.getLongitude(),
-                                programReq.getStatus(), programReq.getType()),
+                                programReq.getOperateStatus(), programReq.getType()),
                         tuple(programReq.getTitle(), programReq.getSubTitle(),
                                 programReq.getContent(),
                                 programReq.getLatitude(), programReq.getLongitude(),
-                                programReq.getStatus(), programReq.getType()),
+                                programReq.getOperateStatus(), programReq.getType()),
                         tuple(programReq.getTitle(), programReq.getSubTitle(),
                                 programReq.getContent(),
                                 programReq.getLatitude(), programReq.getLongitude(),
-                                programReq.getStatus(), programReq.getType()),
+                                programReq.getOperateStatus(), programReq.getType()),
                         tuple(programReq.getTitle(), programReq.getSubTitle(),
                                 programReq.getContent(),
                                 programReq.getLatitude(), programReq.getLongitude(),
-                                programReq.getStatus(), programReq.getType())
+                                programReq.getOperateStatus(), programReq.getType())
                 );
 
         assertThat(programPageRes).isNotNull()
@@ -446,6 +579,9 @@ class ProgramIntegrationTest extends ControllerTestSupport {
     }
 
     private static MockHttpServletRequestBuilder makeMultiPartRequest(Program savedProgram, MockMultipartFile mainFile, List<MockMultipartFile> subFiles) {
+        LocalDate registeredStartDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredEndDate = LocalDate.of(2023, 10, 31);
+
         return multipart("/api/v2/program/" + savedProgram.getId())
                 .file(mainFile)
                 .file(subFiles.get(0))
@@ -457,7 +593,9 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .param("latitude", String.valueOf(30.0f))
                 .param("longitude", String.valueOf(30.0f))
                 .param("type", "GAME")
-                .param("status", "OPERATE")
+                .param("operateStatus", "OPERATE")
+                .param("startDate", registeredStartDate.toString())
+                .param("endDate", registeredEndDate.toString())
                 .contentType(MULTIPART_FORM_DATA)
                 .with(request -> {
                     request.setMethod("PUT");

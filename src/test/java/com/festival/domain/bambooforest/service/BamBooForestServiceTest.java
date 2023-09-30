@@ -1,12 +1,10 @@
 package com.festival.domain.bambooforest.service;
 
-import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.domain.bambooforest.dto.BamBooForestReq;
-import com.festival.domain.bambooforest.fixture.BamBooForestFixture;
 import com.festival.domain.bambooforest.model.BamBooForest;
 import com.festival.domain.bambooforest.repository.BamBooForestRepository;
 import com.festival.domain.member.fixture.MemberFixture;
@@ -138,7 +136,6 @@ class BamBooForestServiceTest {
         BamBooForest bamBooForest = BamBooForest.builder()
                 .content("대나무 숲 글 내용")
                 .contact("010-1234-5678")
-                .status(OperateStatus.OPERATE)
                 .build();
         ReflectionTestUtils.setField(bamBooForest, "id", 1L);
         return bamBooForest;

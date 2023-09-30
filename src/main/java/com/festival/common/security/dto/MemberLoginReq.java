@@ -1,17 +1,20 @@
 package com.festival.common.security.dto;
 
-import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@NoArgsConstructor
 public class MemberLoginReq {
 
     private String username;
     private String password;
 
-    public MemberLoginReq(String username, String password) {
+    @Builder
+    private MemberLoginReq(String username, String password) {
         this.username = username;
         this.password = password;
     }
