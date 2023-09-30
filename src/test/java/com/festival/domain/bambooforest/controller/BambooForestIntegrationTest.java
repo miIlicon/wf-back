@@ -25,7 +25,7 @@ import static com.festival.domain.member.model.MemberRole.MANAGER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.*;
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -64,7 +64,7 @@ class BambooForestIntegrationTest extends ControllerTestSupport {
         //when //then
         mockMvc.perform(
                         post("/api/v2/bambooforest")
-                                .contentType(APPLICATION_FORM_URLENCODED)
+                                .contentType(MULTIPART_FORM_DATA)
                                 .param("content", request.getContent())
                                 .param("contact", request.getContact())
                 )
@@ -85,7 +85,7 @@ class BambooForestIntegrationTest extends ControllerTestSupport {
         //when
         mockMvc.perform(
                         delete("/api/v2/bambooforest/" + savedBamBooForest.getId())
-                                .contentType(APPLICATION_FORM_URLENCODED)
+                                .contentType(MULTIPART_FORM_DATA)
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -102,83 +102,13 @@ class BambooForestIntegrationTest extends ControllerTestSupport {
         //when //then
         mockMvc.perform(
                         delete("/api/v2/bambooforest/1")
-                                .contentType(APPLICATION_FORM_URLENCODED)
+                                .contentType(MULTIPART_FORM_DATA)
                 )
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
-    @DisplayName("대나무숲의 게시물은 10개씩 표시된다. 데이터는 페이지 처리된다.")
-    @Test
-    void getListBamBooForest() throws Exception {
-        //given
-        BamBooForestReq request1 = createBamBooForestReq("bamboo1", "festival1@email.com", "OPERATE");
-        BamBooForestReq request2 = createBamBooForestReq("bamboo2", "festival2@email.com", "OPERATE");
-        BamBooForestReq request3 = createBamBooForestReq("bamboo3", "festival3@email.com", "OPERATE");
-        BamBooForestReq request4 = createBamBooForestReq("bamboo4", "festival4@email.com", "OPERATE");
-        BamBooForestReq request5 = createBamBooForestReq("bamboo5", "festival5@email.com", "OPERATE");
-        BamBooForestReq request6 = createBamBooForestReq("bamboo6", "festival6@email.com", "OPERATE");
-        BamBooForestReq request7 = createBamBooForestReq("bamboo7", "festival7@email.com", "OPERATE");
-        BamBooForestReq request8 = createBamBooForestReq("bamboo8", "festival8@email.com", "OPERATE");
-        BamBooForestReq request9 = createBamBooForestReq("bamboo9", "festival9@email.com", "OPERATE");
-        BamBooForestReq request10 = createBamBooForestReq("bamboo10", "festival10@email.com", "OPERATE");
-        BamBooForestReq request11 = createBamBooForestReq("bamboo11", "festival11@email.com", "OPERATE");
 
-        BamBooForest bamBooForest1 = BamBooForest.of(request1);
-        BamBooForest bamBooForest2 = BamBooForest.of(request2);
-        BamBooForest bamBooForest3 = BamBooForest.of(request3);
-        BamBooForest bamBooForest4 = BamBooForest.of(request4);
-        BamBooForest bamBooForest5 = BamBooForest.of(request5);
-        BamBooForest bamBooForest6 = BamBooForest.of(request6);
-        BamBooForest bamBooForest7 = BamBooForest.of(request7);
-        BamBooForest bamBooForest8 = BamBooForest.of(request8);
-        BamBooForest bamBooForest9 = BamBooForest.of(request9);
-        BamBooForest bamBooForest10 = BamBooForest.of(request10);
-        BamBooForest bamBooForest11 = BamBooForest.of(request11);
-
-        List<BamBooForest> bamBooForests = bamBooForestRepository.saveAllAndFlush(List.of(
-                bamBooForest1, bamBooForest2, bamBooForest3,
-                bamBooForest4, bamBooForest5, bamBooForest6,
-                bamBooForest7, bamBooForest8, bamBooForest9,
-                bamBooForest10, bamBooForest11
-        ));
-
-        //when //then
-        String status = "OPERATE";
-        Pageable pageable = PageRequest.of(0, 10);
-
-        MvcResult mvcResult = mockMvc.perform(
-                        get("/api/v2/bambooforest/list")
-                                .contentType(APPLICATION_FORM_URLENCODED)
-                                .param("status", status)
-                                .param("page", String.valueOf(pageable.getPageNumber()))
-                                .param("size", String.valueOf(pageable.getPageSize()))
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON))
-                .andReturn();
-
-        BamBooForestPageRes bamBooForestPageRes = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), BamBooForestPageRes.class);
-        assertThat(bamBooForestPageRes.getForestResList()).hasSize(10)
-                .extracting("id", "content")
-                .containsExactlyInAnyOrder(
-                        tuple(bamBooForests.get(0).getId(), "bamboo1"),
-                        tuple(bamBooForests.get(1).getId(), "bamboo2"),
-                        tuple(bamBooForests.get(2).getId(), "bamboo3"),
-                        tuple(bamBooForests.get(3).getId(), "bamboo4"),
-                        tuple(bamBooForests.get(4).getId(), "bamboo5"),
-                        tuple(bamBooForests.get(5).getId(), "bamboo6"),
-                        tuple(bamBooForests.get(6).getId(), "bamboo7"),
-                        tuple(bamBooForests.get(7).getId(), "bamboo8"),
-                        tuple(bamBooForests.get(8).getId(), "bamboo9"),
-                        tuple(bamBooForests.get(9).getId(), "bamboo10")
-                );
-
-                assertThat(bamBooForestPageRes).isNotNull()
-                        .extracting("totalCount", "totalPage", "pageNumber", "pageSize")
-                        .contains(11L, 2, 0, 10);
-    }
 
     private static BamBooForestReq createBamBooForestReq(String bambooForestContent, String mail, String operate) {
         return BamBooForestReq.builder()

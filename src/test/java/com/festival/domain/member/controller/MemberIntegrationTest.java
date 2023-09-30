@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,7 +39,7 @@ class MemberIntegrationTest extends ControllerTestSupport {
 
         //when //then
         mockMvc.perform(post("/api/v2/member/join")
-                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .contentType(MULTIPART_FORM_DATA)
                         .param("username", memberJoinReq.getUsername())
                         .param("password", memberJoinReq.getPassword())
                         .param("memberRole", memberJoinReq.getMemberRole()))
@@ -66,7 +66,7 @@ class MemberIntegrationTest extends ControllerTestSupport {
 
         //when //then
         MvcResult mvcResult = mockMvc.perform(post("/api/v2/member/join")
-                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .contentType(MULTIPART_FORM_DATA)
                         .param("username", memberJoinReq.getUsername())
                         .param("password", memberJoinReq.getPassword())
                         .param("memberRole", memberJoinReq.getMemberRole())
@@ -94,7 +94,7 @@ class MemberIntegrationTest extends ControllerTestSupport {
 
         //when
         MvcResult mvcResult = mockMvc.perform(post("/api/v2/member/login")
-                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .contentType(MULTIPART_FORM_DATA)
                         .param("username", loginReq.getUsername())
                         .param("password", loginReq.getPassword())
                 )
