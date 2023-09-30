@@ -11,11 +11,11 @@
 강남대학교 커뮤니티의 역동성을 더욱 촉진하고자 합니다.
 
 ## 기술 스택
-Java, SpringBoot 3.x, Spring Data JPA, Querydsl, JUnit5, Gradle
+Java, SpringBoot 3.x, Spring Data JPA, Querydsl, JUnit5, Mockito, Gradle
 
-AWS - EC2, S3, RDS
+AWS - EC2, S3, RDS, Redis, Github Actions
 
-PostgreSQL
+MARIA DB
 
 ## 아키텍처
 ![WithFestival](https://github.com/miIlicon/WithFestival-BackEnd/assets/77851079/c02489ce-b267-43ec-bdea-b5266d7f367a)
