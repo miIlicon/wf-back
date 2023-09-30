@@ -1,15 +1,19 @@
 name-template: "v$RESOLVED_VERSION"
 tag-template: "v$RESOLVED_VERSION"
 categories:
-  - title: '🚀 Features'
-    labels:
-      - '🚀 Feature'
-      - '♻️ Refactor'
-  - title: '🐛 Bug Fixes'
-    label: '🐛 BugFix'
-change-template: "- $TITLE (#$NUMBER)"
-change-title-escapes: '\<*_&'
-
+  - title: "🚀 Features"
+    labels: 
+      - "🚀 Feature"
+      - "♻️ Refactor"
+  - title: "🐛 Bug Fixes"
+    labels: 
+      - "🐛 BugFix"
+exclude-labels:
+  - "✅ Test"
+  - "🛠 Setting"
+template: |
+  ## 📋 변경점
+  $CHANGES
 version-resolver:
   major:
     labels:
@@ -21,7 +25,4 @@ version-resolver:
     labels:
       - "patch"
   default: patch
-  template: |
-  ## 📋 변경점
-  
-  $CHANGES
+change-template: "- $TITLE (#$NUMBER)"
