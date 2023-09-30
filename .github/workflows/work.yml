@@ -11,6 +11,60 @@ on:
       - 'main'
       
 jobs:
+  version-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - name: Save PR labels to file
+        run: echo '${{ toJson(github.event.pull_request.labels) }}' > pr_labels.json
+      
+      - name: Determine Version Increment
+        id: vars
+        run: |
+          LABELS=$(jq -r '.[].name' pr_labels.json | tr '\n' ' ')
+          echo "Detected Labels: $LABELS"
+          if echo $LABELS | grep -q "major"; then
+            echo "Detected major label"
+            echo "::set-output name=INCREMENT::major"
+          elif echo $LABELS | grep -q "minor"; then
+            echo "Detected minor label"
+            echo "::set-output name=INCREMENT::minor"
+          elif echo $LABELS | grep -q "patch"; then
+            echo "Detected patch label"
+            echo "::set-output name=INCREMENT::patch"
+          else
+            echo "No version label detected"
+            echo "::set-output name=INCREMENT::"
+          fi
+
+      - name: Grant execute permissions for gradlew
+        run: chmod +x ./gradlew
+      
+      - name: Update Project Version with Gradle
+        env:
+            GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        if: steps.vars.outputs.INCREMENT
+        run: |
+          ./gradlew updateVersion -Pincrement=${{ steps.vars.outputs.INCREMENT }}
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git commit -m "chore: update project version based on PR label"
+          git push
+  build-and-deploy:
+    needs: version-update
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout updated code
+        uses: actions/checkout@v2
   build:
     name: 이미지 빌드 및 도커허브 푸시
     runs-on: ubuntu-latest
