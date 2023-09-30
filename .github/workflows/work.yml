@@ -14,7 +14,8 @@ on:
       - 'main'
       
 jobs:
-  version-update:
+  update:
+    name: 프로젝트 버전 업데이트
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -93,7 +94,6 @@ jobs:
           docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
           docker build -t ${{ secrets.DOCKER_REPO }}/withfestival .
           docker push ${{ secrets.DOCKER_REPO }}/withfestival
-          
   deploy:
     name: 원격 서버에 배포
     runs-on: ubuntu-latest
