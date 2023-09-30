@@ -57,8 +57,8 @@ jobs:
           port: 2226
           script: |
             docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
-            docker stop withfestival-app || true
-            docker rm withfestival-app || true
+            docker stop withfestival_app || true
+            docker rm withfestival_app || true
             docker pull ${{ secrets.DOCKER_REPO }}/withfestival
-            docker run --name=withfestival-app --network docker-net --restart unless-stopped \
+            docker run --name=withfestival_app --network docker-net --restart unless-stopped \
             -p 80:8080 -e TZ=Asia/Seoul -d ${{ secrets.DOCKER_REPO }}/withfestival
