@@ -22,6 +22,7 @@ import static com.festival.domain.member.model.MemberRole.ADMIN;
 import static com.festival.domain.member.model.MemberRole.MANAGER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -95,6 +96,7 @@ class GuideIntegrationTest extends ControllerTestSupport {
         mockMvc.perform(
                 put("/api/v2/guide/" + savedGuide.getId())
                         .param("content", updateContent)
+                        .contentType(MULTIPART_FORM_DATA)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -114,6 +116,7 @@ class GuideIntegrationTest extends ControllerTestSupport {
         mockMvc.perform(
                 put("/api/v2/guide/1")
                         .param("content", "updateContent")
+                        .contentType(MULTIPART_FORM_DATA)
                 )
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -132,6 +135,7 @@ class GuideIntegrationTest extends ControllerTestSupport {
         mockMvc.perform(
                 put("/api/v2/guide/" + savedGuide.getId())
                         .param("content", "updateContent")
+                        .contentType(MULTIPART_FORM_DATA)
                 )
                 .andDo(print())
                 .andExpect(status().isForbidden());
