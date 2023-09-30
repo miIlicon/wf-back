@@ -59,12 +59,6 @@ jobs:
           git add .
           git commit -m "chore: update project version based on PR label"
           git push
-  build-and-deploy:
-    needs: version-update
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout updated code
-        uses: actions/checkout@v2
   build:
     name: 이미지 빌드 및 도커허브 푸시
     runs-on: ubuntu-latest
