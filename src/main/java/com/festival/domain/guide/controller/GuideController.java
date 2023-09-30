@@ -59,7 +59,7 @@ public class GuideController {
 
     @PreAuthorize("permitAll()")
     @Operation(summary = "안내사항 목록 조회!")
-    @GetMapping(value = "/list", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<GuidePageRes> getGuideList(@Valid GuideListReq guideListReq) {
         return ResponseEntity.ok().body(guideService.getGuideList(guideListReq));
     }

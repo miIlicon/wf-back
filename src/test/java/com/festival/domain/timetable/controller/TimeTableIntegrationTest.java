@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -21,6 +22,7 @@ import java.util.List;
 import static com.festival.domain.member.model.MemberRole.ADMIN;
 import static com.festival.domain.member.model.MemberRole.MANAGER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -65,6 +67,7 @@ class TimeTableIntegrationTest extends ControllerTestSupport {
                                 .param("title", timeTableReq.getTitle())
                                 .param("startTime", timeTableReq.getStartTime().toString())
                                 .param("endTime", timeTableReq.getEndTime().toString())
+                                .contentType(MULTIPART_FORM_DATA)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -98,6 +101,7 @@ class TimeTableIntegrationTest extends ControllerTestSupport {
                                 .param("title", "updateTitle")
                                 .param("startTime", updatedDateTime.toString())
                                 .param("endTime", updatedDateTime.plusHours(1).toString())
+                                .contentType(MULTIPART_FORM_DATA)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -131,6 +135,7 @@ class TimeTableIntegrationTest extends ControllerTestSupport {
                                 .param("title", "updateTitle")
                                 .param("startTime", updatedDateTime.toString())
                                 .param("endTime", updatedDateTime.plusHours(1).toString())
+                                .contentType(MULTIPART_FORM_DATA)
                 )
                 .andDo(print())
                 .andExpect(status().isForbidden());
@@ -147,6 +152,7 @@ class TimeTableIntegrationTest extends ControllerTestSupport {
                                 .param("startTime", LocalDateTime.of(2023, 9, 1, 12, 41, 0).toString())
                                 .param("endTime", LocalDateTime.of(2023, 9, 1, 13, 41, 0).toString())
                                 .param("status", "OPERATE")
+                                .contentType(MULTIPART_FORM_DATA)
                 )
                 .andDo(print())
                 .andExpect(status().isNotFound());
