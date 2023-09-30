@@ -6,14 +6,10 @@ categories:
       - '🚀 Feature'
       - '♻️ Refactor'
   - title: '🐛 Bug Fixes'
-    labels:
-      - '🐛 BugFix'
-exclude-labels:
-  - '✅ Test'
-  - '🛠 Setting'
-template: |
-  ## 📋 변경점
-  $CHANGES
+    label: '🐛 BugFix'
+change-template: "- $TITLE (#$NUMBER)"
+change-title-escapes: '\<*_&'
+
 version-resolver:
   major:
     labels:
@@ -25,4 +21,7 @@ version-resolver:
     labels:
       - "patch"
   default: patch
-change-template: "- $TITLE (#$NUMBER)"
+  template: |
+  ## 📋 변경점
+  
+  $CHANGES
