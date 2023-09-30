@@ -64,6 +64,7 @@ class GuideIntegrationTest extends ControllerTestSupport {
         MvcResult mvcResult = mockMvc.perform(
                         post("/api/v2/guide")
                                 .param("content", guideReq.getContent())
+                                .contentType(MULTIPART_FORM_DATA)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
