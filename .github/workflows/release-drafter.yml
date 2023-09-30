@@ -1,12 +1,18 @@
 name: Release Drafter
 on:
   pull_request:
-    types: 
-      - closed
+    types: [closed]
     branches:
       - main
+
+permissions:
+  contents: read
+
 jobs:
-  draft-release:
+  update_release_draft:
+    permissions:
+      contents: write
+      pull-requests: write
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true && github.base_ref == 'main'
     steps:
@@ -15,4 +21,4 @@ jobs:
         with:
           config-name: release-drafter-config.yml
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
