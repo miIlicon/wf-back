@@ -1,14 +1,14 @@
 name-template: "v$RESOLVED_VERSION"
 tag-template: "v$RESOLVED_VERSION"
 categories:
-  - title: 'Features'
-    label: 'Feature'
-  - title: 'Fixes'
-    label: 'BugFix'
-  - title: 'Setting'
-    label: 'Setting'
-  - title: 'Test'
-    label: 'Test'
+  - title: '🚀 Features'
+    label: '🚀 Feature'
+    label: '♻️ Refactor'
+  - title: '🐛 Bug Fixes'
+    label: '🐛 BugFix'
+exclude-labels:
+  - '✅ Test'
+  - '🛠 Setting'
 template: |
   ## 📋 변경점
   $CHANGES
