@@ -8,6 +8,7 @@ on:
 jobs:
   draft-release:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && github.base_ref == 'main'
     steps:
       - name: Release drafter
         uses: release-drafter/release-drafter@v5
