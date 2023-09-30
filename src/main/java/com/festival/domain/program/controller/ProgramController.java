@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -27,16 +28,16 @@ public class ProgramController {
     private final ValidationUtils validationUtils;
 
     @PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
-    @Operation(summary = "프로그램 등록")
-    @PostMapping(produces = APPLICATION_JSON_VALUE, consumes = MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "프로그램 등록", description = "MULTIPART_FORM_DATA로 보내주시면 감사하겠습니다.")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE ,produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> createProgram(@Valid @ParameterObject ProgramReq programReq) {
         validationUtils.isProgramValid(programReq);
         return ResponseEntity.ok().body(programService.createProgram(programReq, LocalDate.now()));
     }
 
     @PreAuthorize("hasRole('ADMIN') or  hasRole('MANAGER')")
-    @Operation(summary = "프로그램 업데이트(전체) ")
-    @PutMapping(value = "/{programId}", produces = APPLICATION_JSON_VALUE, consumes = MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "프로그램 업데이트(전체) ",  description = "MULTIPART_FORM_DATA로 보내주시면 감사하겠습니다.")
+    @PutMapping(value = "/{programId}", consumes = MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> updateProgram(@PathVariable("programId") Long programId, @Valid @ParameterObject ProgramReq programReq) {
         validationUtils.isProgramValid(programReq);
         return ResponseEntity.ok().body(programService.updateProgram(programId, programReq));
@@ -67,7 +68,7 @@ public class ProgramController {
     @Operation(summary = "프로그램 목록 조회")
     @PreAuthorize("permitAll()")
     @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProgramPageRes> getProgramList(@Valid ProgramListReq programListReq) {
+    public ResponseEntity<ProgramPageRes> getProgramList(@Valid @ParameterObject ProgramListReq programListReq) {
         return ResponseEntity.ok().body(programService.getProgramList(programListReq));
     }
 
