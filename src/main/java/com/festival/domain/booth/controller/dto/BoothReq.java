@@ -36,6 +36,7 @@ public class BoothReq {
     private String type;
 
     @NotNull(message = "운영 상태를 선택 해주세요.")
+    @Parameter(name = "operateStatus", description = "OPERATE, STATUS")
     private String operateStatus;
 
     @NotNull(message = "시작 날짜를 입력 해주세요.")
