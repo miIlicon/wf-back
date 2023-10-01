@@ -14,7 +14,7 @@ import lombok.Setter;
 public class ProgramListReq {
 
     @NotNull(message = "타입을 선택해주세요.")
-            @Parameter(name = "type", description = "EVENT, GAME")
+    @Parameter(name = "type", description = "EVENT, GAME")
     String type;
 
     int page;

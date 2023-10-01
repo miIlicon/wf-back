@@ -57,11 +57,11 @@ public class Booth extends BaseEntity {
     @Column(nullable = false)
     private Long viewCount = 0L;
 
-    @NotNull(message = "시작 시간을 입력 해주세요.")
+    @NotNull(message = "시작 시간을 입력해주세요.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    @NotNull(message = "종료 시간을 입력 해주세요.")
+    @NotNull(message = "종료 시간을 입력해주세요.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 

@@ -37,6 +37,7 @@ public class ProgramReq {
     private String type;
 
     @NotNull(message = "운영 상태를 선택해주세요.")
+    @Parameter(name = "operateStatus", description = "OPERATE, TERMINATE, UPCOMING")
     private String operateStatus;
 
     @NotNull(message = "썸네일 이미지를 선택해주세요.")
@@ -47,12 +48,12 @@ public class ProgramReq {
 
     @NotNull(message = "시작 날짜를 선택해주세요.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Parameter(name = "startTime" , description = "yyyy-MM-dd")
+    @Parameter(name = "startDate" , description = "yyyy-MM-dd")
     private LocalDate startDate;
 
     @NotNull(message = "종료 날짜를 선택해주세요.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Parameter(name = "endTime" , description = "yyyy-MM-dd")
+    @Parameter(name = "endDate" , description = "yyyy-MM-dd")
     private LocalDate endDate;
 
     @Builder
