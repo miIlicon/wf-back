@@ -25,25 +25,26 @@ public class BoothReq {
     @NotBlank(message = "내용을 입력해주세요")
     private String content;
 
-    @NotNull(message = "위도를 입력 해주세요.")
+    @NotNull(message = "위도를 입력해주세요.")
     private float latitude;
 
-    @NotNull(message = "경도를 입력 해주세요.")
+    @NotNull(message = "경도를 입력해주세요.")
     private float longitude;
 
-    @NotNull(message = "타입을 선택 해주세요.")
+    @NotNull(message = "타입을 선택해주세요.")
     @Parameter(name = "type" , description = "FOOD_TRUCK, PUB, FLEA_MARKET")
     private String type;
 
-    @NotNull(message = "운영 상태를 선택 해주세요.")
+    @NotNull(message = "운영 상태를 선택해주세요.")
+    @Parameter(name = "operateStatus", description = "OPERATE, TERMINATE, UPCOMING")
     private String operateStatus;
 
-    @NotNull(message = "시작 날짜를 입력 해주세요.")
+    @NotNull(message = "시작 날짜를 입력해주세요.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Parameter(name = "startDate" , description = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    @NotNull(message = "종료 날짜를 입력 해주세요.")
+    @NotNull(message = "종료 날짜를 입력해주세요.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Parameter(name = "endDate" , description = "yyyy-MM-dd")
     private LocalDate endDate;

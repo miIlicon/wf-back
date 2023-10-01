@@ -37,6 +37,7 @@ public class ProgramReq {
     private String type;
 
     @NotNull(message = "운영 상태를 선택해주세요.")
+    @Parameter(name = "operateStatus", description = "OPERATE, TERMINATE, UPCOMING")
     private String operateStatus;
 
     @NotNull(message = "썸네일 이미지를 선택해주세요.")
