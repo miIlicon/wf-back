@@ -3,6 +3,7 @@ package com.festival.domain.image.service;
 import com.festival.common.util.ImageUtils;
 import com.festival.domain.image.model.Image;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,19 +16,23 @@ public class ImageService {
 
     private final ImageUtils imageUtils;
 
+    @Value("${cloud.aws.endpoint}/${cloud.aws.bucketName}/${cloud.aws.folderName}/")
+    private String fullEndpoint;
+
     /**
      * @Description
      * 실제 S3와 연동되는 API입니다.
-
+    */
     public Image uploadImage(MultipartFile mainFile, List<MultipartFile> subFiles, String kind){
         String mainFilePath = imageUtils.upload(mainFile, kind);
         List<String> subFilePaths = imageUtils.uploadMulti(subFiles,kind);
 
         return Image.builder()
-                .mainFilePath(mainFilePath)
-                .subFilePaths(subFilePaths).build();
+                .mainFilePath(fullEndpoint + mainFilePath)
+                .subFilePaths(subFilePaths.stream()
+                        .map(s -> fullEndpoint + s)
+                        .collect(Collectors.toList())).build();
     }
-     */
 
     /**
      * @Description
@@ -61,6 +66,6 @@ public class ImageService {
     }
 
     public void deleteImage(Image image) {
-        imageUtils.deleteFile(image);
+        imageUtils.deleteFiles(image);
     }
 }

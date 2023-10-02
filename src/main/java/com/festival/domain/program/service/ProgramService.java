@@ -38,7 +38,7 @@ public class ProgramService {
     @Transactional
     public Long createProgram(ProgramReq programReq, LocalDate dateTime) {
         Program program = Program.of(programReq, dateTime);
-        program.setImage(imageService.createImage(programReq.getMainFile(), programReq.getSubFiles(), programReq.getType()));
+        program.setImage(imageService.uploadImage(programReq.getMainFile(), programReq.getSubFiles(), programReq.getType()));
         program.connectMember(memberService.getAuthenticationMember());
         return programRepository.save(program).getId();
     }
@@ -51,7 +51,8 @@ public class ProgramService {
             throw new ForbiddenException(FORBIDDEN_UPDATE);
         }
 
-        program.setImage(imageService.createImage(programReq.getMainFile(), programReq.getSubFiles(), programReq.getType()));
+        imageService.deleteImage(program.getImage());
+        program.setImage(imageService.uploadImage(programReq.getMainFile(), programReq.getSubFiles(), programReq.getType()));
         program.update(programReq);
         return program.getId();
     }

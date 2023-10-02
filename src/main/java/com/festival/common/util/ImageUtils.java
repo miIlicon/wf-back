@@ -36,20 +36,19 @@ public class ImageUtils {
             om.setContentLength(file.getInputStream().available());
             om.setContentType(file.getContentType());
 
-            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, folderName + fileName, file.getInputStream(), om);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, folderName + "/" + fileName, file.getInputStream(), om);
             // 객체의 권한을 공개로 설정(버킷에서 확인 가능)
             putObjectRequest.withCannedAcl(CannedAccessControlList.PublicRead);
             // 파일 업로드
             amazonS3.putObject(putObjectRequest);
             return fileName;
         } catch (AmazonS3Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch(SdkClientException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     public List<String> uploadMulti(List<MultipartFile> files, String kind) {
@@ -63,7 +62,7 @@ public class ImageUtils {
         return kind + "_" + UUID.randomUUID() + ext;
     }
 
-    public void deleteFile(Image image){
+    public void deleteFiles(Image image){
         DeleteObjectRequest deleteObjectRequest;
         if (image.getMainFilePath() != null) {
             deleteObjectRequest = new DeleteObjectRequest(bucketName, image.getMainFilePath());
