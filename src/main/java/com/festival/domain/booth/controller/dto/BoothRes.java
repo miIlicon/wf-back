@@ -17,21 +17,21 @@ public class BoothRes {
     private String content;
     private float latitude;
     private float longitude;
-    private String status;
+    private String operateStatus;
     private String type;
     private String mainFilePath;
     private List<String> subFilePaths;
 
     @Builder
     @QueryProjection
-    public BoothRes(Long id, String title, String subTitle, String content, float latitude, float longitude, String status, String type, String mainFilePath, List<String> subFilePaths) {
+    public BoothRes(Long id, String title, String subTitle, String content, float latitude, float longitude, String operateStatus, String type, String mainFilePath, List<String> subFilePaths) {
         this.id = id;
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.status = status;
+        this.operateStatus = operateStatus;
         this.type = type;
         this.mainFilePath = mainFilePath;
         this.subFilePaths = subFilePaths;
@@ -45,7 +45,7 @@ public class BoothRes {
                 .content(booth.getContent())
                 .latitude(booth.getLatitude())
                 .longitude(booth.getLongitude())
-                .status(booth.getOperateStatus().getValue())
+                .operateStatus(booth.getOperateStatus().getValue())
                 .type(booth.getType().getValue())
                 .mainFilePath(booth.getImage().getMainFilePath())
                 .subFilePaths(booth.getImage().getSubFilePaths()).build();
