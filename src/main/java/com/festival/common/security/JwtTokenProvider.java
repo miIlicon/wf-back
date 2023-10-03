@@ -1,5 +1,8 @@
 package com.festival.common.security;
 
+import com.festival.common.exception.ErrorCode;
+import com.festival.common.exception.custom_exception.BadRequestException;
+import com.festival.common.exception.custom_exception.InvalidException;
 import com.festival.common.security.dto.JwtTokenRes;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -50,19 +53,14 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
 
-        String refreshToken = Jwts.builder()
-                .setExpiration(refreshTokenTime)
-                .signWith(SignatureAlgorithm.HS256, key)
-                .compact();
-
-        return new JwtTokenRes("Bearer", accessToken, refreshToken);
+        return new JwtTokenRes("Bearer", accessToken);
     }
 
     public Authentication getAuthentication(String accessToken){
         Claims claims = parseClaims(accessToken);
 
         if (claims.get("roles") == null){
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+            throw new InvalidException(ErrorCode.EMPTY_AUTHORITY);
         }
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get("roles").toString().split(","))
@@ -81,27 +79,25 @@ public class JwtTokenProvider {
         }
     }
 
-    public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer")) {
-            return bearerToken.split(" ")[1].trim();
-        }
-        return null;
-    }
 
+    /**
+     * @Description
+     * 토큰의 만료여부와 유효성에 대해 검증합니다.
+     */
     public boolean validateToken(String jwtToken) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwtToken);
+            parseToken(jwtToken);
             return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT Token", e);
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT Token", e);
-        } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT Token", e);
-        } catch (IllegalArgumentException e) {
-            log.info("JWT claims string is empty.", e);
+            throw new InvalidException(ErrorCode.EXPIRED_PERIOD_ACCESS_TOKEN);
+        } catch (final JwtException | IllegalArgumentException e) {
+            throw new InvalidException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
-        return false;
+    }
+    private Jws<Claims> parseToken(final String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token);
     }
 }
