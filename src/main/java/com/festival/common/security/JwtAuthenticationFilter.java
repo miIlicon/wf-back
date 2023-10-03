@@ -32,12 +32,15 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     /**
      * @Description
-     * 토큰의 유무와 Bearer토큰의 여부에 대해 검증한 뒤 토큰을 반환합니다.
+     * Bearer토큰의 여부에 대해 검증한 뒤 토큰을 반환합니다.
      */
     private String extractBearerToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        if(!bearerToken.startsWith("Bearer"))
-            throw new BadRequestException(ErrorCode.INVALID_TYPE_ACCESS_TOKEN);
-        return bearerToken.split(" ")[1].trim();
+        if(bearerToken != null){
+            if(!bearerToken.startsWith("Bearer"))
+                throw new BadRequestException(ErrorCode.INVALID_TYPE_ACCESS_TOKEN);
+            return bearerToken.split(" ")[1].trim();
+        }
+        return null;
     }
 }
