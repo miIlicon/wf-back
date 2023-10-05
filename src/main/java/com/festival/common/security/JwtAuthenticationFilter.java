@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = JwtTokenUtils.extractBearerToken(request.getHeader("accessToken"));
 
         if(!request.getRequestURI().equals("/api/v2/member/rotate") && accessToken != null) { // 토큰 재발급의 요청이 아니면서 accessToken이 존재할 때
-            if (jwtTokenProvider.validateToken(accessToken)) { // 토큰이 유효한 경우
+            if (jwtTokenProvider.validateAccessToken(accessToken)) { // 토큰이 유효한 경우
                 Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

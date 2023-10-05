@@ -60,4 +60,8 @@ public class RedisService {
     public void rotateRefreshToken(String name, String refreshToken) {
         setRefreshToken(name, refreshToken);
     }
+
+    public void deleteRefreshToken(String name) {
+        deleteData(name);
+    }
 }

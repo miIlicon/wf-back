@@ -9,8 +9,8 @@ import redis.embedded.RedisServer;
 
 import java.net.ServerSocket;
 
-@Configuration
-@Profile("dev")
+//@Configuration
+//@Profile("dev")
 public class EmbeddedRedisConfig {
 
     private RedisServer redisServer;
