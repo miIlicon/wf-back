@@ -22,7 +22,7 @@ public class SchedulerRunner {
     private final BoothService boothService;
     private final ProgramService programService;
 
-    @Scheduled(fixedDelay = 3600000)
+    @Scheduled(fixedDelay = 1000)
     public void updateViewCount()
     {
         Set<String> keySet = redisService.getKeySet("*Id*");

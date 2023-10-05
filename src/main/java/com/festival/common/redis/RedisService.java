@@ -31,13 +31,13 @@ public class RedisService {
     }
 
     public boolean isDuplicateAccess(String ipAddress, String domainName) {
-        if(getData(ipAddress + "_" + domainName) == null) {
-            setData(ipAddress + "_" + domainName, 1L, TimeUnit.DAYS);
-            return true;
-        }
-        return false;
+        if(getData(ipAddress + "_" + domainName) == null)
+            return false;
+        return true;
     }
-
+    public void setDuplicateAccess(String ipAddress, String domainName){
+        setData(ipAddress + "_" + domainName, 1L, TimeUnit.DAYS);
+    }
     public Set<String> getKeySet(String domain) {
         return redisTemplate.keys(domain);
     }
