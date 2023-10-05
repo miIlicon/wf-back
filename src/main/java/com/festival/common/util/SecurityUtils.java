@@ -2,9 +2,11 @@ package com.festival.common.util;
 
 import com.festival.domain.member.model.Member;
 import com.festival.domain.member.model.MemberRole;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class SecurityUtils {
 
     public static boolean checkingRole(Member owner, Member accessMember) {

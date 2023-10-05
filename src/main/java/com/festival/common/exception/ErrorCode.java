@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
     // 400
+    EMPTY_REFRESH_TOKEN("RefreshToken이 필요합니다.", HttpStatus.BAD_REQUEST),
     ALREADY_DELETED("이미 삭제된 글입니다.", HttpStatus.BAD_REQUEST),
     INVALID_TYPE("입력된 값의 타입이 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
     INVALID_LENGTH("입력된 값의 길이가 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
