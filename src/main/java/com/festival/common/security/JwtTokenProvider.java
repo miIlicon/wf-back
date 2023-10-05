@@ -3,12 +3,15 @@ package com.festival.common.security;
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.BadRequestException;
 import com.festival.common.exception.custom_exception.InvalidException;
+import com.festival.common.redis.RedisService;
 import com.festival.common.security.dto.JwtTokenRes;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,6 +33,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JwtTokenProvider {
 
+    private final RedisService redisService;
     private final Key key;
 
     @Value("${custom.jwt.token.access-expiration-time}")
@@ -38,7 +42,9 @@ public class JwtTokenProvider {
     @Value("${custom.jwt.token.refresh-expiration-time}")
     private long refreshExpirationTime;
 
-    public JwtTokenProvider(@Value("${custom.jwt.secret}") String secretKey) {
+    @Autowired
+    public JwtTokenProvider(@Value("${custom.jwt.secret}") String secretKey, RedisService redisService) {
+        this.redisService = redisService;
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -70,11 +76,13 @@ public class JwtTokenProvider {
                 .compact();
     }
     public String createRefreshToken(Claims claims, Date expiredDate){
-        return  Jwts.builder()
+        String refreshToken = Jwts.builder()
                 .setClaims(claims) // 아이디, 권한정보
                 .setExpiration(expiredDate) // 만료기간
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
+        redisService.setRefreshToken(claims.getSubject(), refreshToken);
+        return  refreshToken;
     }
 
     public Authentication getAuthentication(String token){

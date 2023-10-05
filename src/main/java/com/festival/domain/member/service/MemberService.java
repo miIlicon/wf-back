@@ -2,6 +2,7 @@ package com.festival.domain.member.service;
 
 import com.festival.common.exception.custom_exception.DuplicationException;
 import com.festival.common.exception.custom_exception.NotFoundException;
+import com.festival.common.redis.RedisService;
 import com.festival.common.security.JwtTokenProvider;
 import com.festival.common.security.dto.JwtTokenRes;
 import com.festival.common.security.dto.MemberLoginReq;
@@ -30,7 +31,7 @@ import static com.festival.common.exception.ErrorCode.NOT_FOUND_MEMBER;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-
+    private final RedisService redisService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -67,6 +68,11 @@ public class MemberService {
 
     public JwtTokenRes rotateToken(String refreshToken) {
         Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
+        String prevRefreshToken = (String) redisService.getData(authentication.getName());
+        if(!prevRefreshToken.equals(refreshToken))
+            System.out.println("토큰 탈취 감지");
+
+        redisService.rotateRefreshToken(authentication.getName(), refreshToken);
         return jwtTokenProvider.createJwtToken(authentication);
     }
 }
