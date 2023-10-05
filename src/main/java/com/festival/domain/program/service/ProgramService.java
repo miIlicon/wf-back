@@ -94,8 +94,6 @@ public class ProgramService {
         Program program = checkingDeletedStatus(programRepository.findById(programId));
         if(!redisService.isDuplicateAccess(ipAddress, "Program_" + program.getId())) {
             redisService.increaseRedisViewCount("Program_Id_" + program.getId());
-        }
-        else{
             redisService.setDuplicateAccess(ipAddress, "Program_" + program.getId());
         }
 

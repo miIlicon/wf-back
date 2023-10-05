@@ -69,10 +69,9 @@ public class BoothService {
         Booth booth = checkingDeletedStatus(boothRepository.findById(id));
         if(!redisService.isDuplicateAccess(ipAddress, "Booth_" + booth.getId())) {
             redisService.increaseRedisViewCount("Booth_Id_" + booth.getId());
-        }
-        else{
             redisService.setDuplicateAccess(ipAddress, "Booth_" + booth.getId());
         }
+
 
         return BoothRes.of(booth);
     }
