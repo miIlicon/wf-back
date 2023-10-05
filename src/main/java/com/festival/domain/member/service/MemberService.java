@@ -47,7 +47,7 @@ public class MemberService {
     public JwtTokenRes login(MemberLoginReq loginReq) {
         Authentication authenticate = attemptAuthenticate(loginReq);
         List<String> roles = settingStringRoles(loginReq.getUsername());
-        return jwtTokenProvider.createToken(authenticate, roles);
+        return jwtTokenProvider.createJwtToken(authenticate, roles);
     }
 
     public Member getAuthenticationMember() {

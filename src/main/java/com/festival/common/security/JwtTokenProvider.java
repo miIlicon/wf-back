@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -31,29 +32,51 @@ public class JwtTokenProvider {
 
     private final Key key;
 
+    @Value("${custom.jwt.token.access-expiration-time}")
+    private long accessExpirationTime;
+
+    @Value("${custom.jwt.token.refresh-expiration-time}")
+    private long refreshExpirationTime;
+
     public JwtTokenProvider(@Value("${custom.jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public JwtTokenRes createToken(Authentication authentication, List<String> roles) {
-
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
+    /**
+     * @Description
+     * 토큰 발급 및 재발급 시 동작
+     */
+    public JwtTokenRes createJwtToken(Authentication authentication, List<String> roles) {
         Date now = new Date();
-        Date initializationAccessTime = new Date(now.getTime() + 30 * 60 * 1000L);
-        Date refreshTokenTime = new Date(now.getTime() + 60 * 60 * 1000L);
 
-        String accessToken = Jwts.builder()
-                .claim("roles",  roles.stream().collect(Collectors.joining(","))) // 권한정보
-                .setSubject(authentication.getName()) // 아이디
-                .setExpiration(initializationAccessTime) // 만료기간
+        String accessToken = createAccessToken(
+                authentication.getName(),
+                roles.stream().collect(Collectors.joining(",")),
+                new Date(now.getTime() + accessExpirationTime)
+        );
+        String refreshToken = createRefreshToken(
+                authentication.getName(),
+                new Date(now.getTime() + refreshExpirationTime)
+        );
+
+        return new JwtTokenRes("Bearer", accessToken, refreshToken);
+    }
+
+    public String createAccessToken(String subject, String roles, Date expiredDate){
+        return  Jwts.builder()
+                .claim("roles",  roles) // 권한정보
+                .setSubject(subject) // 아이디
+                .setExpiration(expiredDate) // 만료기간
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
-
-        return new JwtTokenRes("Bearer", accessToken);
+    }
+    public String createRefreshToken(String subject, Date expiredDate){
+        return  Jwts.builder()
+                .setSubject(subject) // 아이디
+                .setExpiration(expiredDate) // 만료기간
+                .signWith(SignatureAlgorithm.HS256, key)
+                .compact();
     }
 
     public Authentication getAuthentication(String accessToken){
