@@ -46,8 +46,7 @@ public class MemberService {
 
     public JwtTokenRes login(MemberLoginReq loginReq) {
         Authentication authenticate = attemptAuthenticate(loginReq);
-        List<String> roles = settingStringRoles(loginReq.getUsername());
-        return jwtTokenProvider.createToken(authenticate, roles);
+        return jwtTokenProvider.createJwtToken(authenticate);
     }
 
     public Member getAuthenticationMember() {
@@ -58,17 +57,16 @@ public class MemberService {
     private boolean isLoginIdSave(String email) {
         return memberRepository.existsByUsername(email);
     }
-
-    private List<String> settingStringRoles(String loginId) {
-        Member member = memberRepository.findByUsername(loginId).orElseThrow(() -> new NotFoundException(NOT_FOUND_MEMBER));
-        return member.getMemberRoles().stream().map(MemberRole::getValue).collect(Collectors.toList());
-    }
-
     private Authentication attemptAuthenticate(MemberLoginReq loginReq) {
         return authenticationManagerBuilder.getObject().authenticate(createAuthenticationToken(loginReq));
     }
 
     private static UsernamePasswordAuthenticationToken createAuthenticationToken(MemberLoginReq loginReq) {
         return new UsernamePasswordAuthenticationToken(loginReq.getUsername(), loginReq.getPassword());
+    }
+
+    public JwtTokenRes rotateToken(String refreshToken) {
+        Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
+        return jwtTokenProvider.createJwtToken(authentication);
     }
 }

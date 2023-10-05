@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -31,33 +32,53 @@ public class JwtTokenProvider {
 
     private final Key key;
 
+    @Value("${custom.jwt.token.access-expiration-time}")
+    private long accessExpirationTime;
+
+    @Value("${custom.jwt.token.refresh-expiration-time}")
+    private long refreshExpirationTime;
+
     public JwtTokenProvider(@Value("${custom.jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public JwtTokenRes createToken(Authentication authentication, List<String> roles) {
-
+    /**
+     * @Description
+     * 토큰 발급 및 재발급 시 동작
+     */
+    public JwtTokenRes createJwtToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
+                .map(a -> "ROLE_" + a.getAuthority())
                 .collect(Collectors.joining(","));
 
         Date now = new Date();
-        Date initializationAccessTime = new Date(now.getTime() + 30 * 60 * 1000L);
-        Date refreshTokenTime = new Date(now.getTime() + 60 * 60 * 1000L);
+        Claims claims = Jwts.claims().setSubject(authentication.getName());
+        claims.put("roles", authorities);
 
-        String accessToken = Jwts.builder()
-                .claim("roles",  roles.stream().collect(Collectors.joining(","))) // 권한정보
-                .setSubject(authentication.getName()) // 아이디
-                .setExpiration(initializationAccessTime) // 만료기간
-                .signWith(SignatureAlgorithm.HS256, key)
-                .compact();
+        String accessToken = createAccessToken(claims, new Date(now.getTime() + accessExpirationTime));
+        String refreshToken = createRefreshToken(claims, new Date(now.getTime() + refreshExpirationTime));
 
-        return new JwtTokenRes("Bearer", accessToken);
+        return new JwtTokenRes("Bearer", accessToken, refreshToken);
     }
 
-    public Authentication getAuthentication(String accessToken){
-        Claims claims = parseClaims(accessToken);
+    public String createAccessToken(Claims claims, Date expiredDate){
+        return  Jwts.builder()
+                .setClaims(claims) // 아이디, 권한정보
+                .setExpiration(expiredDate) // 만료기간
+                .signWith(SignatureAlgorithm.HS256, key)
+                .compact();
+    }
+    public String createRefreshToken(Claims claims, Date expiredDate){
+        return  Jwts.builder()
+                .setClaims(claims) // 아이디, 권한정보
+                .setExpiration(expiredDate) // 만료기간
+                .signWith(SignatureAlgorithm.HS256, key)
+                .compact();
+    }
+
+    public Authentication getAuthentication(String token){
+        Claims claims = parseClaims(token);
 
         if (claims.get("roles") == null){
             throw new InvalidException(ErrorCode.EMPTY_AUTHORITY);
@@ -71,12 +92,8 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    public Claims parseClaims(String accessToken) {
-        try {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
-        }catch (ExpiredJwtException e){
-            return e.getClaims();
-        }
+    public Claims parseClaims(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
 

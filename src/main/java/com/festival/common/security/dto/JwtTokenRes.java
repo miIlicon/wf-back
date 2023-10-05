@@ -9,9 +9,11 @@ public class JwtTokenRes {
 
     private String tokenType;
     private String accessToken;
+    private String refreshToken;
 
-    public JwtTokenRes(String tokenType, String accessToken) {
+    public JwtTokenRes(String tokenType, String accessToken, String refreshToken) {
         this.tokenType = tokenType;
         this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 }
