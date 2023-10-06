@@ -34,15 +34,15 @@ public class SchedulerRunner {
             String[] splitKey = key.split("_");
             switch (splitKey[0]) {
                 case "Booth" -> {
-                    boothService.increaseBoothViewCount(Long.parseLong((String) redisService.getData(key)), Long.parseLong(splitKey[2]));
+                    boothService.increaseBoothViewCount( redisService.getViewCount(key), Long.parseLong(splitKey[2]));
                     redisService.deleteData(key);
                 }
                 case "Guide" -> {
-                    guideService.increaseGuideViewCount(Long.parseLong((String) redisService.getData(key)), Long.parseLong(splitKey[2]));
+                    guideService.increaseGuideViewCount(redisService.getViewCount(key), Long.parseLong(splitKey[2]));
                     redisService.deleteData(key);
                 }
                 case "Program" -> {
-                    programService.increaseProgramViewCount(Long.parseLong((String) redisService.getData(key)), Long.parseLong(splitKey[2]));
+                    programService.increaseProgramViewCount(redisService.getViewCount(key), Long.parseLong(splitKey[2]));
                     redisService.deleteData(key);
                 }
             }

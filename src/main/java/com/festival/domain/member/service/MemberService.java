@@ -38,7 +38,7 @@ public class MemberService {
 
     @Transactional
     public Long join(MemberJoinReq memberJoinReq) {
-        if (isLoginIdSave(memberJoinReq.getUsername())) {
+        if (isExistsId(memberJoinReq.getUsername())) {
             throw new DuplicationException(DUPLICATION_ID);
         }
         Member member = Member.of(memberJoinReq, passwordEncoder.encode(memberJoinReq.getPassword()));
@@ -55,7 +55,7 @@ public class MemberService {
         return memberRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(NOT_FOUND_MEMBER));
     }
 
-    private boolean isLoginIdSave(String email) {
+    private boolean isExistsId(String email) {
         return memberRepository.existsByUsername(email);
     }
     private Authentication attemptAuthenticate(MemberLoginReq loginReq) {
@@ -73,15 +73,22 @@ public class MemberService {
      *  3. 다르다면 토큰 탈취로 간주 후 로그아웃 처리 + 예외 처리
      */
     public JwtTokenRes rotateToken(String requestRefreshToken) {
-        jwtTokenProvider.validateAccessToken(requestRefreshToken);
+        jwtTokenProvider.validateRefreshToken(requestRefreshToken);
         Authentication authentication = jwtTokenProvider.getAuthentication(requestRefreshToken);
-        String currentRefreshToken = (String) redisService.getData(authentication.getName());
+
+        String currentRefreshToken = redisService.getRefreshToken(authentication.getName());
+
         if(!currentRefreshToken.equals(requestRefreshToken)) {
-            redisService.deleteRefreshToken(authentication.getName());
+            logout(authentication.getName());
             throw new ForbiddenException(SNATCH_TOKEN);
         }
 
         redisService.rotateRefreshToken(authentication.getName(), requestRefreshToken);
         return jwtTokenProvider.createJwtToken(authentication);
+    }
+
+    public String logout(String username){
+        redisService.deleteRefreshToken(username);
+        return "로그아웃 처리 되었습니다.";
     }
 }

@@ -101,7 +101,14 @@ public class JwtTokenProvider {
     }
 
     public Claims parseClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        try {
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        }
+        catch (ExpiredJwtException e) {
+            throw new InvalidException(ErrorCode.EXPIRED_PERIOD_ACCESS_TOKEN);
+        } catch (final JwtException | IllegalArgumentException e) {
+            throw new InvalidException(ErrorCode.INVALID_ACCESS_TOKEN);
+        }
     }
 
 
@@ -135,5 +142,10 @@ public class JwtTokenProvider {
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token);
+    }
+
+    public void checkLogin(String accessToken) {
+        if (redisService.isLogin(parseClaims(accessToken).getSubject()) == false)
+            throw new InvalidException(ErrorCode.LOGOUTED_TOKEN);
     }
 }
