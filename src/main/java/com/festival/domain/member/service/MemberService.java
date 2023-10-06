@@ -91,4 +91,8 @@ public class MemberService {
         redisService.deleteRefreshToken(username);
         return "로그아웃 처리 되었습니다.";
     }
+
+    public void checkLogin(String refreshToken) {
+        jwtTokenProvider.checkLogin(refreshToken);
+    }
 }

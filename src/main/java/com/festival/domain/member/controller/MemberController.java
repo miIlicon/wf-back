@@ -2,6 +2,8 @@ package com.festival.domain.member.controller;
 
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.BadRequestException;
+import com.festival.common.redis.RedisService;
+import com.festival.common.security.JwtTokenProvider;
 import com.festival.common.security.dto.JwtTokenRes;
 import com.festival.common.security.dto.MemberLoginReq;
 import com.festival.common.util.JwtTokenUtils;
@@ -54,8 +56,11 @@ public class MemberController {
     @GetMapping("/rotate")
     public JwtTokenRes rotateToken(HttpServletRequest request){
         String refreshToken = JwtTokenUtils.extractBearerToken(request.getHeader("refreshToken"));
+
         if(refreshToken.isBlank())
             throw new BadRequestException(ErrorCode.EMPTY_REFRESH_TOKEN);
+
+        memberService.checkLogin(refreshToken);
 
         return memberService.rotateToken(refreshToken);
     }
