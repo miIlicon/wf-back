@@ -1,6 +1,7 @@
 package com.festival.domain.member.service;
 
 import com.festival.common.exception.custom_exception.DuplicationException;
+import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.common.redis.RedisService;
 import com.festival.common.security.JwtTokenProvider;
@@ -22,8 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.festival.common.exception.ErrorCode.DUPLICATION_ID;
-import static com.festival.common.exception.ErrorCode.NOT_FOUND_MEMBER;
+import static com.festival.common.exception.ErrorCode.*;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -66,13 +66,22 @@ public class MemberService {
         return new UsernamePasswordAuthenticationToken(loginReq.getUsername(), loginReq.getPassword());
     }
 
-    public JwtTokenRes rotateToken(String refreshToken) {
-        Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
-        String prevRefreshToken = (String) redisService.getData(authentication.getName());
-        if(!prevRefreshToken.equals(refreshToken))
-            System.out.println("토큰 탈취 감지");
+    /**
+     * @Description
+     *  1. 요청으로 들어온 RT를 검증
+     *  2. 현재 RT와 요청으로 들어온 RT비교
+     *  3. 다르다면 토큰 탈취로 간주 후 로그아웃 처리 + 예외 처리
+     */
+    public JwtTokenRes rotateToken(String requestRefreshToken) {
+        jwtTokenProvider.validateAccessToken(requestRefreshToken);
+        Authentication authentication = jwtTokenProvider.getAuthentication(requestRefreshToken);
+        String currentRefreshToken = (String) redisService.getData(authentication.getName());
+        if(!currentRefreshToken.equals(requestRefreshToken)) {
+            redisService.deleteRefreshToken(authentication.getName());
+            throw new ForbiddenException(SNATCH_TOKEN);
+        }
 
-        redisService.rotateRefreshToken(authentication.getName(), refreshToken);
+        redisService.rotateRefreshToken(authentication.getName(), requestRefreshToken);
         return jwtTokenProvider.createJwtToken(authentication);
     }
 }

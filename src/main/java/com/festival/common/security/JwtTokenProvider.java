@@ -109,9 +109,9 @@ public class JwtTokenProvider {
      * @Description
      * 토큰의 만료여부와 유효성에 대해 검증합니다.
      */
-    public boolean validateToken(String jwtToken) {
+    public boolean validateAccessToken(String accessToken) {
         try {
-            parseToken(jwtToken);
+            parseToken(accessToken);
             return true;
         } catch (ExpiredJwtException e) {
             throw new InvalidException(ErrorCode.EXPIRED_PERIOD_ACCESS_TOKEN);
@@ -119,6 +119,17 @@ public class JwtTokenProvider {
             throw new InvalidException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
     }
+    public boolean validateRefreshToken(String refreshToken) {
+        try {
+            parseToken(refreshToken);
+            return true;
+        } catch (ExpiredJwtException e) {
+            throw new InvalidException(ErrorCode.EXPIRED_PERIOD_REFRESH_TOKEN);
+        } catch (final JwtException | IllegalArgumentException e) {
+            throw new InvalidException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+    }
+
     private Jws<Claims> parseToken(final String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
