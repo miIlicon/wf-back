@@ -38,7 +38,7 @@ public class MemberService {
 
     @Transactional
     public Long join(MemberJoinReq memberJoinReq) {
-        if (isLoginIdSave(memberJoinReq.getUsername())) {
+        if (isExistsId(memberJoinReq.getUsername())) {
             throw new DuplicationException(DUPLICATION_ID);
         }
         Member member = Member.of(memberJoinReq, passwordEncoder.encode(memberJoinReq.getPassword()));
@@ -55,7 +55,7 @@ public class MemberService {
         return memberRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(NOT_FOUND_MEMBER));
     }
 
-    private boolean isLoginIdSave(String email) {
+    private boolean isExistsId(String email) {
         return memberRepository.existsByUsername(email);
     }
     private Authentication attemptAuthenticate(MemberLoginReq loginReq) {
