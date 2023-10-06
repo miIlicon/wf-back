@@ -146,6 +146,6 @@ public class JwtTokenProvider {
 
     public void checkLogin(String accessToken) {
         if (redisService.isLogin(parseClaims(accessToken).getSubject()) == false)
-            throw new InvalidException(ErrorCode.EXPIRED_PERIOD_ACCESS_TOKEN);
+            throw new InvalidException(ErrorCode.LOGOUTED_TOKEN);
     }
 }
