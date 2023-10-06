@@ -144,8 +144,8 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token);
     }
 
-    public void checkLogin(String accessToken) {
-        if (redisService.isLogin(parseClaims(accessToken).getSubject()) == false)
+    public void checkLogin(String Token) {
+        if (redisService.isLogin(parseClaims(Token).getSubject()) == false)
             throw new InvalidException(ErrorCode.LOGOUTED_TOKEN);
     }
 }
