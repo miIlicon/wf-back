@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +41,14 @@ public class MemberController {
     @PostMapping("/login")
     public ResponseEntity<JwtTokenRes> loginMember(@Valid MemberLoginReq loginReq) {
         return ResponseEntity.ok().body(memberService.login(loginReq));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "로그아웃")
+    @PostMapping("/logout")
+    public ResponseEntity<String> logoutMember() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok().body(memberService.logout(username));
     }
 
     @GetMapping("/rotate")

@@ -30,7 +30,12 @@ public class RedisService {
     }
 
     public void setRefreshToken(String username, String refreshToken){
-        setData(username, refreshToken, refreshExpirationTime, TimeUnit.SECONDS);
+        setData("Login_" + username, refreshToken, refreshExpirationTime, TimeUnit.SECONDS);
+    }
+    public boolean isLogin(String username){
+        if(getData("Login_" + username) != null)
+            return true;
+        return false;
     }
 
     public boolean isDuplicateAccess(String ipAddress, String domainName) {
@@ -53,7 +58,7 @@ public class RedisService {
         redisTemplate.opsForValue().set(key, value.toString(), time, timeUnit);
     }
 
-    public Object getData(String key) {
+    private Object getData(String key) {
         return redisTemplate.opsForValue().get(key);
     }
 
@@ -62,6 +67,14 @@ public class RedisService {
     }
 
     public void deleteRefreshToken(String name) {
-        deleteData(name);
+        deleteData("Login_" + name);
+    }
+
+    public String getRefreshToken(String name) {
+        return getData("Login_" + name).toString();
+    }
+
+    public Long getViewCount(String key) {
+        return Long.parseLong((String) getData(key));
     }
 }
