@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         try {  
-            if(request.method.equals("OPTIONS")){
+            if(request.getMethod().equals("OPTIONS")){
                 filterChain.doFilter(request, response);
             }
             String accessToken = JwtTokenUtils.extractBearerToken(request.getHeader("accessToken"));
