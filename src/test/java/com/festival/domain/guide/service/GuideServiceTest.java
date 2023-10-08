@@ -225,7 +225,7 @@ class GuideServiceTest {
     void getguideTest(){
         //given
         Guide guide = getGuide();
-
+        guide.connectMember(MemberFixture.ADMIN);
         given(guideRepository.findById(1L))
                 .willReturn(Optional.of(guide));
         //when
