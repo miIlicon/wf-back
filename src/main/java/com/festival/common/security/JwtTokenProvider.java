@@ -1,11 +1,17 @@
 package com.festival.common.security;
 
+import com.festival.common.exception.ErrorCode;
+import com.festival.common.exception.custom_exception.BadRequestException;
+import com.festival.common.exception.custom_exception.InvalidException;
+import com.festival.common.redis.RedisService;
 import com.festival.common.security.dto.JwtTokenRes;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -26,43 +33,63 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JwtTokenProvider {
 
+    private final RedisService redisService;
     private final Key key;
 
-    public JwtTokenProvider(@Value("${custom.jwt.secret}") String secretKey) {
+    @Value("${custom.jwt.token.access-expiration-time}")
+    private long accessExpirationTime;
+
+    @Value("${custom.jwt.token.refresh-expiration-time}")
+    private long refreshExpirationTime;
+
+    @Autowired
+    public JwtTokenProvider(@Value("${custom.jwt.secret}") String secretKey, RedisService redisService) {
+        this.redisService = redisService;
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public JwtTokenRes createToken(Authentication authentication, List<String> roles) {
-
+    /**
+     * @Description
+     * 토큰 발급 및 재발급 시 동작
+     */
+    public JwtTokenRes createJwtToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
+                .map(a -> "ROLE_" + a.getAuthority())
                 .collect(Collectors.joining(","));
 
         Date now = new Date();
-        Date initializationAccessTime = new Date(now.getTime() + 30 * 60 * 1000L);
-        Date refreshTokenTime = new Date(now.getTime() + 60 * 60 * 1000L);
+        Claims claims = Jwts.claims().setSubject(authentication.getName());
+        claims.put("roles", authorities);
 
-        String accessToken = Jwts.builder()
-                .claim("roles",  roles.stream().collect(Collectors.joining(","))) // 권한정보
-                .setSubject(authentication.getName()) // 아이디
-                .setExpiration(initializationAccessTime) // 만료기간
-                .signWith(SignatureAlgorithm.HS256, key)
-                .compact();
-
-        String refreshToken = Jwts.builder()
-                .setExpiration(refreshTokenTime)
-                .signWith(SignatureAlgorithm.HS256, key)
-                .compact();
+        String accessToken = createAccessToken(claims, new Date(now.getTime() + accessExpirationTime));
+        String refreshToken = createRefreshToken(claims, new Date(now.getTime() + refreshExpirationTime));
 
         return new JwtTokenRes("Bearer", accessToken, refreshToken);
     }
 
-    public Authentication getAuthentication(String accessToken){
-        Claims claims = parseClaims(accessToken);
+    public String createAccessToken(Claims claims, Date expiredDate){
+        return  Jwts.builder()
+                .setClaims(claims) // 아이디, 권한정보
+                .setExpiration(expiredDate) // 만료기간
+                .signWith(SignatureAlgorithm.HS256, key)
+                .compact();
+    }
+    public String createRefreshToken(Claims claims, Date expiredDate){
+        String refreshToken = Jwts.builder()
+                .setClaims(claims) // 아이디, 권한정보
+                .setExpiration(expiredDate) // 만료기간
+                .signWith(SignatureAlgorithm.HS256, key)
+                .compact();
+        redisService.setRefreshToken(claims.getSubject(), refreshToken);
+        return  refreshToken;
+    }
+
+    public Authentication getAuthentication(String token){
+        Claims claims = parseClaims(token);
 
         if (claims.get("roles") == null){
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+            throw new InvalidException(ErrorCode.EMPTY_AUTHORITY);
         }
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get("roles").toString().split(","))
@@ -73,35 +100,52 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    public Claims parseClaims(String accessToken) {
+    public Claims parseClaims(String token) {
         try {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
-        }catch (ExpiredJwtException e){
-            return e.getClaims();
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        }
+        catch (ExpiredJwtException e) {
+            throw new InvalidException(ErrorCode.EXPIRED_PERIOD_ACCESS_TOKEN);
+        } catch (final JwtException | IllegalArgumentException e) {
+            throw new InvalidException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
     }
 
-    public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer")) {
-            return bearerToken.split(" ")[1].trim();
-        }
-        return null;
-    }
 
-    public boolean validateToken(String jwtToken) {
+    /**
+     * @Description
+     * 토큰의 만료여부와 유효성에 대해 검증합니다.
+     */
+    public boolean validateAccessToken(String accessToken) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwtToken);
+            parseToken(accessToken);
             return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT Token", e);
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT Token", e);
-        } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT Token", e);
-        } catch (IllegalArgumentException e) {
-            log.info("JWT claims string is empty.", e);
+            throw new InvalidException(ErrorCode.EXPIRED_PERIOD_ACCESS_TOKEN);
+        } catch (final JwtException | IllegalArgumentException e) {
+            throw new InvalidException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
-        return false;
+    }
+    public boolean validateRefreshToken(String refreshToken) {
+        try {
+            parseToken(refreshToken);
+            return true;
+        } catch (ExpiredJwtException e) {
+            throw new InvalidException(ErrorCode.EXPIRED_PERIOD_REFRESH_TOKEN);
+        } catch (final JwtException | IllegalArgumentException e) {
+            throw new InvalidException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+    }
+
+    private Jws<Claims> parseToken(final String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token);
+    }
+
+    public void checkLogin(String Token) {
+        if (redisService.isLogin(parseClaims(Token).getSubject()) == false)
+            throw new InvalidException(ErrorCode.LOGOUTED_TOKEN);
     }
 }

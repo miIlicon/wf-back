@@ -22,6 +22,10 @@ public class SchedulerRunner {
     private final BoothService boothService;
     private final ProgramService programService;
 
+    /**
+     * @Description
+     * 설정한 업데이트 주기에 따라 Redis에 쌓여있던 조회수를 RDB에 한번에 반영합니다.
+     */
     @Scheduled(fixedDelay = 3600000)
     public void updateViewCount()
     {
@@ -30,21 +34,25 @@ public class SchedulerRunner {
             String[] splitKey = key.split("_");
             switch (splitKey[0]) {
                 case "Booth" -> {
-                    boothService.increaseBoothViewCount(redisService.getData(key), Long.parseLong(splitKey[2]));
+                    boothService.increaseBoothViewCount( redisService.getViewCount(key), Long.parseLong(splitKey[2]));
                     redisService.deleteData(key);
                 }
                 case "Guide" -> {
-                    guideService.increaseGuideViewCount(redisService.getData(key), Long.parseLong(splitKey[2]));
+                    guideService.increaseGuideViewCount(redisService.getViewCount(key), Long.parseLong(splitKey[2]));
                     redisService.deleteData(key);
                 }
                 case "Program" -> {
-                    programService.increaseProgramViewCount(redisService.getData(key), Long.parseLong(splitKey[2]));
+                    programService.increaseProgramViewCount(redisService.getViewCount(key), Long.parseLong(splitKey[2]));
                     redisService.deleteData(key);
                 }
             }
         }
     }
 
+    /**
+     * @Description
+     * 하루마다 운영상태를 전환합니다.
+     */
     @Scheduled(cron = "0 0 0 * * *")
     public void updateOperateStatus() {
         programService.settingProgramStatus();

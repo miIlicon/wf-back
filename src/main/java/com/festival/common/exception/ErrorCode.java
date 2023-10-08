@@ -7,14 +7,24 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
     // 400
+    EMPTY_REFRESH_TOKEN("RefreshToken이 필요합니다.", HttpStatus.BAD_REQUEST),
     ALREADY_DELETED("이미 삭제된 글입니다.", HttpStatus.BAD_REQUEST),
-
     INVALID_TYPE("입력된 값의 타입이 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
     INVALID_LENGTH("입력된 값의 길이가 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
     INVALID_RANGE("입력된 값의 범위가 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
     INVALID_STATUS("입력된 값의 상태가 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
     INVALID_DATE("입력된 값의 날짜 형식이 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
     INVALID_EMAIL("입력된 값의 이메일 형식이 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
+
+    // 401
+    LOGOUTED_TOKEN("이미 로그아웃 처리된 토큰입니다.", HttpStatus.UNAUTHORIZED),
+    SNATCH_TOKEN("Refresh Token 탈취를 감지하여 로그아웃 처리됩니다.", HttpStatus.UNAUTHORIZED),
+    INVALID_TYPE_TOKEN("Token의 타입은 Bearer입니다.", HttpStatus.UNAUTHORIZED),
+    EXPIRED_PERIOD_ACCESS_TOKEN("기한이 만료된 AccessToken입니다.", HttpStatus.UNAUTHORIZED),
+    EXPIRED_PERIOD_REFRESH_TOKEN("기한이 만료된 RefreshToken입니다.", HttpStatus.UNAUTHORIZED),
+    EMPTY_AUTHORITY("권한 정보가 필요합니다.", HttpStatus.UNAUTHORIZED),
+    INVALID_ACCESS_TOKEN("유효하지 않은 AccessToken입니다.", HttpStatus.UNAUTHORIZED),
+    INVALID_REFRESH_TOKEN("유효하지 않은 RefreshToken입니다.", HttpStatus.UNAUTHORIZED),
 
     // 404
     NOT_FOUND_BOOTH("부스가 존재하지 않습니다.", HttpStatus.NOT_FOUND),

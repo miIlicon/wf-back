@@ -11,15 +11,15 @@ public class BoothSearchRes {
     private Long id;
     private String title;
     private String subTitle;
-    private String status;
+    private String operateStatus;
     private String mainFilePath;
 
     @QueryProjection
-    public BoothSearchRes(Long id, String title, String subTitle, String status, String mainFilePath) {
+    public BoothSearchRes(Long id, String title, String subTitle, String operateStatus, String mainFilePath) {
         this.id = id;
         this.title = title;
         this.subTitle = subTitle;
-        this.status = status;
+        this.operateStatus = operateStatus;
         this.mainFilePath = mainFilePath;
     }
 

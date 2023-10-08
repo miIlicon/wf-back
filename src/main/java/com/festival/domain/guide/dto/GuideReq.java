@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class GuideReq {
 
-    @NotBlank(message = "내용을 입력 해주세요.")
+    @NotBlank(message = "내용을 입력해주세요.")
     private String content;
 
     @Builder

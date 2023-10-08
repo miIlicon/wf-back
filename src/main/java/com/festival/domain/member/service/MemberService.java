@@ -1,7 +1,9 @@
 package com.festival.domain.member.service;
 
 import com.festival.common.exception.custom_exception.DuplicationException;
+import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
+import com.festival.common.redis.RedisService;
 import com.festival.common.security.JwtTokenProvider;
 import com.festival.common.security.dto.JwtTokenRes;
 import com.festival.common.security.dto.MemberLoginReq;
@@ -21,8 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.festival.common.exception.ErrorCode.DUPLICATION_ID;
-import static com.festival.common.exception.ErrorCode.NOT_FOUND_MEMBER;
+import static com.festival.common.exception.ErrorCode.*;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -30,14 +31,14 @@ import static com.festival.common.exception.ErrorCode.NOT_FOUND_MEMBER;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-
+    private final RedisService redisService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Transactional
     public Long join(MemberJoinReq memberJoinReq) {
-        if (isLoginIdSave(memberJoinReq.getUsername())) {
+        if (isExistsId(memberJoinReq.getUsername())) {
             throw new DuplicationException(DUPLICATION_ID);
         }
         Member member = Member.of(memberJoinReq, passwordEncoder.encode(memberJoinReq.getPassword()));
@@ -46,8 +47,7 @@ public class MemberService {
 
     public JwtTokenRes login(MemberLoginReq loginReq) {
         Authentication authenticate = attemptAuthenticate(loginReq);
-        List<String> roles = settingStringRoles(loginReq.getUsername());
-        return jwtTokenProvider.createToken(authenticate, roles);
+        return jwtTokenProvider.createJwtToken(authenticate);
     }
 
     public Member getAuthenticationMember() {
@@ -55,20 +55,44 @@ public class MemberService {
         return memberRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(NOT_FOUND_MEMBER));
     }
 
-    private boolean isLoginIdSave(String email) {
+    private boolean isExistsId(String email) {
         return memberRepository.existsByUsername(email);
     }
-
-    private List<String> settingStringRoles(String loginId) {
-        Member member = memberRepository.findByUsername(loginId).orElseThrow(() -> new NotFoundException(NOT_FOUND_MEMBER));
-        return member.getMemberRoles().stream().map(MemberRole::getValue).collect(Collectors.toList());
-    }
-
     private Authentication attemptAuthenticate(MemberLoginReq loginReq) {
         return authenticationManagerBuilder.getObject().authenticate(createAuthenticationToken(loginReq));
     }
 
     private static UsernamePasswordAuthenticationToken createAuthenticationToken(MemberLoginReq loginReq) {
         return new UsernamePasswordAuthenticationToken(loginReq.getUsername(), loginReq.getPassword());
+    }
+
+    /**
+     * @Description
+     *  1. 요청으로 들어온 RT를 검증
+     *  2. 현재 RT와 요청으로 들어온 RT비교
+     *  3. 다르다면 토큰 탈취로 간주 후 로그아웃 처리 + 예외 처리
+     */
+    public JwtTokenRes rotateToken(String requestRefreshToken) {
+        jwtTokenProvider.validateRefreshToken(requestRefreshToken);
+        Authentication authentication = jwtTokenProvider.getAuthentication(requestRefreshToken);
+
+        String currentRefreshToken = redisService.getRefreshToken(authentication.getName());
+
+        if(!currentRefreshToken.equals(requestRefreshToken)) {
+            logout(authentication.getName());
+            throw new ForbiddenException(SNATCH_TOKEN);
+        }
+
+        redisService.rotateRefreshToken(authentication.getName(), requestRefreshToken);
+        return jwtTokenProvider.createJwtToken(authentication);
+    }
+
+    public String logout(String username){
+        redisService.deleteRefreshToken(username);
+        return "로그아웃 처리 되었습니다.";
+    }
+
+    public void checkLogin(String refreshToken) {
+        jwtTokenProvider.checkLogin(refreshToken);
     }
 }

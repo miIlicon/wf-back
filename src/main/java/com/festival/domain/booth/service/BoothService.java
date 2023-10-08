@@ -37,7 +37,7 @@ public class BoothService {
 
     public Long createBooth(BoothReq boothReq) {
         Booth booth = Booth.of(boothReq);
-        booth.setImage(imageService.createImage(boothReq.getMainFile(), boothReq.getSubFiles(), boothReq.getType()));
+        booth.setImage(imageService.uploadImage(boothReq.getMainFile(), boothReq.getSubFiles(), boothReq.getType()));
         booth.connectMember(memberService.getAuthenticationMember());
         return boothRepository.save(booth).getId();
     }
@@ -49,12 +49,9 @@ public class BoothService {
             throw new ForbiddenException(FORBIDDEN_UPDATE);
         }
 
-        /**
-         * @Todo
-         *  delete로직 작성해야함
-         */
+        imageService.deleteImage(booth.getImage());
+        booth.setImage(imageService.uploadImage(boothReq.getMainFile(), boothReq.getSubFiles(), boothReq.getType()));
         booth.update(boothReq);
-        booth.setImage(imageService.createImage(boothReq.getMainFile(), boothReq.getSubFiles(), boothReq.getType()));
         return id;
     }
 
@@ -70,9 +67,12 @@ public class BoothService {
 
     public BoothRes getBooth(Long id, String ipAddress) {
         Booth booth = checkingDeletedStatus(boothRepository.findById(id));
-        if(redisService.isDuplicateAccess(ipAddress, "Booth_" + booth.getId())) {
+        if(!redisService.isDuplicateAccess(ipAddress, "Booth_" + booth.getId())) {
             redisService.increaseRedisViewCount("Booth_Id_" + booth.getId());
+            redisService.setDuplicateAccess(ipAddress, "Booth_" + booth.getId());
         }
+
+
         return BoothRes.of(booth);
     }
 

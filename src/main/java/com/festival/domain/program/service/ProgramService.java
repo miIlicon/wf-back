@@ -38,7 +38,7 @@ public class ProgramService {
     @Transactional
     public Long createProgram(ProgramReq programReq, LocalDate dateTime) {
         Program program = Program.of(programReq, dateTime);
-        program.setImage(imageService.createImage(programReq.getMainFile(), programReq.getSubFiles(), programReq.getType()));
+        program.setImage(imageService.uploadImage(programReq.getMainFile(), programReq.getSubFiles(), programReq.getType()));
         program.connectMember(memberService.getAuthenticationMember());
         return programRepository.save(program).getId();
     }
@@ -51,7 +51,8 @@ public class ProgramService {
             throw new ForbiddenException(FORBIDDEN_UPDATE);
         }
 
-        program.setImage(imageService.createImage(programReq.getMainFile(), programReq.getSubFiles(), programReq.getType()));
+        imageService.deleteImage(program.getImage());
+        program.setImage(imageService.uploadImage(programReq.getMainFile(), programReq.getSubFiles(), programReq.getType()));
         program.update(programReq);
         return program.getId();
     }
@@ -91,9 +92,12 @@ public class ProgramService {
 
     public ProgramRes getProgram(Long programId, String ipAddress) {
         Program program = checkingDeletedStatus(programRepository.findById(programId));
-        if(redisService.isDuplicateAccess(ipAddress, "Program_" + program.getId())) {
+        if(!redisService.isDuplicateAccess(ipAddress, "Program_" + program.getId())) {
             redisService.increaseRedisViewCount("Program_Id_" + program.getId());
+            redisService.setDuplicateAccess(ipAddress, "Program_" + program.getId());
         }
+
+
         return ProgramRes.of(program);
     }
 
