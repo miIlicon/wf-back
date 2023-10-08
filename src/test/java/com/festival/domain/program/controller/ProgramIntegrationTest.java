@@ -159,6 +159,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .endDate(registeredEndDate)
                 .build();
         Program program = Program.of(programReq, LocalDate.now());
+        program.setImage(createImage());
         program.connectMember(member);
         Program savedProgram = programRepository.saveAndFlush(program);
 
@@ -601,6 +602,13 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                     request.setMethod("PUT");
                     return request;
                 });
+    }
+
+    private Image createImage() {
+        return Image.builder()
+                .mainFilePath("/mainFile")
+                .subFilePaths(List.of("/subFile1", "/subFile2"))
+                .build();
     }
 
 }
