@@ -343,7 +343,7 @@ class BoothServiceTest {
     void getBoothTest(){
         //given
         Booth foodTruck = BoothFixture.FOOD_TRUCK;
-        ReflectionTestUtils.setField(foodTruck, "image", ImageFixture.IMAGE);
+        ReflectionTestUtils.setField(foodTruck, "image", createImage());
 
         given(boothRepository.findById(1L))
                 .willReturn(Optional.of(foodTruck));
