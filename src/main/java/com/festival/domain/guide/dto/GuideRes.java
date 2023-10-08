@@ -1,5 +1,6 @@
 package com.festival.domain.guide.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.festival.domain.guide.model.Guide;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +15,7 @@ public class GuideRes {
     private Long id;
     private String content;
     private String username;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime createdDateTime;
 
     @Builder
