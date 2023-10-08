@@ -35,6 +35,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         try {  
+            if(request.getMethod().equals("OPTIONS")){
+                filterChain.doFilter(request, response);
+            }
             String accessToken = JwtTokenUtils.extractBearerToken(request.getHeader("accessToken"));
 
             if (!request.getRequestURI().equals("/api/v2/member/rotate") && accessToken != null) { // 토큰 재발급의 요청이 아니면서 accessToken이 존재할 때
