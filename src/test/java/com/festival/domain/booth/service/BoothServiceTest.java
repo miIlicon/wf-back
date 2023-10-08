@@ -15,7 +15,7 @@ import com.festival.domain.booth.model.Booth;
 import com.festival.domain.booth.model.BoothType;
 import com.festival.domain.booth.repository.BoothRepository;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
-import com.festival.domain.image.fixture.ImageFixture;
+import com.festival.domain.image.model.Image;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.fixture.MemberFixture;
 import com.festival.domain.member.service.MemberService;
@@ -26,8 +26,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
@@ -420,5 +418,12 @@ class BoothServiceTest {
                 .type("FOOD_TRUCK")
                 .build();
         return boothReq;
+    }
+
+    private Image createImage() {
+        return Image.builder()
+                .mainFilePath("/mainFile")
+                .subFilePaths(List.of("/subFile1", "/subFile2"))
+                .build();
     }
 }

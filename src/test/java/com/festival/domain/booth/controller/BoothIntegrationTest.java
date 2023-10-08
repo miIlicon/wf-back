@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.NotFoundException;
-import com.festival.domain.bambooforest.dto.BamBooForestPageRes;
 import com.festival.domain.booth.controller.dto.BoothPageRes;
 import com.festival.domain.booth.controller.dto.BoothReq;
 import com.festival.domain.booth.controller.dto.BoothRes;
@@ -34,8 +33,7 @@ import java.util.List;
 import static com.festival.domain.member.model.MemberRole.ADMIN;
 import static com.festival.domain.member.model.MemberRole.MANAGER;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.groups.Tuple.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.assertj.core.groups.Tuple.tuple;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -122,6 +120,7 @@ class BoothIntegrationTest extends ControllerTestSupport {
 
 
         Booth booth = Booth.of(boothReq);
+        booth.setImage(createImage());
         booth.connectMember(member);
         Booth savedBooth = boothRepository.saveAndFlush(booth);
 
@@ -528,5 +527,12 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 TestImageUtils.generateMockImageFile("subFiles"),
                 TestImageUtils.generateMockImageFile("subFiles")
         );
+    }
+
+    private Image createImage() {
+        return Image.builder()
+                .mainFilePath("/mainFile")
+                .subFilePaths(List.of("/subFile1", "/subFile2"))
+                .build();
     }
 }
