@@ -1,11 +1,11 @@
 [
   {
-    "color": "0064FF",
+    "color": "253FC7",
     "default": false,
-    "description": "Version major",
-    "id": 5970265991,
-    "name": "major",
-    "node_id": "LA_kwDOJemGmc8AAAABY9sHhw",
-    "url": "https://api.github.com/repos/miIlicon/WithFestival-BackEnd/labels/major"
+    "description": "Version patch",
+    "id": 5970271155,
+    "name": "patch",
+    "node_id": "LA_kwDOJemGmc8AAAABY9sbsw",
+    "url": "https://api.github.com/repos/miIlicon/WithFestival-BackEnd/labels/patch"
   }
 ]
