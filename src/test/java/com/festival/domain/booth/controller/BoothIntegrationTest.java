@@ -416,7 +416,7 @@ class BoothIntegrationTest extends ControllerTestSupport {
         //then
         BoothRes findBooth = new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), BoothRes.class);
         assertThat(findBooth).isNotNull()
-                .extracting("title", "content", "type", "status")
+                .extracting("title", "content", "type", "operateStatus")
                 .containsExactly(boothReq.getTitle(), boothReq.getContent(), "FOOD_TRUCK", "TERMINATE");
     }
 
@@ -459,7 +459,7 @@ class BoothIntegrationTest extends ControllerTestSupport {
         //then
         BoothPageRes boothPageRes = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), BoothPageRes.class);
         assertThat(boothPageRes.getBoothResList()).hasSize(6)
-                .extracting("title", "content", "type", "status")
+                .extracting("title", "content", "type", "operateStatus")
                 .containsExactlyInAnyOrder(
                         tuple("testTitle1", "testContent1", "FOOD_TRUCK", "TERMINATE"),
                         tuple("testTitle2", "testContent2", "FOOD_TRUCK", "TERMINATE"),
