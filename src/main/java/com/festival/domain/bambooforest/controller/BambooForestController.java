@@ -29,7 +29,7 @@ public class BambooForestController {
     @Operation(summary = "대나무숲 글 등록")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> createBamBooForest(@Valid BamBooForestReq bamBooForestReq) {
-        validationUtils.isBamBooForestValid(bamBooForestReq);
+        //validationUtils.isBamBooForestValid(bamBooForestReq);
         return ResponseEntity.ok().body(bambooForestService.createBamBooForest(bamBooForestReq));
     }
 
