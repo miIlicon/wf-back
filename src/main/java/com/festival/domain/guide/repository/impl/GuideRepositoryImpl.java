@@ -31,6 +31,7 @@ public class GuideRepositoryImpl implements GuideRepositoryCustom {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .where(guide.deleted.eq(false))
+                .orderBy(guide.id.desc())
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory
