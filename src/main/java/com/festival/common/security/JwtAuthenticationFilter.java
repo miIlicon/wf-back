@@ -53,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             ErrorCode errorCode = e.getErrorCode();
 
             response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html; charset=UTF-8");
+            response.setContentType("application/json");
             response.setStatus(errorCode.getStatus().value());
 
             log.error(errorCode.getMessage());
