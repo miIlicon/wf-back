@@ -10,10 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping(value = "/api/v2/view-count")
 public class ViewCountController {
-    private ViewCountService viewCountService;
+    private final ViewCountService viewCountService;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Void> increase(HttpServletRequest httpServletRequest){
         viewCountService.increase(httpServletRequest.getRemoteAddr());
         return ResponseEntity.ok().build();

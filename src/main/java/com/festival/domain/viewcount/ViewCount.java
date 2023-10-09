@@ -21,6 +21,10 @@ public class ViewCount {
     private long count;
 
 
+    public ViewCount(long count) {
+        this.count = count;
+    }
+
     public void plus(long viewCount) {
         this.count += viewCount;
     }
