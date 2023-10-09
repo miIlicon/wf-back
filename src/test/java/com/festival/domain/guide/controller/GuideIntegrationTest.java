@@ -269,8 +269,8 @@ class GuideIntegrationTest extends ControllerTestSupport {
         assertThat(guidePageRes.getGuideResList()).hasSize(10)
                 .extracting("content")
                 .containsExactlyInAnyOrder(
-                        "content1", "content2", "content3", "content4", "content5",
-                        "content6", "content7", "content8", "content9", "content10"
+                        "content11", "content10", "content9", "content8", "content7",
+                        "content6", "content5", "content4", "content3", "content2"
                 );
         assertThat(guidePageRes).isNotNull()
              .extracting("totalCount", "totalPage", "pageNumber", "pageSize")
