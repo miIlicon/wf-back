@@ -45,6 +45,7 @@ public class MemberController {
         return ResponseEntity.ok().body(memberService.login(loginReq));
     }
 
+
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "로그아웃")
     @PostMapping("/logout")
