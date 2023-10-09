@@ -85,8 +85,8 @@ public class JwtTokenProvider {
         return  refreshToken;
     }
 
-    public Authentication getAuthentication(String token){
-        Claims claims = parseClaims(token);
+    public Authentication getAuthenticationByAccessToken(String accessToken){
+        Claims claims = parseAccessTokenClaims(accessToken);
 
         if (claims.get("roles") == null){
             throw new InvalidException(ErrorCode.EMPTY_AUTHORITY);
@@ -100,9 +100,9 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    public Claims parseClaims(String token) {
+    public Claims parseAccessTokenClaims(String accessToken) {
         try {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
         }
         catch (ExpiredJwtException e) {
             throw new InvalidException(ErrorCode.EXPIRED_PERIOD_ACCESS_TOKEN);
@@ -110,7 +110,31 @@ public class JwtTokenProvider {
             throw new InvalidException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
     }
+    public Authentication getAuthenticationByRefreshToken(String refreshToken){
+        Claims claims = parseRefreshTokenClaims(refreshToken);
 
+        if (claims.get("roles") == null){
+            throw new InvalidException(ErrorCode.EMPTY_AUTHORITY);
+        }
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(claims.get("roles").toString().split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+
+        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+    }
+
+    public Claims parseRefreshTokenClaims(String refreshToken) {
+        try {
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(refreshToken).getBody();
+        }
+        catch (ExpiredJwtException e) {
+            throw new InvalidException(ErrorCode.EXPIRED_PERIOD_REFRESH_TOKEN);
+        } catch (final JwtException | IllegalArgumentException e) {
+            throw new InvalidException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+    }
 
     /**
      * @Description
@@ -144,8 +168,12 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token);
     }
 
-    public void checkLogin(String Token) {
-        if (redisService.isLogin(parseClaims(Token).getSubject()) == false)
+    public void checkLoginByAccessToken(String accessToken) {
+        if (redisService.isLogin(parseAccessTokenClaims(accessToken).getSubject()) == false)
+            throw new InvalidException(ErrorCode.LOGOUTED_TOKEN);
+    }
+    public void checkLoginByRefreshToken(String refreshToken) {
+        if (redisService.isLogin(parseAccessTokenClaims(refreshToken).getSubject()) == false)
             throw new InvalidException(ErrorCode.LOGOUTED_TOKEN);
     }
 }

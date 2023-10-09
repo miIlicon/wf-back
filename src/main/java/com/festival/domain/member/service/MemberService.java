@@ -74,7 +74,7 @@ public class MemberService {
      */
     public JwtTokenRes rotateToken(String requestRefreshToken) {
         jwtTokenProvider.validateRefreshToken(requestRefreshToken);
-        Authentication authentication = jwtTokenProvider.getAuthentication(requestRefreshToken);
+        Authentication authentication = jwtTokenProvider.getAuthenticationByRefreshToken(requestRefreshToken);
 
         String currentRefreshToken = redisService.getRefreshToken(authentication.getName());
 
@@ -93,6 +93,6 @@ public class MemberService {
     }
 
     public void checkLogin(String refreshToken) {
-        jwtTokenProvider.checkLogin(refreshToken);
+        jwtTokenProvider.checkLoginByRefreshToken(refreshToken);
     }
 }
