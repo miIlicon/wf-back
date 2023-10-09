@@ -8,6 +8,7 @@ import com.festival.domain.bambooforest.service.BamBooForestService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v2/bambooforest")
@@ -37,6 +39,7 @@ public class BambooForestController {
     @Operation(summary = "대나무숲 글 삭제 등록")
     @DeleteMapping(value = "/{bamBooForestId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteBamBooForest(@PathVariable("bamBooForestId") Long bamBooForestId) {
+        log.info("deleteController");
         bambooForestService.deleteBamBooForest(bamBooForestId);
         return ResponseEntity.ok().build();
     }
