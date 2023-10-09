@@ -4,6 +4,7 @@ import com.festival.common.redis.RedisService;
 import com.festival.domain.booth.service.BoothService;
 import com.festival.domain.guide.service.GuideService;
 import com.festival.domain.program.service.ProgramService;
+import com.festival.domain.viewcount.service.ViewCountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,6 +22,7 @@ public class SchedulerRunner {
     private final GuideService guideService;
     private final BoothService boothService;
     private final ProgramService programService;
+    private final ViewCountService viewCountService;
 
     /**
      * @Description
@@ -43,6 +45,10 @@ public class SchedulerRunner {
                 }
                 case "Program" -> {
                     programService.increaseProgramViewCount(redisService.getViewCount(key), Long.parseLong(splitKey[2]));
+                    redisService.deleteData(key);
+                }
+                case "ViewCount" ->{
+                    viewCountService.update(redisService.getViewCount(key), Long.parseLong(splitKey[2]));
                     redisService.deleteData(key);
                 }
             }

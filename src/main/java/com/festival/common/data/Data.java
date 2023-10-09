@@ -7,6 +7,8 @@ import com.festival.domain.image.repository.ImageRepository;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.dto.MemberJoinReq;
 import com.festival.domain.member.service.MemberService;
+import com.festival.domain.viewcount.ViewCount;
+import com.festival.domain.viewcount.repository.ViewCountRepository;
 import org.hibernate.annotations.CurrentTimestamp;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-@Profile({"dev", "prod"})
+@Profile({"dev"})
 @Configuration
 @Transactional
 public class Data {
@@ -27,52 +29,15 @@ public class Data {
     CommandLineRunner initData(
             MemberService memberService,
             ImageRepository imageRepository,
-            BoothJdbcRepository boothJdbcRepository
+            BoothJdbcRepository boothJdbcRepository,
+            ViewCountRepository viewCountRepository
     ) {
         return args -> {
 
             if (initDataDone) return;
 
             initDataDone = true;
-            Long memberId = memberService.join(MemberJoinReq.builder()
-                    .username("user")
-                    .password("1234")
-                    .memberRole("ADMIN")
-                    .build());
-            Long imageId = imageRepository.save(Image.builder()
-                    .mainFilePath("")
-                    .subFilePaths(List.of("")).build()).getId();
-
-            int cnt = 1;
             long start = System.currentTimeMillis();
-            
-/*
-            for(int i = 0; i < 1; i++){
-                List<BulkInsertBooth> boothList = new ArrayList<>();
-                for(int j = 0;j < 1000; j++){
-
-                    boothList.add(BulkInsertBooth.builder()
-                            .title("testTitle" + cnt)
-                            .status("OPERATE")
-                            .subTitle("testSubTitle" + cnt)
-                            .content("testContent" + cnt)
-                            .longitude(50L)
-                            .latitude(50L)
-                            .type("PUB")
-                            .imageId(imageId)
-                            .memberId(memberId)
-                            .lastModifiedBy("user")
-                            .createdBy("user")
-                            .build());
-                    cnt += 1;
-                }
-                boothJdbcRepository.insertBoothList(boothList);
-            }
-*/
-
-            long executionTime = System.currentTimeMillis() - start;
-            System.out.println("===================== BulkInsert Success =====================");
-            System.out.println("수행 시간 : " + executionTime + " ms");
         };
     }
 }
