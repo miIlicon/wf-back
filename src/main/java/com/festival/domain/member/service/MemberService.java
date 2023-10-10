@@ -46,8 +46,11 @@ public class MemberService {
     }
 
     public JwtTokenRes login(MemberLoginReq loginReq) {
-        Authentication authenticate = attemptAuthenticate(loginReq);
-        return jwtTokenProvider.createJwtToken(authenticate);
+        Authentication authentication = attemptAuthenticate(loginReq);
+        String authorities = authentication.getAuthorities().stream()
+                .map(a -> "ROLE_" + a.getAuthority())
+                .collect(Collectors.joining(","));
+        return jwtTokenProvider.createJwtToken(authentication.getName(), authorities);
     }
 
     public Member getAuthenticationMember() {
@@ -83,8 +86,11 @@ public class MemberService {
             throw new ForbiddenException(SNATCH_TOKEN);
         }
 
+        String authorities = authentication.getAuthorities().stream()
+                .map(a -> a.getAuthority())
+                .collect(Collectors.joining(","));
         redisService.rotateRefreshToken(authentication.getName(), requestRefreshToken);
-        return jwtTokenProvider.createJwtToken(authentication);
+        return jwtTokenProvider.createJwtToken(authentication.getName(), authorities);
     }
 
     public String logout(String username){
