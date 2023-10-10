@@ -53,13 +53,10 @@ public class JwtTokenProvider {
      * @Description
      * 토큰 발급 및 재발급 시 동작
      */
-    public JwtTokenRes createJwtToken(Authentication authentication) {
-        String authorities = authentication.getAuthorities().stream()
-                .map(a -> "ROLE_" + a.getAuthority())
-                .collect(Collectors.joining(","));
+    public JwtTokenRes createJwtToken(String username, String authorities) {
 
         Date now = new Date();
-        Claims claims = Jwts.claims().setSubject(authentication.getName());
+        Claims claims = Jwts.claims().setSubject(username);
         claims.put("roles", authorities);
 
         String accessToken = createAccessToken(claims, new Date(now.getTime() + accessExpirationTime));
