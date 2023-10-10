@@ -35,7 +35,7 @@ public class ValidationUtils {
     public void isBoothValid(BoothReq booth) {
         checkStrLength(booth.getTitle(), 1, 30);
         checkStrLength(booth.getSubTitle(), 1, 50);
-        checkStrLength(booth.getContent(), 1, 800);
+        checkStrLength(booth.getContent(), 1, 1000);
         checkNumberRange(booth.getLatitude(), -90.0, 90.0);
         checkNumberRange(booth.getLongitude(), -180, 180);
         String[] typeList = {"FOOD_TRUCK", "FLEA_MARKET", "PUB"};
@@ -46,7 +46,7 @@ public class ValidationUtils {
     public void isProgramValid(ProgramReq program) {
         checkStrLength(program.getTitle(), 1, 30);
         checkStrLength(program.getSubTitle(), 1, 50);
-        checkStrLength(program.getContent(), 1, 800);
+        checkStrLength(program.getContent(), 1, 1000);
         checkNumberRange(program.getLatitude(), -90.0, 90.0);
         checkNumberRange(program.getLongitude(), -180, 180);
         String[] typeList = {"EVENT", "GAME"};
