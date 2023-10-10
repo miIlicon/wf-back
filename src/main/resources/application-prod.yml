@@ -4,7 +4,7 @@ spring:
     url: jdbc:mariadb://mariadb_1:3306/withfestival?characterEncoding=UTF-8&serverTimezone=UTC
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
 
 custom:
   redis:
