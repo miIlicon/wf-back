@@ -60,11 +60,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json");
             response.setStatus(errorCode.getStatus().value());
+            response.setHeader("Access-Control-Allow-Origin", "*");
+            response.setHeader("Access-Control-Allow-Credentials", "true");
+            response.setHeader("Access-Control-Allow-Methods","*");
+            response.setHeader("Access-Control-Max-Age", "3600");
+            response.setHeader("Access-Control-Allow-Headers",
+                    "Origin, X-Requested-With, Content-Type, Accept, accessToken, refreshToken");
+            if("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+                response.setStatus(HttpServletResponse.SC_OK);
+            }
+            else{
+                log.error(errorCode.getMessage());
+                response.getWriter().write(
+                        objectMapper.writeValueAsString(new ErrorResponse(errorCode.getMessage()))
+                );
+            }
 
-            log.error(errorCode.getMessage());
-            response.getWriter().write(
-                    objectMapper.writeValueAsString(new ErrorResponse(errorCode.getMessage()))
-            );
         }
 
     }
