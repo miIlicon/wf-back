@@ -170,7 +170,7 @@ public class JwtTokenProvider {
             throw new InvalidException(ErrorCode.LOGOUTED_TOKEN);
     }
     public void checkLoginByRefreshToken(String refreshToken) {
-        if (redisService.isLogin(parseAccessTokenClaims(refreshToken).getSubject()) == false)
+        if (redisService.isLogin(parseRefreshTokenClaims(refreshToken).getSubject()) == false)
             throw new InvalidException(ErrorCode.LOGOUTED_TOKEN);
     }
 }
