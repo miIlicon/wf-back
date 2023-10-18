@@ -28,27 +28,27 @@ public class SchedulerRunner {
      * @Description
      * 설정한 업데이트 주기에 따라 Redis에 쌓여있던 조회수를 RDB에 한번에 반영합니다.
      */
-    @Scheduled(fixedDelay = 3600000)
+    @Scheduled(fixedDelay = 360000)
     public void updateViewCount()
     {
-        Set<String> keySet = redisService.getKeySet("*Id*");
+        Set<String> keySet = redisService.getKeySet("viewCount*");
         for(String key : keySet){
-            String[] splitKey = key.split("_");
-            switch (splitKey[0]) {
+            String[] splitKey = key.split("_"); // 0 : viewCount, 1 : Domain명, 2 : Entity_Id
+            switch (splitKey[1]) {
                 case "Booth" -> {
-                    boothService.increaseBoothViewCount( redisService.getViewCount(key), Long.parseLong(splitKey[2]));
+                    boothService.increaseBoothViewCount( Long.parseLong(splitKey[2]), redisService.getViewCount(key));
                     redisService.deleteData(key);
                 }
                 case "Guide" -> {
-                    guideService.increaseGuideViewCount(redisService.getViewCount(key), Long.parseLong(splitKey[2]));
+                    guideService.increaseGuideViewCount(Long.parseLong(splitKey[2]), redisService.getViewCount(key));
                     redisService.deleteData(key);
                 }
                 case "Program" -> {
-                    programService.increaseProgramViewCount(redisService.getViewCount(key), Long.parseLong(splitKey[2]));
+                    programService.increaseProgramViewCount(Long.parseLong(splitKey[2]), redisService.getViewCount(key));
                     redisService.deleteData(key);
                 }
                 case "ViewCount" ->{
-                    viewCountService.update(redisService.getViewCount(key), Long.parseLong(splitKey[2]));
+                    viewCountService.update(Long.parseLong(splitKey[2]), redisService.getViewCount(key));
                     redisService.deleteData(key);
                 }
             }
