@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
     private final MemberService memberService;
-/*
 
     @PreAuthorize("isAnonymous()")
     @Operation(summary = "회원가입")
@@ -40,7 +39,7 @@ public class MemberController {
         memberService.join(memberJoinReq);
         return ResponseEntity.ok().build();
     }
-*/
+
 
     @PreAuthorize("isAnonymous()")
     @Operation(summary = "로그인")
@@ -60,7 +59,6 @@ public class MemberController {
 
     @GetMapping("/rotate")
     public JwtTokenRes rotateToken(HttpServletRequest request){
-        log.info("rotateContoller");
         String refreshToken = JwtTokenUtils.extractBearerToken(request.getHeader("refreshToken"));
 
         if(refreshToken.isBlank())
