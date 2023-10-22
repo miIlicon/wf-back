@@ -1,4 +1,5 @@
-<img width="313" alt="image" src="https://github.com/miIlicon/WithFestival-BackEnd/assets/26915908/b71fb76b-51ba-4ce6-9811-38a04ba4e822"/>
+![image](https://github.com/miIlicon/wf-back/assets/26915908/187daba2-5bf6-4fc3-8acb-18245e048a89)
+
 <br/>
 
 # 강남대학교 축제 서비스, WithFestival
@@ -13,7 +14,7 @@
 ## 기술 스택
 Java, SpringBoot 3.x, Spring Data JPA, Querydsl, JUnit5, Mockito, Gradle
 
-AWS - EC2, S3, RDS, Redis, Github Actions
+Naver Cloud platform - Server, ObjectStorage, Redis, Github Actions
 
 MARIA DB
 
