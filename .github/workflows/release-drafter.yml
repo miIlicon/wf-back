@@ -1,4 +1,5 @@
 name: Release Drafter
+run-name: Setup Next Version
 
 on:
   push:
