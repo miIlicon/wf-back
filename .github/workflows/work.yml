@@ -4,14 +4,6 @@ on:
   pull_request:
       types:
         - closed
-  push:
-    paths:
-      - '.github/workflows/**'
-      - 'src/**'
-      - 'build.gradle'
-      - 'Dockerfile'
-    branches:
-      - 'main'
       
 jobs:
   update:
@@ -21,16 +13,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
           java-version: '17'
           distribution: 'adopt'
-
       - name: Save PR labels to file
         run: echo '${{ toJson(github.event.pull_request.labels) }}' > pr_labels.json
-      
       - name: Determine Version Increment
         id: vars
         run: |
@@ -52,10 +41,9 @@ jobs:
 
       - name: Grant execute permissions for gradlew
         run: chmod +x ./gradlew
-      
       - name: Update Project Version with Gradle
         env:
-            GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: steps.vars.outputs.INCREMENT
         run: |
           ./gradlew updateVersion -Pincrement=${{ steps.vars.outputs.INCREMENT }}
@@ -64,6 +52,7 @@ jobs:
           git add .
           git commit -m "chore: update project version based on PR label"
           git push
+          
   build:
     name: 이미지 빌드 및 도커허브 푸시
     runs-on: ubuntu-latest
@@ -78,7 +67,7 @@ jobs:
           ACTIONS_STEP_DEBUG: true
           APPLICATION_SECRET: ${{ secrets.APPLICATION_SECRET_YML }}
         run: echo "$APPLICATION_SECRET" > src/main/resources/application-secret.yml
-      - name: jdk 17 설치
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
@@ -88,6 +77,9 @@ jobs:
         run: chmod +x gradlew
       - name: gradle 빌드
         run: ./gradlew build --no-daemon
+      - name: 빌드 버전 저장
+        id: get_version
+        run: echo "::set-output name=VERSION::$(./gradlew properties --no-daemon | grep "version:" | awk '{print $2}' | sed 's/-SNAPSHOT//')"
       - name: build 폴더를 캐시에 저장
         uses: actions/upload-artifact@v3
         with:
@@ -97,8 +89,9 @@ jobs:
       - name: 도커 이미지 빌드 및 푸시
         run: |
           docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_REPO }}/withfestival .
-          docker push ${{ secrets.DOCKER_REPO }}/withfestival
+          docker build -t ${{ secrets.DOCKER_REPO }}/withfestival:${{ steps.get_version.outputs.VERSION }} .
+          docker push ${{ secrets.DOCKER_REPO }}/withfestival:${{ steps.get_version.outputs.VERSION }}
+          
   deploy:
     name: 원격 서버에 배포
     runs-on: ubuntu-latest
@@ -111,11 +104,27 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
-          port: 2226
           script: |
-            docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
-            docker stop withfestival_app || true
-            docker rm withfestival_app || true
-            docker pull ${{ secrets.DOCKER_REPO }}/withfestival
-            docker run --name=withfestival_app --network docker-net --restart unless-stopped \
-            -p 8080:8080 -e TZ=Asia/Seoul -d ${{ secrets.DOCKER_REPO }}/withfestival
+            echo ${{ secrets.DOCKER_HUB_PASSWORD }} | sudo docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+
+            sudo docker stop withfestival_app || true
+            sudo docker rm withfestival_app || true
+
+            # Get the image ID of the currently running container
+            PREVIOUS_IMAGE_ID=$(sudo docker inspect withfestival_app --format '{{.Image}}')
+
+            # Search Latest Image Version
+            VERSION=$(curl -s "https://registry.hub.docker.com/v2/repositories/${{ secrets.DOCKER_REPO }}/withfestival/tags/" | \
+             jq -r '.results[].name' | sort -V | tail -n 1)
+
+            # Docker Image Run
+            sudo docker pull ${{ secrets.DOCKER_REPO }}/withfestival:${VERSION}
+            if ! sudo docker run --name=withfestival_app --network docker-net --restart unless-stopped \
+             -p 8080:8080 -e TZ=Asia/Seoul -d ${{ secrets.DOCKER_REPO }}/withfestival:${VERSION}; then
+                echo "Docker run failed, rolling back to previous image..."
+                sudo docker run --name=withfestival_app --network docker-net --restart unless-stopped \
+                -p 8080:8080 -e TZ=Asia/Seoul -d $PREVIOUS_IMAGE_ID
+            else
+                # Remove old images if docker run succeeds
+                sudo docker image prune -f
+            fi
