@@ -11,20 +11,20 @@ public class BamBooForestRes {
 
     private Long id;
     private String content;
-    private LocalDateTime createdAt;
+    private LocalDateTime createdDate;
 
     @Builder
-    public BamBooForestRes(Long id, String content, LocalDateTime createdAt) {
+    public BamBooForestRes(Long id, String content, LocalDateTime createdDate) {
         this.id = id;
         this.content = content;
-        this.createdAt = createdAt;
+        this.createdDate = createdDate;
     }
 
     public static BamBooForestRes of(BamBooForest bamBooForest){
         return BamBooForestRes.builder()
                 .id(bamBooForest.getId())
                 .content(bamBooForest.getContent())
-                .createdAt(bamBooForest.getCreatedDate())
+                .createdDate(bamBooForest.getCreatedDate())
                 .build();
     }
 }
