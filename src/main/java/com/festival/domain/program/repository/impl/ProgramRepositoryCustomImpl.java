@@ -1,5 +1,6 @@
 package com.festival.domain.program.repository.impl;
 
+import com.festival.common.base.OperateStatus;
 import com.festival.domain.program.dto.ProgramPageRes;
 import com.festival.domain.program.dto.ProgramSearchRes;
 import com.festival.domain.program.dto.QProgramSearchRes;
@@ -76,7 +77,8 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
                 .from(program)
                 .where(
                         keywordEqTitleOrSubTitle(keyword),
-                        program.deleted.eq(false)
+                        program.deleted.eq(false),
+                        program.operateStatus.eq(OperateStatus.OPERATE)
                 )
                 .orderBy(operateStatusASC, program.viewCount.desc())
                 .fetch();

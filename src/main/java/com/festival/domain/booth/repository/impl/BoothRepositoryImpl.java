@@ -1,5 +1,6 @@
 package com.festival.domain.booth.repository.impl;
 
+import com.festival.common.base.OperateStatus;
 import com.festival.domain.booth.controller.dto.BoothPageRes;
 import com.festival.domain.booth.controller.dto.BoothSearchRes;
 import com.festival.domain.booth.controller.dto.QBoothSearchRes;
@@ -78,7 +79,8 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
                .from(booth)
                .where(
                        eqKeyword(keyword),
-                      booth.deleted.eq(false)
+                       booth.deleted.eq(false),
+                       booth.operateStatus.eq(OperateStatus.OPERATE)
                )
                .orderBy(booth.viewCount.desc(), operateStatusAsc)
                .fetch();
