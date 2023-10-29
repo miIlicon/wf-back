@@ -52,6 +52,7 @@ public class Program extends BaseEntity {
     @Column(nullable = false)
     private Long viewCount = 0L;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private OperateStatus operateStatus;
 
