@@ -41,6 +41,7 @@ public class Booth extends BaseEntity {
     private float longitude;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private OperateStatus operateStatus;
 
     @Column(nullable = false)
