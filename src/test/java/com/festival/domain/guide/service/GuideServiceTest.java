@@ -12,6 +12,7 @@ import com.festival.domain.guide.repository.GuideRepository;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.fixture.MemberFixture;
 import com.festival.domain.member.service.MemberService;
+import com.festival.domain.viewcount.util.ViewCountUtil;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ class GuideServiceTest {
     private ImageService imageService;
 
     @Mock
-    private RedisService redisService;
+    private ViewCountUtil viewCountUtil;
 
     @DisplayName("존재하지 않는 가이드를 업데이트하면 NotFoundException을 반환한다.")
     @Test

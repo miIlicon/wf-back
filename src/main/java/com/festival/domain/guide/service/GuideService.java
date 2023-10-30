@@ -3,7 +3,6 @@ package com.festival.domain.guide.service;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
-import com.festival.common.redis.RedisService;
 import com.festival.common.util.SecurityUtils;
 import com.festival.domain.guide.dto.GuideListReq;
 import com.festival.domain.guide.dto.GuidePageRes;
@@ -12,6 +11,7 @@ import com.festival.domain.guide.dto.GuideRes;
 import com.festival.domain.guide.model.Guide;
 import com.festival.domain.guide.repository.GuideRepository;
 import com.festival.domain.member.service.MemberService;
+import com.festival.domain.viewcount.util.ViewCountUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class GuideService {
     private final GuideRepository guideRepository;
 
     private final MemberService memberService;
-    private final RedisService redisService;
+    private final ViewCountUtil viewCountUtil;
 
     @Transactional
     public Long createGuide(GuideReq guideReq) {

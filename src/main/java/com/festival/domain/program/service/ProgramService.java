@@ -5,7 +5,6 @@ import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
-import com.festival.common.redis.RedisService;
 import com.festival.common.util.SecurityUtils;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.service.MemberService;
@@ -13,6 +12,7 @@ import com.festival.domain.program.dto.*;
 import com.festival.domain.program.model.Program;
 import com.festival.domain.program.repository.ProgramRepository;
 import com.festival.domain.program.service.vo.ProgramSearchCond;
+import com.festival.domain.viewcount.util.ViewCountUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,8 @@ public class ProgramService {
 
     private final ImageService imageService;
     private final MemberService memberService;
-    private final RedisService redisService;
+
+    private final ViewCountUtil viewCountUtil;
 
     @Transactional
     public Long createProgram(ProgramReq programReq, LocalDate dateTime) {
@@ -96,7 +97,6 @@ public class ProgramService {
             viewCountUtil.increaseData("viewCount_" + "Program_" + program.getId());
             viewCountUtil.setDuplicateAccess(ipAddress, "Program_" + program.getId());
         }
-
 
         return ProgramRes.of(program);
     }

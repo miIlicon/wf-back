@@ -1,8 +1,8 @@
 package com.festival.domain.viewcount.service;
 
-import com.festival.common.redis.RedisService;
 import com.festival.domain.viewcount.Home;
 import com.festival.domain.viewcount.repository.HomeRepository;
+import com.festival.domain.viewcount.util.ViewCountUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class HomeService {
 
-    private final RedisService redisService;
+    private final ViewCountUtil viewCountUtil;
     private final HomeRepository homeRepository;
 
     public void increase(String ipAddress) {

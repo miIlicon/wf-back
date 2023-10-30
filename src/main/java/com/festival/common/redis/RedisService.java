@@ -2,7 +2,6 @@ package com.festival.common.redis;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +11,6 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @Service
 public class RedisService {
-    @Value("${custom.jwt.token.refresh-expiration-time}")
-    private long refreshExpirationTime;
 
     private final RedisTemplate<String, Object> redisTemplate;
 
