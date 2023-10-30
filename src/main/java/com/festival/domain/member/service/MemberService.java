@@ -7,6 +7,7 @@ import com.festival.common.redis.RedisService;
 import com.festival.common.security.JwtTokenProvider;
 import com.festival.common.security.dto.JwtTokenRes;
 import com.festival.common.security.dto.MemberLoginReq;
+import com.festival.common.util.JwtTokenUtils;
 import com.festival.domain.member.dto.MemberJoinReq;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.member.model.MemberRole;
@@ -31,7 +32,7 @@ import static com.festival.common.exception.ErrorCode.*;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final RedisService redisService;
+    private final JwtTokenUtils jwtTokenUtils;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -79,7 +80,7 @@ public class MemberService {
         jwtTokenProvider.validateRefreshToken(requestRefreshToken);
         Authentication authentication = jwtTokenProvider.getAuthenticationByRefreshToken(requestRefreshToken);
 
-        String currentRefreshToken = redisService.getRefreshToken(authentication.getName());
+        String currentRefreshToken = jwtTokenUtils.getRefreshToken(authentication.getName());
 
         if(!currentRefreshToken.equals(requestRefreshToken)) {
             logout(authentication.getName());
@@ -89,12 +90,12 @@ public class MemberService {
         String authorities = authentication.getAuthorities().stream()
                 .map(a -> a.getAuthority())
                 .collect(Collectors.joining(","));
-        redisService.rotateRefreshToken(authentication.getName(), requestRefreshToken);
+        jwtTokenUtils.rotateRefreshToken(authentication.getName(), requestRefreshToken);
         return jwtTokenProvider.createJwtToken(authentication.getName(), authorities);
     }
 
     public String logout(String username){
-        redisService.deleteRefreshToken(username);
+        jwtTokenUtils.deleteRefreshToken(username);
         return "로그아웃 처리 되었습니다.";
     }
 

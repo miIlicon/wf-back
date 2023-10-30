@@ -1,10 +1,10 @@
 package com.festival.common.scheduler;
 
-import com.festival.common.redis.RedisService;
 import com.festival.domain.booth.service.BoothService;
 import com.festival.domain.guide.service.GuideService;
 import com.festival.domain.program.service.ProgramService;
 import com.festival.domain.viewcount.service.HomeService;
+import com.festival.domain.viewcount.util.ViewCountUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,7 +17,7 @@ import java.util.Set;
 @EnableScheduling
 public class SchedulerRunner {
 
-    private final RedisService redisService;
+    private final ViewCountUtil viewCountUtil;
 
     private final GuideService guideService;
     private final BoothService boothService;
@@ -31,25 +31,25 @@ public class SchedulerRunner {
     @Scheduled(fixedDelay = 30000)
     public void updateViewCount()
     {
-        Set<String> keySet = redisService.getKeySet("viewCount*");
+        Set<String> keySet = viewCountUtil.getKeySet("viewCount*");
         for(String key : keySet){
             String[] splitKey = key.split("_"); // 0 : viewCount, 1 : Domain명, 2 : Entity_Id
             switch (splitKey[1]) {
                 case "Booth" -> {
-                    boothService.increaseBoothViewCount( Long.parseLong(splitKey[2]), redisService.getViewCount(key));
-                    redisService.deleteData(key);
+                    boothService.increaseBoothViewCount( Long.parseLong(splitKey[2]), viewCountUtil.getViewCount(key));
+                    viewCountUtil.deleteData(key);
                 }
                 case "Guide" -> {
-                    guideService.increaseGuideViewCount(Long.parseLong(splitKey[2]), redisService.getViewCount(key));
-                    redisService.deleteData(key);
+                    guideService.increaseGuideViewCount(Long.parseLong(splitKey[2]), viewCountUtil.getViewCount(key));
+                    viewCountUtil.deleteData(key);
                 }
                 case "Program" -> {
-                    programService.increaseProgramViewCount(Long.parseLong(splitKey[2]), redisService.getViewCount(key));
-                    redisService.deleteData(key);
+                    programService.increaseProgramViewCount(Long.parseLong(splitKey[2]), viewCountUtil.getViewCount(key));
+                    viewCountUtil.deleteData(key);
                 }
                 case "Home" ->{
-                    homeService.update(Long.parseLong(splitKey[2]), redisService.getViewCount(key));
-                    redisService.deleteData(key);
+                    homeService.update(Long.parseLong(splitKey[2]), viewCountUtil.getViewCount(key));
+                    viewCountUtil.deleteData(key);
                 }
             }
         }

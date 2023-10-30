@@ -4,7 +4,6 @@ import com.festival.common.base.OperateStatus;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
-import com.festival.common.redis.RedisService;
 import com.festival.common.util.SecurityUtils;
 import com.festival.domain.booth.controller.dto.*;
 import com.festival.domain.booth.model.Booth;
@@ -12,9 +11,9 @@ import com.festival.domain.booth.repository.BoothRepository;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.service.MemberService;
+import com.festival.domain.viewcount.util.ViewCountUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,9 +30,10 @@ public class BoothService {
 
     private final BoothRepository boothRepository;
 
-    private final RedisService redisService;
     private final ImageService imageService;
     private final MemberService memberService;
+
+    private final ViewCountUtil viewCountUtil;
 
     public Long createBooth(BoothReq boothReq) {
         Booth booth = Booth.of(boothReq);
@@ -67,11 +67,10 @@ public class BoothService {
 
     public BoothRes getBooth(Long id, String ipAddress) {
         Booth booth = checkingDeletedStatus(boothRepository.findById(id));
-        if(!redisService.isDuplicateAccess(ipAddress, "Booth_" + booth.getId())) {
-            redisService.increaseRedisViewCount("viewCount_" + "Booth_" + booth.getId());
-            redisService.setDuplicateAccess(ipAddress, "Booth_" + booth.getId());
+        if(!viewCountUtil.isDuplicatedAccess(ipAddress, "Booth_" + booth.getId())) {
+            viewCountUtil.increaseData("viewCount_" + "Booth_" + booth.getId());
+            viewCountUtil.setDuplicateAccess(ipAddress, "Booth_" + booth.getId());
         }
-
 
         return BoothRes.of(booth);
     }

@@ -19,6 +19,7 @@ import com.festival.domain.image.model.Image;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.fixture.MemberFixture;
 import com.festival.domain.member.service.MemberService;
+import com.festival.domain.viewcount.util.ViewCountUtil;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,7 +56,7 @@ class BoothServiceTest {
     private ImageService imageService;
 
     @Mock
-    private RedisService redisService;
+    private ViewCountUtil viewCountUtil;
 
     @DisplayName("부스를 생성한 후 boothId를 반환한다.")
     @Test
