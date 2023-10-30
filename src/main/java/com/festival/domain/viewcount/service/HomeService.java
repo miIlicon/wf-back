@@ -15,9 +15,9 @@ public class HomeService {
     private final HomeRepository homeRepository;
 
     public void increase(String ipAddress) {
-        if(!redisService.isDuplicateAccess(ipAddress, "Home")) {
-            redisService.increaseRedisViewCount("viewCount_Home_1");
-            redisService.setDuplicateAccess(ipAddress, "Home");
+        if(!viewCountUtil.isDuplicatedAccess(ipAddress, "Home")) {
+            viewCountUtil.increaseData("viewCount_Home_1");
+            viewCountUtil.setDuplicateAccess(ipAddress, "Home");
         }
     }
 

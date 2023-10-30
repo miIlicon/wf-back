@@ -63,9 +63,9 @@ public class GuideService {
 
     public GuideRes getGuide(Long id, String ipAddress){
         Guide guide = checkingDeletedStatus(guideRepository.findById(id));
-        if(!redisService.isDuplicateAccess(ipAddress, "Guide_" + guide.getId())) {
-            redisService.increaseRedisViewCount("viewCount_" + "Guide_" + guide.getId());
-            redisService.setDuplicateAccess(ipAddress, "Guide_" + guide.getId());
+        if(!viewCountUtil.isDuplicatedAccess(ipAddress, "Guide_" + guide.getId())) {
+            viewCountUtil.increaseData("viewCount_" + "Guide_" + guide.getId());
+            viewCountUtil.setDuplicateAccess(ipAddress, "Guide_" + guide.getId());
         }
 
         return GuideRes.of(guide);

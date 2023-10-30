@@ -14,7 +14,6 @@ import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,9 +66,9 @@ public class BoothService {
 
     public BoothRes getBooth(Long id, String ipAddress) {
         Booth booth = checkingDeletedStatus(boothRepository.findById(id));
-        if(!redisService.isDuplicateAccess(ipAddress, "Booth_" + booth.getId())) {
-            redisService.increaseRedisViewCount("viewCount_" + "Booth_" + booth.getId());
-            redisService.setDuplicateAccess(ipAddress, "Booth_" + booth.getId());
+        if(!viewCountUtil.isDuplicatedAccess(ipAddress, "Booth_" + booth.getId())) {
+            viewCountUtil.increaseData("viewCount_" + "Booth_" + booth.getId());
+            viewCountUtil.setDuplicateAccess(ipAddress, "Booth_" + booth.getId());
         }
 
 
