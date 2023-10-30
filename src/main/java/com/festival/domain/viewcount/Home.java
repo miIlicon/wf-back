@@ -7,12 +7,11 @@ import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class ViewCount {
+public class Home {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,8 +19,7 @@ public class ViewCount {
 
     private long count;
 
-
-    public ViewCount(long count) {
+    public Home(long count) {
         this.count = count;
     }
 
