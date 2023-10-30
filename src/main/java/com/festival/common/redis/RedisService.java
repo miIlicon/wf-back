@@ -25,27 +25,14 @@ public class RedisService {
         }
     }
 
-    public void increaseRedisViewCount(String key) {
-        redisTemplate.opsForValue().increment(key);
+    public void setData(String key, Object value, Long time,TimeUnit timeUnit) {
+        redisTemplate.opsForValue().set(key, value.toString(), time, timeUnit);
     }
 
-    public void setRefreshToken(String username, String refreshToken){
-        setData("Login_" + username, refreshToken, refreshExpirationTime, TimeUnit.SECONDS);
-    }
-    public boolean isLogin(String username){
-        if(getData("Login_" + username) != null)
-            return true;
-        return false;
+    public Object getData(String key) {
+        return redisTemplate.opsForValue().get(key);
     }
 
-    public boolean isDuplicateAccess(String ipAddress, String domainName) {
-        if(getData(ipAddress + "_" + domainName) == null)
-            return false;
-        return true;
-    }
-    public void setDuplicateAccess(String ipAddress, String domainName){
-        setData(ipAddress + "_" + domainName, 1L, 1L, TimeUnit.DAYS);
-    }
     public Set<String> getKeySet(String domain) {
         return redisTemplate.keys(domain);
     }
@@ -54,27 +41,8 @@ public class RedisService {
         redisTemplate.delete(key);
     }
 
-    private void setData(String key, Object value, Long time,TimeUnit timeUnit) {
-        redisTemplate.opsForValue().set(key, value.toString(), time, timeUnit);
+    public void increaseData(String key) {
+        redisTemplate.opsForValue().increment(key);
     }
 
-    private Object getData(String key) {
-        return redisTemplate.opsForValue().get(key);
-    }
-
-    public void rotateRefreshToken(String name, String refreshToken) {
-        setRefreshToken(name, refreshToken);
-    }
-
-    public void deleteRefreshToken(String name) {
-        deleteData("Login_" + name);
-    }
-
-    public String getRefreshToken(String name) {
-        return getData("Login_" + name).toString();
-    }
-
-    public Long getViewCount(String key) {
-        return Long.parseLong((String) getData(key));
-    }
 }
