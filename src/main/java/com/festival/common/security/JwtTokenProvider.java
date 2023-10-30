@@ -5,6 +5,7 @@ import com.festival.common.exception.custom_exception.BadRequestException;
 import com.festival.common.exception.custom_exception.InvalidException;
 import com.festival.common.redis.RedisService;
 import com.festival.common.security.dto.JwtTokenRes;
+import com.festival.common.util.JwtTokenUtils;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -30,11 +31,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class JwtTokenProvider {
 
-    private final RedisService redisService;
-    private final Key key;
+    private final JwtTokenUtils jwtTokenUtils;
 
     @Value("${custom.jwt.token.access-expiration-time}")
     private long accessExpirationTime;
@@ -42,12 +43,17 @@ public class JwtTokenProvider {
     @Value("${custom.jwt.token.refresh-expiration-time}")
     private long refreshExpirationTime;
 
+
+    private final Key key;
+
+
     @Autowired
-    public JwtTokenProvider(@Value("${custom.jwt.secret}") String secretKey, RedisService redisService) {
-        this.redisService = redisService;
+    public JwtTokenProvider(@Value("${custom.jwt.secret}") String secretKey, JwtTokenUtils jwtTokenUtils) {
+        this.jwtTokenUtils = jwtTokenUtils;
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
+
 
     /**
      * @Description
@@ -78,7 +84,7 @@ public class JwtTokenProvider {
                 .setExpiration(expiredDate) // 만료기간
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
-        redisService.setRefreshToken(claims.getSubject(), refreshToken);
+        jwtTokenUtils.setRefreshToken(claims.getSubject(), refreshToken);
         return  refreshToken;
     }
 
@@ -166,11 +172,11 @@ public class JwtTokenProvider {
     }
 
     public void checkLoginByAccessToken(String accessToken) {
-        if (redisService.isLogin(parseAccessTokenClaims(accessToken).getSubject()) == false)
+        if (jwtTokenUtils.isLogin(parseAccessTokenClaims(accessToken).getSubject()) == false)
             throw new InvalidException(ErrorCode.LOGOUTED_TOKEN);
     }
     public void checkLoginByRefreshToken(String refreshToken) {
-        if (redisService.isLogin(parseRefreshTokenClaims(refreshToken).getSubject()) == false)
+        if (jwtTokenUtils.isLogin(parseRefreshTokenClaims(refreshToken).getSubject()) == false)
             throw new InvalidException(ErrorCode.LOGOUTED_TOKEN);
     }
 }
