@@ -143,7 +143,6 @@ class BamBooForestServiceTest {
     private BamBooForestReq getBamBooForestCreateReq() {
         return BamBooForestReq.builder()
                 .content("대나무 숲 글 내용")
-                .status("OPERATE")
                 .contact("010-1234-5678")
                 .build();
     }
