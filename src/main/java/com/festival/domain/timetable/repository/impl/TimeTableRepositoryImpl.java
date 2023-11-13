@@ -42,6 +42,4 @@ public class TimeTableRepositoryImpl implements TimeTableRepositoryCustom {
         return timeTable.startTime.goe(startTime)
                 .and(timeTable.endTime.loe(endTime));
     }
-
-
 }
