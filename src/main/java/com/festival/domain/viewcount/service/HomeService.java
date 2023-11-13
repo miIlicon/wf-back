@@ -17,7 +17,7 @@ public class HomeService {
     private final ViewCountUtil viewCountUtil;
     private final HomeRepository homeRepository;
 
-    public void increaseViewCount(String ipAddress) {
+    public void increaseHomeViewCount(String ipAddress) {
         if(!viewCountUtil.isDuplicatedAccess(ipAddress, "Home")) {
             viewCountUtil.increaseData("viewCount_Home_1");
             viewCountUtil.setDuplicateAccess(ipAddress, "Home");
@@ -25,7 +25,7 @@ public class HomeService {
     }
 
     @Transactional
-    public void updateViewCount(Long id, long count){
+    public void updateHomeViewCount(Long id, long count){
         Home home = homeRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_OBJECT));
         home.plus(count);
     }

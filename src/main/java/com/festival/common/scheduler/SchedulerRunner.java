@@ -48,7 +48,7 @@ public class SchedulerRunner {
                     viewCountUtil.deleteData(key);
                 }
                 case "Home" ->{
-                    homeService.update(Long.parseLong(splitKey[2]), viewCountUtil.getViewCount(key));
+                    homeService.updateHomeViewCount(Long.parseLong(splitKey[2]), viewCountUtil.getViewCount(key));
                     viewCountUtil.deleteData(key);
                 }
             }
