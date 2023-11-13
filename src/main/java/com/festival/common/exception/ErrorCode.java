@@ -34,6 +34,7 @@ public enum ErrorCode {
     NOT_FOUND_MEMBER("회원이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
     NOT_FOUND_TIMETABLE("시간표가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
     NOT_FOUND_IMAGE("이미지가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
+    NOT_FOUND_OBJECT("존재하지 않는 객체입니다.", HttpStatus.NOT_FOUND),
 
     // 403
     FORBIDDEN_UPDATE("수정 권한이 없습니다.", HttpStatus.FORBIDDEN),

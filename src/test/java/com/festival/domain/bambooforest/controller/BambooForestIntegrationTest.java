@@ -114,7 +114,6 @@ class BambooForestIntegrationTest extends ControllerTestSupport {
         return BamBooForestReq.builder()
                 .content(bambooForestContent)
                 .contact(mail)
-                .status(operate)
                 .build();
     }
 }

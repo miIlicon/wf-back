@@ -128,7 +128,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .containsExactly(programReq.getTitle(), programReq.getSubTitle(),
                         programReq.getContent(),
                         programReq.getLatitude(), programReq.getLongitude(),
-                        OperateStatus.OPERATE, ProgramType.EVENT);
+                        OperateStatus.TERMINATE, ProgramType.EVENT);
     }
 
     @WithMockUser(username = "testUser", roles = "ADMIN")
