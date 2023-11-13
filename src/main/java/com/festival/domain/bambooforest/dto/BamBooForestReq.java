@@ -16,7 +16,7 @@ public class BamBooForestReq {
     private String contact;
 
     @Builder
-    private BamBooForestReq(String content, String contact, String status) {
+    private BamBooForestReq(String content, String contact) {
         this.content = content;
         this.contact = contact;
     }
