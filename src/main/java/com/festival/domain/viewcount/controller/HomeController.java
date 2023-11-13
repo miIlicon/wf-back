@@ -17,7 +17,7 @@ public class HomeController {
 
     @GetMapping
     public ResponseEntity<Void> increaseViewCount(HttpServletRequest httpServletRequest){
-        homeService.increaseViewCount(httpServletRequest.getRemoteAddr());
+        homeService.increaseHomeViewCount(httpServletRequest.getRemoteAddr());
         return ResponseEntity.ok().build();
     }
 }
