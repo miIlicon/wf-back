@@ -22,7 +22,7 @@ import static com.festival.domain.program.model.QProgram.program;
 
 public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
 
-    private JPAQueryFactory queryFactory;
+    private final JPAQueryFactory queryFactory;
 
     private final OrderSpecifier<Integer> operateStatusASC = new CaseBuilder()
             .when(program.operateStatus.stringValue().eq("OPERATE")).then(1)
@@ -34,12 +34,8 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
-    private static BooleanExpression TypeEq(String type) {
-        return type == null ? null : program.type.stringValue().eq(type);
-    }
-
     @Override
-    public ProgramPageRes getList(ProgramSearchCond programSearchCond) {
+    public ProgramPageRes getProgramList(ProgramSearchCond programSearchCond) {
         List<Program> result = queryFactory
                 .selectFrom(program)
                 .join(program.image).fetchJoin()
@@ -82,6 +78,10 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
                 )
                 .orderBy(operateStatusASC, program.viewCount.desc())
                 .fetch();
+    }
+
+    private static BooleanExpression TypeEq(String type) {
+        return type == null ? null : program.type.stringValue().eq(type);
     }
 
     private static BooleanExpression keywordEqTitleOrSubTitle(String keyword) {

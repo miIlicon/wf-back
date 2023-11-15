@@ -7,6 +7,6 @@ import com.festival.domain.program.service.vo.ProgramSearchCond;
 import java.util.List;
 
 public interface ProgramRepositoryCustom {
-    ProgramPageRes getList(ProgramSearchCond programSearchCond);
+    ProgramPageRes getProgramList(ProgramSearchCond programSearchCond);
     List<ProgramSearchRes> searchProgramList(String keyword);
 }
