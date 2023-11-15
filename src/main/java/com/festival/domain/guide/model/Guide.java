@@ -50,10 +50,6 @@ public class Guide extends BaseEntity {
         this.viewCount += viewCount;
     }
 
-    public void decreaseViewCount(Long viewCount) {
-        this.viewCount -= viewCount;
-    }
-
     public void connectMember(Member member) {
         this.member = member;
     }
@@ -62,7 +58,4 @@ public class Guide extends BaseEntity {
         this.deleted = true;
     }
 
-    private static OperateStatus settingStatus(String guideStatus) {
-        return OperateStatus.checkStatus(guideStatus);
-    }
 }
