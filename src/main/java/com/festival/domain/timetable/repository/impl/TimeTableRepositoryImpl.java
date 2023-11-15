@@ -36,9 +36,6 @@ public class TimeTableRepositoryImpl implements TimeTableRepositoryCustom {
     }
 
     private static BooleanExpression isWithinPeriod(LocalDateTime startTime, LocalDateTime endTime) {
-        if (startTime == null || endTime == null) {
-            return null;
-        }
         return timeTable.startTime.goe(startTime)
                 .and(timeTable.endTime.loe(endTime));
     }

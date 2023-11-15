@@ -60,6 +60,10 @@ public class TimeTableService {
     }
 
     public List<TimeTableRes> getTimeTableList(TimeTableDateReq timeTableDateReq) {
+        if (timeTableDateReq.getStartTime() == null || timeTableDateReq.getEndTime() == null) {
+            throw new NotFoundException(ErrorCode.INVALID_PARAMETER);
+        }
+
         TimeTableSearchCond timeTableSearchCond =TimeTableSearchCond.builder()
                 .startTime(timeTableDateReq.getStartTime())
                 .endTime(timeTableDateReq.getEndTime())
