@@ -5,11 +5,7 @@ import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
-import com.festival.common.redis.RedisService;
-import com.festival.domain.booth.controller.dto.BoothListReq;
-import com.festival.domain.booth.controller.dto.BoothPageRes;
-import com.festival.domain.booth.controller.dto.BoothReq;
-import com.festival.domain.booth.controller.dto.BoothRes;
+import com.festival.domain.booth.controller.dto.*;
 import com.festival.domain.booth.fixture.BoothFixture;
 import com.festival.domain.booth.model.Booth;
 import com.festival.domain.booth.model.BoothType;
@@ -77,7 +73,6 @@ class BoothServiceTest {
         Assertions.assertThat(boothId).isEqualTo(1L);
     }
 
-
     @DisplayName("존재하지 않는 부스를 업데이트하면 NotFoundException을 반환한다.")
     @Test
     void updateNotExistBooth() throws IOException {
@@ -93,8 +88,8 @@ class BoothServiceTest {
                 .isInstanceOf(NotFoundException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.NOT_FOUND_BOOTH);
-
     }
+
     @DisplayName("삭제된 부스를 업데이트하면 AlreadyDeletedException을 반환한다.")
     @Test
     void updateDeletedBooth() throws IOException {
@@ -109,10 +104,7 @@ class BoothServiceTest {
                 .isInstanceOf(AlreadyDeleteException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.ALREADY_DELETED);
-
     }
-
-
 
     @DisplayName("다른 사람이 부스를 업데이트하면 ForbiddenException을 반환한다.")
     @Test
@@ -133,6 +125,7 @@ class BoothServiceTest {
             .extracting("errorCode")
             .isEqualTo(ErrorCode.FORBIDDEN_UPDATE);
     }
+
     @DisplayName("Admin이 부스를 업데이트하면 boothId를 반환한다.")
     @Test
     void updateBooth3() throws IOException {
@@ -152,6 +145,7 @@ class BoothServiceTest {
         //then
         Assertions.assertThat(boothId).isEqualTo(booth.getId());
     }
+
     @DisplayName("부스의 관리자가 업데이트하면 boothId를 반환한다.")
     @Test
     void updateBooth4() throws IOException {
@@ -172,8 +166,6 @@ class BoothServiceTest {
         Assertions.assertThat(boothId).isEqualTo(booth.getId());
     }
 
-    //   ###############################################################
-
     @DisplayName("삭제된 부스의 상태값을 업데이트하면 AlreadyDeletedException을 반환한다.")
     @Test
     void updateBoothOperateStatus() throws IOException {
@@ -186,10 +178,7 @@ class BoothServiceTest {
                 .isInstanceOf(AlreadyDeleteException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.ALREADY_DELETED);
-
     }
-
-
 
     @DisplayName("다른 사람이 부스 상태값을 업데이트하면 ForbiddenException을 반환한다.")
     @Test
@@ -209,6 +198,7 @@ class BoothServiceTest {
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.FORBIDDEN_UPDATE);
     }
+
     @DisplayName("Admin이 부스 상태값을 업데이트하면 boothId를 반환한다.")
     @Test
     void updateBoothOperateStatus3() throws IOException {
@@ -227,6 +217,7 @@ class BoothServiceTest {
         //then
         Assertions.assertThat(boothId).isEqualTo(booth.getId());
     }
+
     @DisplayName("부스의 관리자가 업데이트하면 boothId를 반환한다.")
     @Test
     void updateBoothOperateStatus4() throws IOException {
@@ -253,14 +244,11 @@ class BoothServiceTest {
                 .willReturn(Optional.empty());
 
         //when & then
-        assertThatThrownBy(() ->boothService.updateBoothOperateStatus(OperateStatus.OPERATE.getValue(), 1L))
+        assertThatThrownBy(() -> boothService.updateBoothOperateStatus(OperateStatus.OPERATE.getValue(), 1L))
                 .isInstanceOf(NotFoundException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.NOT_FOUND_BOOTH);
-
     }
-
-    // #####################################################################
 
     @DisplayName("존재하지 않는 부스를 삭제하면 NotFoundException을 반환한다.")
     @Test
@@ -274,8 +262,8 @@ class BoothServiceTest {
                 .isInstanceOf(NotFoundException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.NOT_FOUND_BOOTH);
-
     }
+
     @DisplayName("삭제된 부스를 삭제하면 AlreadyDeletedException을 반환한다.")
     @Test
     void deleteDeletedBooth() {
@@ -288,7 +276,6 @@ class BoothServiceTest {
                 .isInstanceOf(AlreadyDeleteException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.ALREADY_DELETED);
-
     }
 
     @DisplayName("다른 사람이 부스를 삭제하면 ForbiddenException을 반환한다.")
@@ -309,6 +296,7 @@ class BoothServiceTest {
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.FORBIDDEN_DELETE);
     }
+
     @DisplayName("Admin이 부스를 삭제하면 정상처리")
     @Test
     void deleteBooth3() {
@@ -324,6 +312,7 @@ class BoothServiceTest {
         //when && then
         boothService.deleteBooth(1L);
     }
+
     @DisplayName("부스의 관리자가 업데이트하면 정상동작")
     @Test
     void deleteBooth4(){
@@ -339,6 +328,7 @@ class BoothServiceTest {
         //when && then
         boothService.deleteBooth(1L);
     }
+
     @DisplayName("아이디에 맞는 부스를 반환한다.")
     @Test
     void getBoothTest(){
@@ -360,7 +350,7 @@ class BoothServiceTest {
     @Test
     void getBoothList(){
         //given
-        given(boothRepository.getList(any(BoothListSearchCond.class)))
+        given(boothRepository.getBoothList(any(BoothListSearchCond.class)))
                 .willReturn(BoothPageRes.builder()
                         .boothResList(List.of(BoothRes.builder().
                                 build())).build());
@@ -377,6 +367,50 @@ class BoothServiceTest {
         Assertions.assertThat(boothPageRes.getBoothResList()).hasSize(1);
     }
 
+    @DisplayName("부스 게시물들의 운영상태를 변경한다.")
+    @Test
+    void settingBoothStatus() throws Exception {
+        //given
+        LocalDate registeredDate = LocalDate.of(2023, 11, 15);
+        given(boothRepository.findByStartDateEqualsAndOperateStatusEquals(registeredDate, OperateStatus.UPCOMING))
+                .willReturn(List.of(getBooth()));
+        given(boothRepository.findByEndDateEquals(registeredDate)).willReturn(List.of(getBooth()));
+
+        //when
+        boothService.settingBoothStatus(registeredDate);
+
+        //then
+        Assertions.assertThat(getBooth().getOperateStatus()).isEqualTo(OperateStatus.OPERATE);
+    }
+
+    @DisplayName("부스 게시물의 조회수를 증가시킨다.")
+    @Test
+    void increaseBoothViewCount() throws Exception {
+        //given
+        Booth booth = getBooth();
+
+        given(boothRepository.findById(1L)).willReturn(Optional.of(booth));
+
+        //when
+        boothService.increaseBoothViewCount(1L, 1L);
+
+        //then
+        Assertions.assertThat(booth.getViewCount()).isEqualTo(1L);
+    }
+
+    @DisplayName("키워드를 제목에 포함하고 있는 부스 게시물들을 조회한다.")
+    @Test
+    void searchBoothList() throws Exception {
+        //given
+        given(boothRepository.searchBoothList("부스")).willReturn(List.of());
+
+        //when
+        List<BoothSearchRes> boothSearchResList = boothService.searchBoothList("부스");
+
+        //then
+        Assertions.assertThat(boothSearchResList).hasSize(0);
+    }
+
     private Booth getBooth(){
         Booth booth = Booth.builder()
                 .title("부스 게시물 제목")
@@ -391,7 +425,7 @@ class BoothServiceTest {
         return booth;
     }
     private BoothReq getBoothCreateReq() throws IOException {
-        BoothReq boothReq = BoothReq.builder()
+        return BoothReq.builder()
                 .title("푸드트럭 게시물 제목")
                 .subTitle("푸드트럭 게시물 부제목")
                 .operateStatus("OPERATE")
@@ -404,10 +438,9 @@ class BoothServiceTest {
                 .subFiles(List.of(generateMockImageFile("subFile1"), generateMockImageFile("subFile1")))
                 .type("FOOD_TRUCK")
                 .build();
-        return boothReq;
     }
     private BoothReq getBoothUpdateReq() throws IOException {
-        BoothReq boothReq = BoothReq.builder()
+        return BoothReq.builder()
                 .title("변경된 제목")
                 .subTitle("변경된 부제목")
                 .operateStatus("OPERATE")
@@ -418,7 +451,6 @@ class BoothServiceTest {
                 .subFiles(List.of(generateMockImageFile("subFile1"), generateMockImageFile("subFile1")))
                 .type("FOOD_TRUCK")
                 .build();
-        return boothReq;
     }
 
     private Image createImage() {
