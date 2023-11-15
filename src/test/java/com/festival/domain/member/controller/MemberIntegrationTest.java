@@ -26,7 +26,6 @@ class MemberIntegrationTest extends ControllerTestSupport {
 
     @Autowired
     private MemberService memberService;
-/*
 
     @DisplayName("유저는 회원가입을 할 수 있다.")
     @Test
@@ -76,7 +75,6 @@ class MemberIntegrationTest extends ControllerTestSupport {
                 .andExpect(status().isConflict())
                 .andReturn();
     }
-*/
 
     @DisplayName("회원가입한 사용자는 로그인을 할 수 있다.")
     @Test
@@ -112,4 +110,5 @@ class MemberIntegrationTest extends ControllerTestSupport {
         assertThat(jwtTokenRes.getRefreshToken()).isNotNull();
         assertThat(jwtTokenRes.getTokenType()).isEqualTo("Bearer");
     }
+
 }
