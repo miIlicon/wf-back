@@ -15,6 +15,7 @@ class HomeTest {
 
         //then
         assertThat(home.getCount()).isEqualTo(0);
+        assertThat(home.getId()).isZero();
     }
 
     @DisplayName("조회수 객체의 조회수는 더해진만큼 조회수가 증가한다.")

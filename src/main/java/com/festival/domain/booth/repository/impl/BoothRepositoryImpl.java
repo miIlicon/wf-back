@@ -9,10 +9,8 @@ import com.festival.domain.booth.model.BoothType;
 import com.festival.domain.booth.repository.BoothRepositoryCustom;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -37,8 +35,7 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public BoothPageRes getList(BoothListSearchCond boothListSearchCond) {
-
+    public BoothPageRes getBoothList(BoothListSearchCond boothListSearchCond) {
         List<Booth> result = queryFactory
                 .selectFrom(booth)
                 .join(booth.image).fetchJoin()
@@ -93,5 +90,4 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
     private static BooleanExpression eqType(String type) {
         return type == null ? null : booth.type.eq(BoothType.valueOf(type));
     }
-
 }

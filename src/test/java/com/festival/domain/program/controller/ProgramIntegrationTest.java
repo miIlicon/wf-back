@@ -62,12 +62,11 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .build();
         memberRepository.saveAndFlush(differentMember);
 
-        Member differentMember2 = Member.builder()
+        memberRepository.saveAndFlush(Member.builder()
                 .username("differentUser2")
                 .password("12345")
                 .memberRole(MANAGER)
-                .build();
-        memberRepository.saveAndFlush(differentMember2);
+                .build());
     }
 
     @WithMockUser(username = "testUser", roles = "ADMIN")
@@ -577,6 +576,97 @@ class ProgramIntegrationTest extends ControllerTestSupport {
         assertThat(programPageRes).isNotNull()
                 .extracting("totalCount", "totalPage", "pageNumber", "pageSize")
                 .contains(7L, 2, 0, 6);
+    }
+
+    @DisplayName("검색한 프로그램 게시물을 조회한다.")
+    @Test
+    void searchProgramList() throws Exception {
+        //given
+        LocalDate registeredDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredStartDate = LocalDate.of(2023, 9, 26);
+        LocalDate registeredEndDate = LocalDate.of(2023, 10, 31);
+
+        MockMultipartFile mainFile = TestImageUtils.generateMockImageFile("mainFile");
+        List<MockMultipartFile> subFiles = List.of(
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles"),
+                TestImageUtils.generateMockImageFile("subFiles")
+        );
+
+        Image image = Image.builder()
+                .mainFilePath("mainFilePath")
+                .subFilePaths(List.of("subFilePath1", "subFilePath2", "subFilePath3"))
+                .build();
+
+        ProgramReq programReq = ProgramReq.builder()
+                .title("includeTitle")
+                .subTitle("subTitle")
+                .content("content")
+                .latitude(50.0f)
+                .longitude(50.0f)
+                .type("EVENT")
+                .operateStatus("OPERATE")
+                .mainFile(mainFile)
+                .startDate(registeredStartDate)
+                .endDate(registeredEndDate)
+                .build();
+        Program program1 = Program.of(programReq, registeredDate);
+        program1.connectMember(member);
+        program1.setImage(image);
+        Program program2 = Program.of(programReq, registeredDate);
+        program2.connectMember(member);
+        program2.setImage(image);
+        Program program3 = Program.of(programReq, registeredDate);
+        program3.connectMember(member);
+        program3.setImage(image);
+        Program program4 = Program.of(programReq, registeredDate);
+        program4.connectMember(member);
+        program4.setImage(image);
+
+        programReq = ProgramReq.builder()
+                .title("notMatched")
+                .subTitle("subTitle")
+                .content("content")
+                .latitude(50.0f)
+                .longitude(50.0f)
+                .type("EVENT")
+                .operateStatus("OPERATE")
+                .mainFile(mainFile)
+                .startDate(registeredStartDate)
+                .endDate(registeredEndDate)
+                .build();
+        Program program5 = Program.of(programReq, registeredDate);
+        program5.connectMember(member);
+        program5.setImage(image);
+        Program program6 = Program.of(programReq, registeredDate);
+        program6.connectMember(member);
+        program6.setImage(image);
+        Program program7 = Program.of(programReq, registeredDate);
+        program7.connectMember(member);
+        program7.setImage(image);
+
+        programRepository.saveAll(List.of(program1, program2, program3, program4, program5,
+                program6, program7));
+
+        //when
+        MvcResult mvcResult = mockMvc.perform(
+                        get("/api/v2/program/search")
+                                .param("keyword", "includeTitle")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        //then
+        List<ProgramRes> programResList = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), objectMapper.getTypeFactory().constructCollectionType(List.class, ProgramRes.class));
+        assertThat(programResList).hasSize(4)
+                .extracting("title", "subTitle")
+                .containsExactly(
+                        tuple("includeTitle", "subTitle"),
+                        tuple("includeTitle", "subTitle"),
+                        tuple("includeTitle", "subTitle"),
+                        tuple("includeTitle", "subTitle")
+                );
     }
 
     private static MockHttpServletRequestBuilder makeMultiPartRequest(Program savedProgram, MockMultipartFile mainFile, List<MockMultipartFile> subFiles) {

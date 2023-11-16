@@ -77,7 +77,7 @@ public class BoothService {
 
     @Transactional(readOnly = true)
     public BoothPageRes getBoothList(BoothListReq boothListReq) {
-        return boothRepository.getList(BoothListSearchCond.builder()
+        return boothRepository.getBoothList(BoothListSearchCond.builder()
                 .type(boothListReq.getType())
                 .pageable(PageRequest.of(boothListReq.getPage() ,boothListReq.getSize()))
                 .build());
@@ -93,6 +93,23 @@ public class BoothService {
         booth.increaseViewCount(viewCount);
     }
 
+    public Long updateBoothOperateStatus(String operateStatus, Long id) {
+        Booth booth = checkingDeletedStatus(boothRepository.findById(id));
+
+        if (!SecurityUtils.checkingRole(booth.getMember(), memberService.getAuthenticationMember())) {
+            throw new ForbiddenException(FORBIDDEN_UPDATE);
+        }
+        booth.changeOperateStatus(operateStatus);
+        return id;
+    }
+
+    public void settingBoothStatus(LocalDate registeredDate) {
+        boothRepository.findByStartDateEqualsAndOperateStatusEquals(registeredDate, OperateStatus.UPCOMING)
+                .forEach(booth -> booth.changeOperateStatus(OperateStatus.OPERATE.getValue()));
+
+        boothRepository.findByEndDateEquals(registeredDate)
+                .forEach(booth -> booth.changeOperateStatus(OperateStatus.TERMINATE.getValue()));
+    }
 
     private Booth checkingDeletedStatus(Optional<Booth> booth) {
         if (booth.isEmpty()) {
@@ -103,25 +120,5 @@ public class BoothService {
         }
 
         return booth.get();
-    }
-
-    public Long updateBoothOperateStatus(String operateStatus, Long id) {
-        Booth booth = checkingDeletedStatus(boothRepository.findById(id));
-
-        if (!SecurityUtils.checkingRole(booth.getMember(), memberService.getAuthenticationMember())) {
-            throw new ForbiddenException(FORBIDDEN_UPDATE);
-        }
-        booth.changeOperateStatus(operateStatus);
-        return id;
-
-    }
-
-    public void settingBoothStatus() {
-        LocalDate registeredDate = LocalDate.now();
-        boothRepository.findByStartDateEqualsAndOperateStatusEquals(registeredDate, OperateStatus.UPCOMING.getValue())
-                .forEach(booth -> booth.changeOperateStatus(OperateStatus.OPERATE.getValue()));
-
-        boothRepository.findByEndDateEquals(registeredDate)
-                .forEach(booth -> booth.changeOperateStatus(OperateStatus.TERMINATE.getValue()));
     }
 }

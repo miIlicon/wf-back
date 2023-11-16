@@ -15,6 +15,7 @@ public enum ErrorCode {
     INVALID_STATUS("입력된 값의 상태가 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
     INVALID_DATE("입력된 값의 날짜 형식이 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
     INVALID_EMAIL("입력된 값의 이메일 형식이 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
+    INVALID_PARAMETER("필수 파라미터가 유효하지 않습니다.", HttpStatus.BAD_REQUEST),
 
     // 401
     LOGOUTED_TOKEN("이미 로그아웃 처리된 토큰입니다.", HttpStatus.UNAUTHORIZED),

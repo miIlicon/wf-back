@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -61,7 +62,8 @@ public class SchedulerRunner {
      */
     @Scheduled(cron = "0 0 0 * * *")
     public void updateOperateStatus() {
-        programService.settingProgramStatus();
-        boothService.settingBoothStatus();
+        LocalDate registeredDate = LocalDate.now();
+        programService.settingProgramStatus(registeredDate);
+        boothService.settingBoothStatus(registeredDate);
     }
 }

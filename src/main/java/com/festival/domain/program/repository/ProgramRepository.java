@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface ProgramRepository extends JpaRepository<Program, Long> , ProgramRepositoryCustom{
-
-    List<Program> findByStartDateEqualsAndOperateStatusEquals(LocalDate currentDate, String operateStatus);
+    List<Program> findByStartDateEqualsAndOperateStatusEquals(LocalDate startDate, OperateStatus operateStatus);
     List<Program> findByEndDateEquals(LocalDate currentDate);
 }

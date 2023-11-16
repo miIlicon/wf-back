@@ -67,7 +67,8 @@ public class Booth extends BaseEntity {
     private LocalDate endDate;
 
     @Builder
-    private Booth(String title, String subTitle, String content, float latitude, float longitude, boolean deleted, OperateStatus operateStatus, BoothType type, LocalDate startDate, LocalDate endDate) {
+    private Booth(String title, String subTitle, String content, float latitude, float longitude, boolean deleted,
+                  OperateStatus operateStatus, BoothType type, LocalDate startDate, LocalDate endDate) {
         this.title = title;
         this.subTitle = subTitle;
         this.content = content;
@@ -87,7 +88,9 @@ public class Booth extends BaseEntity {
                 .content(boothReq.getContent())
                 .latitude(boothReq.getLatitude())
                 .longitude(boothReq.getLongitude())
-                .operateStatus(resolveOperateStatus(LocalDate.now(), boothReq.getOperateStatus(), boothReq.getStartDate(), boothReq.getEndDate()))
+                .operateStatus(resolveOperateStatus(
+                        LocalDate.now(), boothReq.getOperateStatus(), boothReq.getStartDate(), boothReq.getEndDate())
+                )
                 .startDate(boothReq.getStartDate())
                 .endDate(boothReq.getEndDate())
                 .deleted(false)
@@ -97,14 +100,14 @@ public class Booth extends BaseEntity {
         this.image = image;
     }
 
-    private static OperateStatus resolveOperateStatus(LocalDate currentDate,String operateStatus, LocalDate startDate, LocalDate endDate){
+    private static OperateStatus resolveOperateStatus(LocalDate currentDate,String operateStatus,
+                                                      LocalDate startDate, LocalDate endDate){
         if(currentDate.isBefore(startDate))
             return OperateStatus.UPCOMING;
         else if (currentDate.isAfter(endDate)) {
             return OperateStatus.TERMINATE;
         }
         return OperateStatus.checkStatus(operateStatus);
-
     }
 
     public void connectMember(Member member){

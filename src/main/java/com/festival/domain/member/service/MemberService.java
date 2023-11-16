@@ -3,14 +3,12 @@ package com.festival.domain.member.service;
 import com.festival.common.exception.custom_exception.DuplicationException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
-import com.festival.common.redis.RedisService;
 import com.festival.common.security.JwtTokenProvider;
 import com.festival.common.security.dto.JwtTokenRes;
 import com.festival.common.security.dto.MemberLoginReq;
 import com.festival.common.util.JwtTokenUtils;
 import com.festival.domain.member.dto.MemberJoinReq;
 import com.festival.domain.member.model.Member;
-import com.festival.domain.member.model.MemberRole;
 import com.festival.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.festival.common.exception.ErrorCode.*;
@@ -59,17 +56,6 @@ public class MemberService {
         return memberRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(NOT_FOUND_MEMBER));
     }
 
-    private boolean isExistsId(String email) {
-        return memberRepository.existsByUsername(email);
-    }
-    private Authentication attemptAuthenticate(MemberLoginReq loginReq) {
-        return authenticationManagerBuilder.getObject().authenticate(createAuthenticationToken(loginReq));
-    }
-
-    private static UsernamePasswordAuthenticationToken createAuthenticationToken(MemberLoginReq loginReq) {
-        return new UsernamePasswordAuthenticationToken(loginReq.getUsername(), loginReq.getPassword());
-    }
-
     /**
      * @Description
      *  1. 요청으로 들어온 RT를 검증
@@ -101,5 +87,16 @@ public class MemberService {
 
     public void checkLogin(String refreshToken) {
         jwtTokenProvider.checkLoginByRefreshToken(refreshToken);
+    }
+
+    private boolean isExistsId(String email) {
+        return memberRepository.existsByUsername(email);
+    }
+    private Authentication attemptAuthenticate(MemberLoginReq loginReq) {
+        return authenticationManagerBuilder.getObject().authenticate(createAuthenticationToken(loginReq));
+    }
+
+    private static UsernamePasswordAuthenticationToken createAuthenticationToken(MemberLoginReq loginReq) {
+        return new UsernamePasswordAuthenticationToken(loginReq.getUsername(), loginReq.getPassword());
     }
 }

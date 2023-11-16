@@ -71,9 +71,8 @@ public class ProgramService {
     }
 
     @Transactional
-    public void settingProgramStatus() {
-        LocalDate registeredDate = LocalDate.now();
-        programRepository.findByStartDateEqualsAndOperateStatusEquals(registeredDate, OperateStatus.UPCOMING.getValue())
+    public void settingProgramStatus(LocalDate registeredDate) {
+        programRepository.findByStartDateEqualsAndOperateStatusEquals(registeredDate, OperateStatus.UPCOMING)
                 .forEach(p -> p.changeStatus(OperateStatus.OPERATE.getValue()));
 
         programRepository.findByEndDateEquals(registeredDate)
@@ -102,7 +101,7 @@ public class ProgramService {
     }
 
     public ProgramPageRes getProgramList(ProgramListReq programListReq) {
-        return programRepository.getList(
+        return programRepository.getProgramList(
                 ProgramSearchCond.builder()
                 .type(programListReq.getType())
                 .pageable(PageRequest.of(programListReq.getPage(), programListReq.getSize()))

@@ -2,8 +2,6 @@ package com.festival.domain.member.controller;
 
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.BadRequestException;
-import com.festival.common.redis.RedisService;
-import com.festival.common.security.JwtTokenProvider;
 import com.festival.common.security.dto.JwtTokenRes;
 import com.festival.common.security.dto.MemberLoginReq;
 import com.festival.common.util.JwtTokenUtils;
@@ -17,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,14 +57,11 @@ public class MemberController {
     @GetMapping("/rotate")
     public JwtTokenRes rotateToken(HttpServletRequest request){
         String refreshToken = JwtTokenUtils.extractBearerToken(request.getHeader("refreshToken"));
-
-        if(refreshToken.isBlank())
+        if(refreshToken.isBlank()) {
             throw new BadRequestException(ErrorCode.EMPTY_REFRESH_TOKEN);
-
+        }
         memberService.checkLogin(refreshToken);
 
         return memberService.rotateToken(refreshToken);
     }
-
-
 }

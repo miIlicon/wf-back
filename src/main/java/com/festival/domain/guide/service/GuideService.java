@@ -72,7 +72,6 @@ public class GuideService {
     }
 
     public GuidePageRes getGuideList(GuideListReq guideListReq) {
-
         return guideRepository.getList(PageRequest.of(guideListReq.getPage(), guideListReq.getSize()));
     }
 
@@ -80,12 +79,6 @@ public class GuideService {
     public void increaseGuideViewCount(Long id, Long viewCount) {
         Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_GUIDE));
         guide.increaseViewCount(viewCount);
-    }
-
-    @Transactional
-    public void decreaseGuideViewCount(Long id, Long viewCount) {
-        Guide guide = guideRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_GUIDE));
-        guide.decreaseViewCount(viewCount);
     }
 
     private Guide checkingDeletedStatus(Optional<Guide> guide) {
