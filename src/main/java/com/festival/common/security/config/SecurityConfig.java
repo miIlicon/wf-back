@@ -1,5 +1,6 @@
 package com.festival.common.security.config;
 
+import com.festival.common.infra.Alert.discord.DiscordService;
 import com.festival.common.security.JwtAuthenticationFilter;
 import com.festival.common.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
+
+    //    private final SlackService slackService;
+    private final DiscordService discordService;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -44,7 +48,7 @@ public class SecurityConfig {
                 .and()
                 .headers().frameOptions().disable()
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, discordService), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
