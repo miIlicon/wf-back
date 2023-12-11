@@ -10,3 +10,9 @@ custom:
   redis:
     host: redis_1
     port: 6379
+
+webhook:
+  slack:
+    url: ${custom.webhook.SLACK_PRODUCTION_URL}
+  discord:
+    url: ${custom.webhook.DISCORD_PRODUCTION_URL}

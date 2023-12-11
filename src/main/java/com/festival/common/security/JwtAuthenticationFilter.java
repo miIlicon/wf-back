@@ -4,32 +4,28 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.festival.common.exception.CustomException;
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.ErrorResponse;
-import com.festival.common.exception.custom_exception.BadRequestException;
-import com.festival.common.redis.RedisService;
+import com.festival.common.infra.Alert.discord.DiscordService;
 import com.festival.common.util.JwtTokenUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.connector.Response;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.net.http.HttpHeaders;
 
 @RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+
+    //    private final SlackService slackService;
+    private final DiscordService discordService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -54,8 +50,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
 
-        }catch (CustomException e){
+        } catch (CustomException e){
             ErrorCode errorCode = e.getErrorCode();
+
+//            slackService.sendSlackAlertLog(e, request);
+            discordService.sendDiscordAlertLog(e, request);
 
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json");
@@ -68,17 +67,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     "Origin, X-Requested-With, Content-Type, Accept, accessToken, refreshToken");
             if("OPTIONS".equalsIgnoreCase(request.getMethod())) {
                 response.setStatus(HttpServletResponse.SC_OK);
-            }
-            else{
+            } else{
                 log.error(errorCode.getMessage());
                 response.getWriter().write(
                         objectMapper.writeValueAsString(new ErrorResponse(errorCode.getMessage()))
                 );
             }
-
         }
-
     }
-
-
 }

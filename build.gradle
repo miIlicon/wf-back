@@ -69,6 +69,9 @@ dependencies {
     // Embedded Redis
     testImplementation ('it.ozimov:embedded-redis:0.7.2') { exclude group: "org.slf4j", module: "slf4j-simple" }
     implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
+
+    // Slack
+    implementation 'com.slack.api:slack-api-client:1.29.0'
 }
 
 tasks.named('test') {
