@@ -37,7 +37,10 @@ public class WebConfig implements WebMvcConfigurer {
             }
         };
     }
-
+    /**
+     * @Description
+     * Interceptor 등록
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authenticationInterceptor)

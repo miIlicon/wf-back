@@ -22,11 +22,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         log.info("Authentication Interceptor : " + request.getRequestURI());
-            /*
-            if(request.getMethod().equals("OPTIONS")){
-                filterChain.doFilter(request, response);
-            }
-            */
         String accessToken = JwtTokenUtils.extractBearerToken(request.getHeader("accessToken"));
 
         if (!request.getRequestURI().equals("/api/v2/member/rotate") && accessToken != null) { // 토큰 재발급의 요청이 아니면서 accessToken이 존재할 때
