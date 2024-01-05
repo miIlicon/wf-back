@@ -1,7 +1,6 @@
 package com.festival.common.security.config;
 
 import com.festival.common.infra.Alert.discord.DiscordService;
-import com.festival.common.security.JwtAuthenticationFilter;
 import com.festival.common.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -47,8 +46,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .headers().frameOptions().disable()
-                .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, discordService), UsernamePasswordAuthenticationFilter.class);
+                .and();
 
         return http.build();
     }
