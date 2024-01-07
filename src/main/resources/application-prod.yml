@@ -5,6 +5,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            redirect-uri: https://server.withfestival.site/login/oauth2/code/kakao
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
+            client-name: kakao
+
 
 custom:
   redis:

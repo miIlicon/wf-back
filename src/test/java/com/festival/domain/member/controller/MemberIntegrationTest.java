@@ -1,7 +1,7 @@
 package com.festival.domain.member.controller;
 
-import com.festival.common.security.dto.JwtTokenRes;
-import com.festival.common.security.dto.MemberLoginReq;
+import com.festival.common.security.jwt.JwtTokenRes;
+import com.festival.domain.member.dto.MemberLoginReq;
 import com.festival.domain.member.dto.MemberJoinReq;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.member.model.MemberRole;

@@ -1,4 +1,4 @@
-package com.festival.common.security.dto;
+package com.festival.domain.member.dto;
 
 import lombok.Builder;
 import lombok.Getter;

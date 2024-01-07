@@ -1,4 +1,4 @@
-package com.festival.common.security.dto;
+package com.festival.common.security.jwt;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
