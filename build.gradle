@@ -72,6 +72,9 @@ dependencies {
 
     // Slack
     implementation 'com.slack.api:slack-api-client:1.29.0'
+
+    // OAuth
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 
 tasks.named('test') {
