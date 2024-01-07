@@ -1,5 +1,6 @@
 package com.festival.common.security.oauth;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.common.security.jwt.JwtTokenProvider;
@@ -30,14 +31,14 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-
+        ObjectMapper objectMapper = new ObjectMapper();
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-        String provider = oAuth2User.getAttribute("provider");
+
         SocialCode socialCode = oAuth2User.getAttribute("socialCode");
 
         // KAKAO_user123@naver.com
-        String email = provider + "_" + oAuth2User.getAttribute("email");
+        String email = socialCode.name() + "_" + oAuth2User.getAttribute("email");
         Optional<Member> findMember = memberRepository.findByEmail(email);
 
         // 회원이 아닌 경우에 회원 가입 진행
@@ -55,16 +56,24 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         // OAuth2User 객체에서 권한 가져옴
         JwtTokenRes jwtToken = jwtTokenProvider.createJwtToken(member.getEmail(), member.getRole().getValue());
+/*
 
-        String targetUrl = UriComponentsBuilder.fromUriString("http://home")
+        String targetUrl = UriComponentsBuilder.fromUriString("http//localhost:8080/success")
                 .queryParam("accessToken", jwtToken.getAccessToken())
                 .queryParam("refreshToken", jwtToken.getRefreshToken())
                 .queryParam("memberId", String.valueOf(member.getId()))
                 .build().toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
+*/
 
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json; charset=UTF-8");
+        response.setStatus(200);
 
+        response.getWriter().write(
+                objectMapper.writeValueAsString(jwtToken)
+        );
     }
 
 }

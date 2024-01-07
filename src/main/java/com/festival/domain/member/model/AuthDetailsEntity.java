@@ -22,10 +22,8 @@ public abstract class AuthDetailsEntity implements UserDetails {
     @Column(unique = true)
     protected String email;
 
-    @Column(nullable = false)
     protected String password;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     protected SocialCode socialCode;
 
