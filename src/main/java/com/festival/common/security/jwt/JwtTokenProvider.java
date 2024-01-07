@@ -1,15 +1,11 @@
-package com.festival.common.security;
+package com.festival.common.security.jwt;
 
 import com.festival.common.exception.ErrorCode;
-import com.festival.common.exception.custom_exception.BadRequestException;
 import com.festival.common.exception.custom_exception.InvalidException;
-import com.festival.common.redis.RedisService;
-import com.festival.common.security.dto.JwtTokenRes;
 import com.festival.common.util.JwtTokenUtils;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +19,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Component

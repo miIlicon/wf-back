@@ -1,5 +1,6 @@
 package com.festival.domain.member.model;
 
+import com.festival.common.security.oauth.SocialCode;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,11 +16,22 @@ import java.util.stream.Collectors;
 @Getter
 public abstract class AuthDetailsEntity implements UserDetails {
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     protected String username;
+
+    @Column(unique = true)
+    protected String email;
 
     @Column(nullable = false)
     protected String password;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    protected SocialCode socialCode;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    protected MemberRole role;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "member_roles", joinColumns = @JoinColumn(name = "member_id"))

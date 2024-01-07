@@ -2,8 +2,8 @@ package com.festival.domain.member.controller;
 
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.BadRequestException;
-import com.festival.common.security.dto.JwtTokenRes;
-import com.festival.common.security.dto.MemberLoginReq;
+import com.festival.common.security.jwt.JwtTokenRes;
+import com.festival.domain.member.dto.MemberLoginReq;
 import com.festival.common.util.JwtTokenUtils;
 import com.festival.domain.member.dto.MemberJoinReq;
 import com.festival.domain.member.service.MemberService;

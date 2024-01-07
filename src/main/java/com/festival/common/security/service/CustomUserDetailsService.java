@@ -1,4 +1,4 @@
-package com.festival.common.security;
+package com.festival.common.security.service;
 
 import com.festival.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,6 @@
 package com.festival.domain.member.model;
 
+import com.festival.common.security.oauth.SocialCode;
 import com.festival.domain.member.dto.MemberJoinReq;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,7 +20,10 @@ public class Member extends AuthDetailsEntity {
     private Long id;
 
     @Builder
-    private Member(String username, String password, MemberRole memberRole) {
+    private Member(String email, SocialCode socialCode, String username, String password, MemberRole memberRole) {
+        this.email = email;
+        this.socialCode = socialCode;
+        this.role = MemberRole.MEMBER;
         this.username = username;
         this.password = password;
         this.memberRoles.add(memberRole);
