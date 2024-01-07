@@ -6,6 +6,7 @@ import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.common.security.jwt.JwtTokenProvider;
 import com.festival.common.security.jwt.JwtTokenRes;
 import com.festival.domain.member.model.Member;
+import com.festival.domain.member.model.MemberRole;
 import com.festival.domain.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,10 +36,10 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
 
-        SocialCode socialCode = oAuth2User.getAttribute("socialCode");
+        String loginType = oAuth2User.getAttribute("loginType");
 
         // KAKAO_user123@naver.com
-        String email = socialCode.name() + "_" + oAuth2User.getAttribute("email");
+        String email = loginType + "_" + oAuth2User.getAttribute("email");
         Optional<Member> findMember = memberRepository.findByEmail(email);
 
         // 회원이 아닌 경우에 회원 가입 진행
@@ -47,7 +48,9 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             // KAKAO_user123
             member = Member.builder()
                     .email(email)
-                    .socialCode(socialCode).build();
+                    .loginType(loginType)
+                    .memberRole(MemberRole.MEMBER)
+                    .build();
 
             memberRepository.save(member);
         } else {

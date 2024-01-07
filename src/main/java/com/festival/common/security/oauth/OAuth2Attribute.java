@@ -19,7 +19,7 @@ public class OAuth2Attribute {
     private Map<String, Object> attributes; // 소셜 로그인 사용자의 속성 정보를 담는 Map
     private String attributeKey; // 사용자 속성의 키 값
     private String email; // 이메일
-    private SocialCode socialCode;
+    private String loginType;
 
 
     /**
@@ -43,7 +43,7 @@ public class OAuth2Attribute {
                 .email((String) kakaoAccount.get("email"))
                 .attributes(kakaoAccount)
                 .attributeKey(attributeKey)
-                .socialCode(SocialCode.KAKAO)
+                .loginType("KAKAO")
                 .build();
     }
 
@@ -53,7 +53,7 @@ public class OAuth2Attribute {
         map.put("id", attributeKey);
         map.put("key", attributeKey);
         map.put("email", email);
-        map.put("socialCode", socialCode);
+        map.put("loginType", loginType);
 
         return map;
     }
