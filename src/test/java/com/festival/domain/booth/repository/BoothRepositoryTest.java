@@ -133,9 +133,11 @@ class BoothRepositoryTest {
                 .deleted(false)
                 .build();
         booth.setImage(Image.builder()
-                .mainFilePath("mainFilePath")
-                .subFilePaths(List.of("subFilePaths"))
-                .build());
+                        .filePath("mainFilePath")
+                        .build(),
+                List.of(Image.builder()
+                        .filePath("subFilePath")
+                        .build()));
         return booth;
     }
 }

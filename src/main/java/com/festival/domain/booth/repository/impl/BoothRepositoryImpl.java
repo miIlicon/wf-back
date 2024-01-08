@@ -38,7 +38,7 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
     public BoothPageRes getBoothList(BoothListSearchCond boothListSearchCond) {
         List<Booth> result = queryFactory
                 .selectFrom(booth)
-                .join(booth.image).fetchJoin()
+                .join(booth.thumbnailImage).fetchJoin()
                 .where(
                         eqType(boothListSearchCond.getType()),
                         booth.deleted.eq(false)
@@ -71,7 +71,7 @@ public class BoothRepositoryImpl implements BoothRepositoryCustom {
                         booth.title,
                         booth.subTitle,
                         booth.operateStatus.stringValue(),
-                        booth.image.mainFilePath
+                        booth.thumbnailImage.filePath
                ))
                .from(booth)
                .where(

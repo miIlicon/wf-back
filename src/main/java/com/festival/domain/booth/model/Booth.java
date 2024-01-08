@@ -11,10 +11,10 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
@@ -49,7 +49,10 @@ public class Booth extends BaseEntity {
     private BoothType type;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Image image;
+    private Image thumbnailImage;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Image> images;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -96,8 +99,11 @@ public class Booth extends BaseEntity {
                 .deleted(false)
                 .type(BoothType.handleType(boothReq.getType())).build();
     }
-    public void setImage(Image image){
-        this.image = image;
+
+    public void setImage(Image thumbnailImage, List<Image> images)
+    {
+        this.thumbnailImage = thumbnailImage;
+        this.images = images;
     }
 
     private static OperateStatus resolveOperateStatus(LocalDate currentDate,String operateStatus,

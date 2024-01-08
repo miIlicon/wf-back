@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.festival.domain.member.model.MemberRole.ADMIN;
@@ -145,6 +146,9 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 TestImageUtils.generateMockImageFile("subFiles")
         );
 
+        Image image = createImage();
+        List<Image> images = createImages();
+
         ProgramReq programReq = ProgramReq.builder()
                 .title("title")
                 .subTitle("subTitle")
@@ -158,7 +162,7 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .endDate(registeredEndDate)
                 .build();
         Program program = Program.of(programReq, LocalDate.now());
-        program.setImage(createImage());
+        program.setImage(image, images);
         program.connectMember(member);
         Program savedProgram = programRepository.saveAndFlush(program);
 
@@ -447,11 +451,9 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .build();
         Program program = Program.of(programReq, registeredDate);
         program.connectMember(member);
-        Image image = Image.builder()
-                .mainFilePath("mainFilePath")
-                .subFilePaths(List.of("subFilePath1", "subFilePath2", "subFilePath3"))
-                .build();
-        program.setImage(image);
+        Image image = createImage();
+        List<Image> images = createImages();
+        program.setImage(image, images);
         Program savedProgram = programRepository.saveAndFlush(program);
 
         //when
@@ -487,10 +489,8 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 TestImageUtils.generateMockImageFile("subFiles")
         );
 
-        Image image = Image.builder()
-                .mainFilePath("mainFilePath")
-                .subFilePaths(List.of("subFilePath1", "subFilePath2", "subFilePath3"))
-                .build();
+        Image image = createImage();
+        List<Image> images = createImages();
 
         ProgramReq programReq = ProgramReq.builder()
                 .title("title")
@@ -506,25 +506,25 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .build();
         Program program1 = Program.of(programReq, registeredDate);
         program1.connectMember(member);
-        program1.setImage(image);
+        program1.setImage(image, images);
         Program program2 = Program.of(programReq, registeredDate);
         program2.connectMember(member);
-        program2.setImage(image);
+        program2.setImage(image, images);
         Program program3 = Program.of(programReq, registeredDate);
         program3.connectMember(member);
-        program3.setImage(image);
+        program3.setImage(image, images);
         Program program4 = Program.of(programReq, registeredDate);
         program4.connectMember(member);
-        program4.setImage(image);
+        program4.setImage(image, images);
         Program program5 = Program.of(programReq, registeredDate);
         program5.connectMember(member);
-        program5.setImage(image);
+        program5.setImage(image, images);
         Program program6 = Program.of(programReq, registeredDate);
         program6.connectMember(member);
-        program6.setImage(image);
+        program6.setImage(image, images);
         Program program7 = Program.of(programReq, registeredDate);
         program7.connectMember(member);
-        program7.setImage(image);
+        program7.setImage(image, images);
 
         programRepository.saveAll(List.of(program1, program2, program3, program4, program5,
                 program6, program7));
@@ -593,11 +593,6 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 TestImageUtils.generateMockImageFile("subFiles")
         );
 
-        Image image = Image.builder()
-                .mainFilePath("mainFilePath")
-                .subFilePaths(List.of("subFilePath1", "subFilePath2", "subFilePath3"))
-                .build();
-
         ProgramReq programReq = ProgramReq.builder()
                 .title("includeTitle")
                 .subTitle("subTitle")
@@ -612,16 +607,20 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .build();
         Program program1 = Program.of(programReq, registeredDate);
         program1.connectMember(member);
-        program1.setImage(image);
+
+        Image image = createImage();
+        List<Image> images = createImages();
+
+        program1.setImage(image, images);
         Program program2 = Program.of(programReq, registeredDate);
         program2.connectMember(member);
-        program2.setImage(image);
+        program2.setImage(image, images);
         Program program3 = Program.of(programReq, registeredDate);
         program3.connectMember(member);
-        program3.setImage(image);
+        program3.setImage(image, images);
         Program program4 = Program.of(programReq, registeredDate);
         program4.connectMember(member);
-        program4.setImage(image);
+        program4.setImage(image, images);
 
         programReq = ProgramReq.builder()
                 .title("notMatched")
@@ -637,13 +636,13 @@ class ProgramIntegrationTest extends ControllerTestSupport {
                 .build();
         Program program5 = Program.of(programReq, registeredDate);
         program5.connectMember(member);
-        program5.setImage(image);
+        program5.setImage(image, images);
         Program program6 = Program.of(programReq, registeredDate);
         program6.connectMember(member);
-        program6.setImage(image);
+        program6.setImage(image, images);
         Program program7 = Program.of(programReq, registeredDate);
         program7.connectMember(member);
-        program7.setImage(image);
+        program7.setImage(image, images);
 
         programRepository.saveAll(List.of(program1, program2, program3, program4, program5,
                 program6, program7));
@@ -696,9 +695,15 @@ class ProgramIntegrationTest extends ControllerTestSupport {
 
     private Image createImage() {
         return Image.builder()
-                .mainFilePath("/mainFile")
-                .subFilePaths(List.of("/subFile1", "/subFile2"))
+                .filePath("mainFilePath")
                 .build();
     }
 
+    private List<Image> createImages() {
+        List<Image> images = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            images.add(createImage());
+        }
+        return images;
+    }
 }

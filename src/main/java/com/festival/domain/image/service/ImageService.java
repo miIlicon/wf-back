@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,16 +22,21 @@ public class ImageService {
      * @Description
      * 실제 S3와 연동되는 API입니다.
     */
-    public Image uploadImage(MultipartFile mainFile, List<MultipartFile> subFiles, String kind){
-        String mainFilePath = imageUtils.upload(mainFile, kind);
-        List<String> subFilePaths = imageUtils.uploadMulti(subFiles,kind);
+    public Image uploadImage(MultipartFile file, String kind){
+        String filePath = imageUtils.upload(file, kind);
 
         return Image.builder()
-                .mainFilePath(fullEndpoint + mainFilePath)
-                .subFilePaths(subFilePaths.stream()
-                        .map(s -> fullEndpoint + s)
-                        .collect(Collectors.toList())).build();
+                .filePath(fullEndpoint + filePath).build();
     }
+
+    /**
+     * return Image.builder()
+     *                 .mainFilePath(fullEndpoint + mainFilePath)
+     *                 .subFilePaths(subFilePaths.stream()
+     *                         .map(s -> fullEndpoint + s)
+     *                         .collect(Collectors.toList())).build();
+     * */
+
 
     /**
      * @Description
@@ -70,7 +74,8 @@ public class ImageService {
     }
     */
 
-    public void deleteImage(Image image) {
-        imageUtils.deleteFiles(image);
+    public void deleteImage(Image thumbnailImage, List<Image> images) {
+        images.add(thumbnailImage);
+        imageUtils.deleteFiles(images);
     }
 }
