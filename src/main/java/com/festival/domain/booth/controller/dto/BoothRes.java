@@ -1,6 +1,7 @@
 package com.festival.domain.booth.controller.dto;
 
 import com.festival.domain.booth.model.Booth;
+import com.festival.domain.image.model.Image;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,7 +48,7 @@ public class BoothRes {
                 .longitude(booth.getLongitude())
                 .operateStatus(booth.getOperateStatus().getValue())
                 .type(booth.getType().getValue())
-                .mainFilePath(booth.getImage().getMainFilePath())
-                .subFilePaths(booth.getImage().getSubFilePaths()).build();
+                .mainFilePath(booth.getThumbnailImage().getFilePath())
+                .subFilePaths(booth.getImages().stream().map(Image::getFilePath).toList()).build();
     }
 }

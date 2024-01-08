@@ -148,10 +148,14 @@ class ProgramRepositoryTest {
                 .endDate(endDate)
                 .deleted(false)
                 .build();
-        program.setImage(Image.builder()
-                .mainFilePath("mainFilePath")
-                .subFilePaths(List.of("subFilePaths"))
-                .build());
+        program.setImage(
+            Image.builder()
+                    .filePath("mainFilePath")
+                    .build(),
+            List.of(Image.builder()
+                    .filePath("subFilePath")
+                    .build())
+        );
         return program;
     }
 

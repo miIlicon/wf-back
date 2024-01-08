@@ -1,5 +1,6 @@
 package com.festival.domain.program.dto;
 
+import com.festival.domain.image.model.Image;
 import com.festival.domain.program.model.Program;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,8 +46,8 @@ public class ProgramRes {
                 .operateStatus(program.getOperateStatus().toString())
                 .longitude(program.getLongitude())
                 .latitude(program.getLatitude())
-                .mainFilePath(program.getImage().getMainFilePath())
-                .subFilePaths(program.getImage().getSubFilePaths())
+                .mainFilePath(program.getThumbnailImage().getFilePath())
+                .subFilePaths(program.getImages().stream().map(Image::getFilePath).toList())
                 .build();
     }
 }

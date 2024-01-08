@@ -9,6 +9,7 @@ import com.festival.domain.booth.controller.dto.*;
 import com.festival.domain.booth.model.Booth;
 import com.festival.domain.booth.repository.BoothRepository;
 import com.festival.domain.booth.service.vo.BoothListSearchCond;
+import com.festival.domain.image.model.Image;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.service.MemberService;
 import com.festival.domain.viewcount.util.ViewCountUtil;
@@ -37,7 +38,12 @@ public class BoothService {
 
     public Long createBooth(BoothReq boothReq) {
         Booth booth = Booth.of(boothReq);
-        booth.setImage(imageService.uploadImage(boothReq.getMainFile(), boothReq.getSubFiles(), boothReq.getType()));
+
+        Image thumbnailImage = imageService.uploadImage(boothReq.getMainFile(), boothReq.getType());
+        List<Image> images = boothReq.getSubFiles().stream().map(filePath -> imageService.uploadImage(filePath, boothReq.getType())).toList();
+
+        booth.setImage(thumbnailImage, images);
+
         booth.connectMember(memberService.getAuthenticationMember());
         return boothRepository.save(booth).getId();
     }
@@ -49,8 +55,12 @@ public class BoothService {
             throw new ForbiddenException(FORBIDDEN_UPDATE);
         }
 
-        imageService.deleteImage(booth.getImage());
-        booth.setImage(imageService.uploadImage(boothReq.getMainFile(), boothReq.getSubFiles(), boothReq.getType()));
+        imageService.deleteImage(booth.getThumbnailImage(), booth.getImages());
+
+        Image thumbnailImage = imageService.uploadImage(boothReq.getMainFile(), boothReq.getType());
+        List<Image> images = boothReq.getSubFiles().stream().map(filePath -> imageService.uploadImage(filePath, boothReq.getType())).toList();
+
+        booth.setImage(thumbnailImage, images);
         booth.update(boothReq);
         return id;
     }

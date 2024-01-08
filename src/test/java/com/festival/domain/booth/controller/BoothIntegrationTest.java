@@ -28,6 +28,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.festival.domain.member.model.MemberRole.ADMIN;
@@ -118,9 +119,10 @@ class BoothIntegrationTest extends ControllerTestSupport {
 
         BoothReq boothReq = getBoothReq();
 
-
         Booth booth = Booth.of(boothReq);
-        booth.setImage(createImage());
+
+        booth.setImage(createThumbnailImage(), createImages());
+
         booth.connectMember(member);
         Booth savedBooth = boothRepository.saveAndFlush(booth);
 
@@ -396,12 +398,14 @@ class BoothIntegrationTest extends ControllerTestSupport {
         BoothReq boothReq = getBoothReq();
 
         Booth booth = Booth.of(boothReq);
-        Image image = Image.builder()
-                .mainFilePath(mainFile.getName())
-                .subFilePaths(subFiles.stream().map(MockMultipartFile::getName).toList())
-                .build();
+
+        Image thumbnailImage = Image.builder().filePath(mainFile.getName()).build();
+        List<String> list = subFiles.stream().map(MockMultipartFile::getName).toList();
+        List<Image> images = list.stream().map(filePath -> Image.builder().filePath(filePath).build()).toList();
+
         booth.connectMember(member);
-        booth.setImage(image);
+        booth.setImage(thumbnailImage, images);
+
         Booth savedBooth = boothRepository.saveAndFlush(booth);
 
         //when
@@ -493,13 +497,16 @@ class BoothIntegrationTest extends ControllerTestSupport {
                 .operateStatus("OPERATE")
                 .build();
         Booth booth = Booth.of(boothReq);
-        Image image = Image.builder()
-                .mainFilePath(mainFile.getName())
-                .subFilePaths(subFiles.stream().map(MockMultipartFile::getName).toList())
-                .build();
+
+
+        Image thumbnailImage = Image.builder().filePath(mainFile.getName()).build();
+        List<String> list = subFiles.stream().map(MockMultipartFile::getName).toList();
+        List<Image> images = list.stream().map(filePath -> Image.builder().filePath(filePath).build()).toList();
+
         booth.connectMember(member);
-        booth.setImage(image);
-        Booth booth11 = booth;
+        booth.setImage(thumbnailImage, images);
+
+
         return boothRepository.saveAndFlush(booth);
     }
 
@@ -529,10 +536,19 @@ class BoothIntegrationTest extends ControllerTestSupport {
         );
     }
 
-    private Image createImage() {
+    private Image createThumbnailImage() {
         return Image.builder()
-                .mainFilePath("/mainFile")
-                .subFilePaths(List.of("/subFile1", "/subFile2"))
+                .filePath("/mainFile")
                 .build();
+    }
+    private List<Image> createImages() {
+        List<Image> images = new ArrayList<>();
+        for(String filePath : List.of("/subFile1", "/subFile2")) {
+            images.add(Image.builder()
+                    .filePath(filePath)
+                    .build()
+            );
+        }
+        return images;
     }
 }

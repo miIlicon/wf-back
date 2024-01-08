@@ -5,6 +5,7 @@ import com.festival.domain.program.dto.ProgramPageRes;
 import com.festival.domain.program.dto.ProgramSearchRes;
 import com.festival.domain.program.dto.QProgramSearchRes;
 import com.festival.domain.program.model.Program;
+import com.festival.domain.program.model.QProgram;
 import com.festival.domain.program.repository.ProgramRepositoryCustom;
 import com.festival.domain.program.service.vo.ProgramSearchCond;
 import com.querydsl.core.types.OrderSpecifier;
@@ -38,7 +39,7 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
     public ProgramPageRes getProgramList(ProgramSearchCond programSearchCond) {
         List<Program> result = queryFactory
                 .selectFrom(program)
-                .join(program.image).fetchJoin()
+                .join(program.thumbnailImage).fetchJoin()
                 .where(
                         TypeEq(programSearchCond.getType()),
                         program.deleted.eq(false)
@@ -68,7 +69,7 @@ public class ProgramRepositoryCustomImpl implements ProgramRepositoryCustom {
                         program.title,
                         program.subTitle,
                         program.operateStatus.stringValue(),
-                        program.image.mainFilePath
+                        program.thumbnailImage.filePath
                 ))
                 .from(program)
                 .where(

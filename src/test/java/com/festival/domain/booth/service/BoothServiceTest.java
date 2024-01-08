@@ -27,6 +27,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -334,7 +335,8 @@ class BoothServiceTest {
     void getBoothTest(){
         //given
         Booth foodTruck = BoothFixture.FOOD_TRUCK;
-        ReflectionTestUtils.setField(foodTruck, "image", createImage());
+        ReflectionTestUtils.setField(foodTruck, "thumbnailImage", createThumbnailImage());
+        ReflectionTestUtils.setField(foodTruck, "images", createImages());
 
         given(boothRepository.findById(1L))
                 .willReturn(Optional.of(foodTruck));
@@ -453,10 +455,19 @@ class BoothServiceTest {
                 .build();
     }
 
-    private Image createImage() {
+    private Image createThumbnailImage() {
         return Image.builder()
-                .mainFilePath("/mainFile")
-                .subFilePaths(List.of("/subFile1", "/subFile2"))
+                .filePath("/mainFile")
                 .build();
+    }
+    private List<Image> createImages() {
+        List<Image> images = new ArrayList<>();
+        for(String filePath : List.of("/subFile1", "/subFile2")) {
+            images.add(Image.builder()
+                    .filePath(filePath)
+                    .build()
+            );
+        }
+        return images;
     }
 }

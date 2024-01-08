@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -43,7 +44,10 @@ public class Program extends BaseEntity {
     private ProgramType type;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Image image;
+    private Image thumbnailImage;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Image> images;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -113,8 +117,9 @@ public class Program extends BaseEntity {
         this.deleted = true;
     }
 
-    public void setImage(Image uploadImage) {
-        this.image = uploadImage;
+    public void setImage(Image thumbnailImage, List<Image> images) {
+        this.thumbnailImage = thumbnailImage;
+        this.images = images;
     }
 
     public void connectMember(Member member){

@@ -6,6 +6,7 @@ import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
 import com.festival.common.util.SecurityUtils;
+import com.festival.domain.image.model.Image;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.service.MemberService;
 import com.festival.domain.program.dto.*;
@@ -39,7 +40,11 @@ public class ProgramService {
     @Transactional
     public Long createProgram(ProgramReq programReq, LocalDate dateTime) {
         Program program = Program.of(programReq, dateTime);
-        program.setImage(imageService.uploadImage(programReq.getMainFile(), programReq.getSubFiles(), programReq.getType()));
+
+        Image thumbnailImage = imageService.uploadImage(programReq.getMainFile(), programReq.getType());
+        List<Image> images = programReq.getSubFiles().stream().map(filePath -> imageService.uploadImage(filePath, programReq.getType())).toList();
+        program.setImage(thumbnailImage, images);
+
         program.connectMember(memberService.getAuthenticationMember());
         return programRepository.save(program).getId();
     }
@@ -52,8 +57,12 @@ public class ProgramService {
             throw new ForbiddenException(FORBIDDEN_UPDATE);
         }
 
-        imageService.deleteImage(program.getImage());
-        program.setImage(imageService.uploadImage(programReq.getMainFile(), programReq.getSubFiles(), programReq.getType()));
+        imageService.deleteImage(program.getThumbnailImage(), program.getImages());
+
+        Image thumbnailImage = imageService.uploadImage(programReq.getMainFile(), programReq.getType());
+        List<Image> images = programReq.getSubFiles().stream().map(filePath -> imageService.uploadImage(filePath, programReq.getType())).toList();
+        program.setImage(thumbnailImage, images);
+
         program.update(programReq);
         return program.getId();
     }
