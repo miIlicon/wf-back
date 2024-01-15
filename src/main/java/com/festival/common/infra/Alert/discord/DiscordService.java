@@ -21,11 +21,11 @@ public class DiscordService {
 
     public void sendDiscordAlertLog(CustomException ex, HttpServletRequest request) {
         try {
-            DiscordUtil discordUtil = new DiscordUtil(discordUrl);
+            DiscordUtil discordWebhookBot = new DiscordUtil(discordUrl);
             String registeredTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
 
-            discordUtil.setUsername("Millicon");
-            discordUtil.setAvatarUrl("https://raw.githubusercontent.com/angelSooho/InfraTest/main/images/millicon-black.png");
+            discordWebhookBot.setUsername("Millicon");
+            discordWebhookBot.setAvatarUrl("https://raw.githubusercontent.com/angelSooho/InfraTest/main/images/millicon-black.png");
 
             DiscordUtil.EmbedObject embedObject = new DiscordUtil.EmbedObject()
                     .setTitle("\uD83D\uDEA8 서버에 에러가 감지되었습니다. 즉시 확인이 필요합니다. \uD83D\uDEA8")
@@ -39,8 +39,8 @@ public class DiscordService {
                     .addField("Error Message", ex.getErrorCode().getMessage(), true)
                     .addField("발생 시간", registeredTimeFormat, false);
 
-            discordUtil.addEmbed(embedObject);
-            discordUtil.execute();
+            discordWebhookBot.addEmbed(embedObject);
+            discordWebhookBot.execute();
         } catch (Exception e) {
             log.debug("Discord 통신 과정에 예외 발생");
         }

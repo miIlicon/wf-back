@@ -43,7 +43,7 @@ public class TimeTableService {
     public Long updateTimeTable(Long timeTableId, TimeTableReq timeTableReq) {
         TimeTable timeTable = checkingDeletedStatus(timeTableRepository.findById(timeTableId));
 
-        if(!SecurityUtils.checkingAdminRole(memberService.getAuthenticationMember().getMemberRoles())) {
+        if(!SecurityUtils.checkingAdminRole(memberService.getAuthenticationMember().getRole())) {
             throw new ForbiddenException(ErrorCode.FORBIDDEN_UPDATE);
         }
         timeTable.update(timeTableReq);
@@ -53,7 +53,7 @@ public class TimeTableService {
     @Transactional
     public void deleteTimeTable(Long id) {
         TimeTable timeTable = checkingDeletedStatus(timeTableRepository.findById(id));
-        if(!SecurityUtils.checkingAdminRole(memberService.getAuthenticationMember().getMemberRoles())) {
+        if(!SecurityUtils.checkingAdminRole(memberService.getAuthenticationMember().getRole())) {
             throw new ForbiddenException(ErrorCode.FORBIDDEN_DELETE);
         }
         timeTable.deleteTimeTable();

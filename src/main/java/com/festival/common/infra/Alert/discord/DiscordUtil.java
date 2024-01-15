@@ -16,12 +16,12 @@ import java.util.*;
 @Setter
 public class DiscordUtil {
 
-    private final String url;
+    private final String url; // 웹훅 URL
     private String content;
-    private String username;
-    private String avatarUrl;
+    private String username; // 웹훅 봇의 이름
+    private String avatarUrl; // 웹훅 봇의 이미지 경로
     private boolean tts;
-    private List<EmbedObject> embedObjects = new ArrayList<>();
+    private List<EmbedObject> embedObjects = new ArrayList<>(); // Embed 오브젝트
 
     public DiscordUtil(String url) {
         this.url = url;

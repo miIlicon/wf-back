@@ -30,7 +30,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String provider = userRequest.getClientRegistration().getRegistrationId();
         String attributeKey = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
-
         OAuth2Attribute oAuth2Attribute = OAuth2Attribute.of(provider, attributeKey, oAuth2User.getAttributes());
         Map<String, Object> memberAttribute = oAuth2Attribute.convertToMap();
 

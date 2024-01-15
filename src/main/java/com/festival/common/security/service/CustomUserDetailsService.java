@@ -1,12 +1,12 @@
 package com.festival.common.security.service;
 
 import com.festival.common.exception.custom_exception.NotFoundException;
-import com.festival.domain.member.model.AuthenticationMember;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

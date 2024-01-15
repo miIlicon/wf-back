@@ -55,7 +55,7 @@ public class BoothService {
             throw new ForbiddenException(FORBIDDEN_UPDATE);
         }
 
-        imageService.deleteImage(booth.getThumbnailImage(), booth.getImages());
+        imageService.deleteThumbnailAndImages(booth.getThumbnailImage(), booth.getImages());
 
         Image thumbnailImage = imageService.uploadImage(boothReq.getMainFile(), boothReq.getType());
         List<Image> images = boothReq.getSubFiles().stream().map(filePath -> imageService.uploadImage(filePath, boothReq.getType())).toList();

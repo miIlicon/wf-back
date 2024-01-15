@@ -1,9 +1,7 @@
 package com.festival.common.security.config;
 
-import com.festival.common.infra.Alert.discord.DiscordService;
 import com.festival.common.security.jwt.JwtTokenProvider;
 import com.festival.common.security.oauth.CustomOAuth2UserService;
-import com.festival.common.security.oauth.OAuthSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,8 +21,6 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    //    private final SlackService slackService;
-    private final DiscordService discordService;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final com.festival.common.security.oauth.OAuthSuccessHandler OAuthSuccessHandler;
 

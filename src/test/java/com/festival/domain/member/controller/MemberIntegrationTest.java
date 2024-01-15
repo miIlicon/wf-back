@@ -10,6 +10,7 @@ import com.festival.domain.util.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -94,7 +95,7 @@ class MemberIntegrationTest extends ControllerTestSupport {
 
         //when
         MvcResult mvcResult = mockMvc.perform(post("/api/v2/member/login")
-                        .contentType(MULTIPART_FORM_DATA)
+                        .contentType("application/x-www-form-urlencoded")
                         .param("username", loginReq.getUsername())
                         .param("password", loginReq.getPassword())
                 )

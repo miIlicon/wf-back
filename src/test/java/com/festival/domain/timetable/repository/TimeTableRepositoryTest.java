@@ -1,6 +1,7 @@
 package com.festival.domain.timetable.repository;
 
 import com.festival.domain.member.model.Member;
+import com.festival.domain.member.model.MemberRole;
 import com.festival.domain.member.repository.MemberRepository;
 import com.festival.domain.timetable.dto.TimeTableReq;
 import com.festival.domain.timetable.dto.TimeTableRes;
@@ -35,6 +36,7 @@ class TimeTableRepositoryTest {
         savedMember = memberRepository.save(Member.builder()
                 .username("testMember")
                 .password("testPassword")
+                .memberRole(MemberRole.ADMIN)
                 .build());
     }
 
