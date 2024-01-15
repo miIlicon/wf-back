@@ -28,7 +28,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         Member member = memberRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(NOT_FOUND_MEMBER));
 
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(member.getRole().name()));
-        return new AuthenticationMember(member, authorities);
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + member.getRole().name()));
+        return User.builder()
+                .username(member.getUsername())
+                .password(member.getPassword())
+                .authorities(authorities)
+                .build();
     }
 }
