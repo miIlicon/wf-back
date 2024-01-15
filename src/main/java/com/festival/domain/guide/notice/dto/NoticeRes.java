@@ -1,7 +1,7 @@
-package com.festival.domain.guide.dto;
+package com.festival.domain.guide.notice.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.festival.domain.guide.model.Guide;
+import com.festival.domain.guide.notice.model.Notice;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-public class GuideRes {
+public class NoticeRes {
 
     private Long id;
     private String content;
@@ -19,19 +19,19 @@ public class GuideRes {
     private LocalDateTime createdDateTime;
 
     @Builder
-    private GuideRes(Long id, String content, String username, LocalDateTime createdDateTime) {
+    private NoticeRes(Long id, String content, String username, LocalDateTime createdDateTime) {
         this.id = id;
         this.content = content;
         this.username = username;
         this.createdDateTime = createdDateTime;
     }
 
-    public static GuideRes of(Guide guide) {
-        return GuideRes.builder()
-                .id(guide.getId())
-                .content(guide.getContent())
-                .username(guide.getMember().getUsername())
-                .createdDateTime(guide.getCreatedDate())
+    public static NoticeRes of(Notice notice) {
+        return NoticeRes.builder()
+                .id(notice.getId())
+                .content(notice.getContent())
+                .username(notice.getMember().getUsername())
+                .createdDateTime(notice.getCreatedDate())
                 .build();
     }
 }

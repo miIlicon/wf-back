@@ -1,14 +1,13 @@
-package com.festival.domain.guide.service;
+package com.festival.domain.guide.notice.service;
 
 import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.AlreadyDeleteException;
 import com.festival.common.exception.custom_exception.ForbiddenException;
 import com.festival.common.exception.custom_exception.NotFoundException;
-import com.festival.common.redis.RedisService;
-import com.festival.domain.guide.dto.GuideReq;
-import com.festival.domain.guide.dto.GuideRes;
-import com.festival.domain.guide.model.Guide;
-import com.festival.domain.guide.repository.GuideRepository;
+import com.festival.domain.guide.notice.dto.NoticeReq;
+import com.festival.domain.guide.notice.dto.NoticeRes;
+import com.festival.domain.guide.notice.model.Notice;
+import com.festival.domain.guide.notice.repository.NoticeRepository;
 import com.festival.domain.image.service.ImageService;
 import com.festival.domain.member.fixture.MemberFixture;
 import com.festival.domain.member.service.MemberService;
@@ -25,18 +24,18 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.io.IOException;
 import java.util.Optional;
 
-import static com.festival.domain.guide.fixture.GuideFixture.DELETED_GUIDE;
+import static com.festival.domain.guide.notice.fixture.GuideFixture.DELETED_NOTICE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class GuideServiceTest {
+class NoticeServiceTest {
     
     @InjectMocks
-    private GuideService guideService;
+    private NoticeService noticeService;
 
     @Mock
-    private GuideRepository guideRepository;
+    private NoticeRepository noticeRepository;
 
     @Mock
     private MemberService memberService;
@@ -51,14 +50,14 @@ class GuideServiceTest {
     @Test
     void updateNotExistGuide() {
         //given
-        GuideReq guideUpdateReq = getGuideUpdateReq();
+        NoticeReq guideUpdateReq = getGuideUpdateReq();
 
 
-        given(guideRepository.findById(1L))
+        given(noticeRepository.findById(1L))
                 .willReturn(Optional.empty());
 
         //when & then
-        assertThatThrownBy(() -> guideService.updateGuide(1L, guideUpdateReq))
+        assertThatThrownBy(() -> noticeService.updateGuide(1L, guideUpdateReq))
                 .isInstanceOf(NotFoundException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.NOT_FOUND_GUIDE);
@@ -68,13 +67,13 @@ class GuideServiceTest {
     @Test
     void updateDeletedGuide() throws IOException {
         //given
-        GuideReq guideUpdateReq = getGuideUpdateReq();
+        NoticeReq guideUpdateReq = getGuideUpdateReq();
 
-        given(guideRepository.findById(1L))
-                .willReturn(Optional.of(DELETED_GUIDE));
+        given(noticeRepository.findById(1L))
+                .willReturn(Optional.of(DELETED_NOTICE));
 
         //when & then
-        assertThatThrownBy(() -> guideService.updateGuide(1L, guideUpdateReq))
+        assertThatThrownBy(() -> noticeService.updateGuide(1L, guideUpdateReq))
                 .isInstanceOf(AlreadyDeleteException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.ALREADY_DELETED);
@@ -85,17 +84,17 @@ class GuideServiceTest {
     @Test
     void updateGuide2() throws IOException {
         //given
-        GuideReq guideUpdateReq = getGuideUpdateReq();
-        Guide guide = getGuide();
-        guide.connectMember(MemberFixture.MANAGER1);
+        NoticeReq guideUpdateReq = getGuideUpdateReq();
+        Notice notice = getGuide();
+        notice.connectMember(MemberFixture.MANAGER1);
 
-        given(guideRepository.findById(1L))
-                .willReturn(Optional.of(guide));
+        given(noticeRepository.findById(1L))
+                .willReturn(Optional.of(notice));
         given(memberService.getAuthenticationMember())
                 .willReturn(MemberFixture.MANAGER2);
 
         //when & then
-        assertThatThrownBy(() -> guideService.updateGuide(1L, guideUpdateReq))
+        assertThatThrownBy(() -> noticeService.updateGuide(1L, guideUpdateReq))
                 .isInstanceOf(ForbiddenException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.FORBIDDEN_UPDATE);
@@ -105,51 +104,51 @@ class GuideServiceTest {
     @Test
     void updateGuide3() throws IOException {
         //given
-        GuideReq guideUpdateReq = getGuideUpdateReq();
-        Guide guide = getGuide();
-        guide.connectMember(MemberFixture.MANAGER1);
+        NoticeReq guideUpdateReq = getGuideUpdateReq();
+        Notice notice = getGuide();
+        notice.connectMember(MemberFixture.MANAGER1);
 
-        given(guideRepository.findById(1L))
-                .willReturn(Optional.of(guide));
+        given(noticeRepository.findById(1L))
+                .willReturn(Optional.of(notice));
         given(memberService.getAuthenticationMember())
                 .willReturn(MemberFixture.ADMIN);
 
         //when
-        Long guideId = guideService.updateGuide(1L, guideUpdateReq);
+        Long guideId = noticeService.updateGuide(1L, guideUpdateReq);
 
         //then
-        Assertions.assertThat(guideId).isEqualTo(guide.getId());
+        Assertions.assertThat(guideId).isEqualTo(notice.getId());
     }
 
     @DisplayName("가이드의 관리자가 업데이트하면 guideId를 반환한다.")
     @Test
     void updateGuide4() throws IOException {
         //given
-        GuideReq guideUpdateReq = getGuideUpdateReq();
-        Guide guide = getGuide();
-        guide.connectMember(MemberFixture.ADMIN);
+        NoticeReq guideUpdateReq = getGuideUpdateReq();
+        Notice notice = getGuide();
+        notice.connectMember(MemberFixture.ADMIN);
 
-        given(guideRepository.findById(1L))
-                .willReturn(Optional.of(guide));
+        given(noticeRepository.findById(1L))
+                .willReturn(Optional.of(notice));
         given(memberService.getAuthenticationMember())
                 .willReturn(MemberFixture.ADMIN);
 
         //when
-        Long guideId = guideService.updateGuide(1L, guideUpdateReq);
+        Long guideId = noticeService.updateGuide(1L, guideUpdateReq);
 
         //then
-        Assertions.assertThat(guideId).isEqualTo(guide.getId());
+        Assertions.assertThat(guideId).isEqualTo(notice.getId());
     }
 
     @DisplayName("존재하지 않는 가이드를 삭제하면 NotFoundException을 반환한다.")
     @Test
     void deleteNotExistGuide() {
         //given
-        given(guideRepository.findById(1L))
+        given(noticeRepository.findById(1L))
                 .willReturn(Optional.empty());
 
         //when & then
-        assertThatThrownBy(() -> guideService.deleteGuide(1L))
+        assertThatThrownBy(() -> noticeService.deleteGuide(1L))
                 .isInstanceOf(NotFoundException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.NOT_FOUND_GUIDE);
@@ -159,11 +158,11 @@ class GuideServiceTest {
     @Test
     void deleteDeletedGuide() {
         //given
-        given(guideRepository.findById(1L))
-                .willReturn(Optional.of(DELETED_GUIDE));
+        given(noticeRepository.findById(1L))
+                .willReturn(Optional.of(DELETED_NOTICE));
 
         //when & then
-        assertThatThrownBy(() -> guideService.deleteGuide(1L))
+        assertThatThrownBy(() -> noticeService.deleteGuide(1L))
                 .isInstanceOf(AlreadyDeleteException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.ALREADY_DELETED);
@@ -174,16 +173,16 @@ class GuideServiceTest {
     @Test
     void deleteGuide2() throws IOException {
         //given
-        Guide guide = getGuide();
-        guide.connectMember(MemberFixture.MANAGER1);
+        Notice notice = getGuide();
+        notice.connectMember(MemberFixture.MANAGER1);
 
-        given(guideRepository.findById(1L))
-                .willReturn(Optional.of(guide));
+        given(noticeRepository.findById(1L))
+                .willReturn(Optional.of(notice));
         given(memberService.getAuthenticationMember())
                 .willReturn(MemberFixture.MANAGER2);
 
         //when & then
-        assertThatThrownBy(() -> guideService.deleteGuide(1L))
+        assertThatThrownBy(() -> noticeService.deleteGuide(1L))
                 .isInstanceOf(ForbiddenException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.FORBIDDEN_DELETE);
@@ -193,66 +192,66 @@ class GuideServiceTest {
     @Test
     void deleteGuide3() {
         //given
-        Guide guide = getGuide();
-        guide.connectMember(MemberFixture.MANAGER1);
+        Notice notice = getGuide();
+        notice.connectMember(MemberFixture.MANAGER1);
 
-        given(guideRepository.findById(1L))
-                .willReturn(Optional.of(guide));
+        given(noticeRepository.findById(1L))
+                .willReturn(Optional.of(notice));
         given(memberService.getAuthenticationMember())
                 .willReturn(MemberFixture.ADMIN);
 
         //when && then
-        guideService.deleteGuide(1L);
+        noticeService.deleteGuide(1L);
     }
 
     @DisplayName("가이드의 관리자가 업데이트하면 정상동작")
     @Test
     void deleteGuide4(){
         //given
-        Guide guide = getGuide();
-        guide.connectMember(MemberFixture.ADMIN);
+        Notice notice = getGuide();
+        notice.connectMember(MemberFixture.ADMIN);
 
-        given(guideRepository.findById(1L))
-                .willReturn(Optional.of(guide));
+        given(noticeRepository.findById(1L))
+                .willReturn(Optional.of(notice));
         given(memberService.getAuthenticationMember())
                 .willReturn(MemberFixture.ADMIN);
 
         //when && then
-        guideService.deleteGuide(1L);
+        noticeService.deleteGuide(1L);
     }
 
     @DisplayName("아이디에 맞는 가이드를 반환한다.")
     @Test
     void getguideTest(){
         //given
-        Guide guide = getGuide();
-        guide.connectMember(MemberFixture.ADMIN);
-        given(guideRepository.findById(1L))
-                .willReturn(Optional.of(guide));
+        Notice notice = getGuide();
+        notice.connectMember(MemberFixture.ADMIN);
+        given(noticeRepository.findById(1L))
+                .willReturn(Optional.of(notice));
         //when
-        GuideRes guideRes = guideService.getGuide(1L, "");
+        NoticeRes noticeRes = noticeService.getGuide(1L, "");
 
         //then
-        Assertions.assertThat(guideRes).usingRecursiveComparison()
-                .isEqualTo(GuideRes.of(guide));
+        Assertions.assertThat(noticeRes).usingRecursiveComparison()
+                .isEqualTo(NoticeRes.of(notice));
     }
     
-    private Guide getGuide(){
-        Guide guide = Guide.builder()
+    private Notice getGuide(){
+        Notice notice = Notice.builder()
                 .content("가이드 내용")
                 .build();
-        ReflectionTestUtils.setField(guide, "id", 1L);
-        return guide;
+        ReflectionTestUtils.setField(notice, "id", 1L);
+        return notice;
     }
     
-    private GuideReq getGuideCreateReq(){
-        return GuideReq.builder()
+    private NoticeReq getGuideCreateReq(){
+        return NoticeReq.builder()
                 .content("가이드 내용")
                 .build();
     }
 
-    private GuideReq getGuideUpdateReq(){
-        return GuideReq.builder()
+    private NoticeReq getGuideUpdateReq(){
+        return NoticeReq.builder()
                 .content("가이드 내용 수정")
                 .build();
     }

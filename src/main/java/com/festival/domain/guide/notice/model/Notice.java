@@ -1,9 +1,7 @@
-package com.festival.domain.guide.model;
+package com.festival.domain.guide.notice.model;
 
 import com.festival.common.base.BaseEntity;
-import com.festival.common.base.OperateStatus;
-import com.festival.domain.guide.dto.GuideReq;
-import com.festival.domain.image.model.Image;
+import com.festival.domain.guide.notice.dto.NoticeReq;
 import com.festival.domain.member.model.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -14,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Guide extends BaseEntity {
+public class Notice extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,20 +28,20 @@ public class Guide extends BaseEntity {
     private Long viewCount = 0L;
 
     @Builder
-    private Guide(String content, boolean deleted) {
+    private Notice(String content, boolean deleted) {
         this.content = content;
         this.deleted = deleted;
     }
 
-    public static Guide of(GuideReq guideReq) {
-        return Guide.builder()
-                .content(guideReq.getContent())
+    public static Notice of(NoticeReq noticeReq) {
+        return Notice.builder()
+                .content(noticeReq.getContent())
                 .deleted(false)
                 .build();
     }
 
-    public void update(GuideReq guideReq) {
-        this.content = guideReq.getContent();
+    public void update(NoticeReq noticeReq) {
+        this.content = noticeReq.getContent();
     }
 
     public void increaseViewCount(Long viewCount) {

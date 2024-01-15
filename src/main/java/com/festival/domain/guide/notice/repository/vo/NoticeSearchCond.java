@@ -1,16 +1,16 @@
-package com.festival.domain.guide.repository.vo;
+package com.festival.domain.guide.notice.repository.vo;
 
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Pageable;
 
 @Getter
-public class GuideSearchCond {
+public class NoticeSearchCond {
 
     private Pageable pageable;
 
     @Builder
-    private GuideSearchCond(Pageable pageable) {
+    private NoticeSearchCond(Pageable pageable) {
         this.pageable = pageable;
     }
 

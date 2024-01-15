@@ -4,7 +4,7 @@ import com.festival.common.exception.ErrorCode;
 import com.festival.common.exception.custom_exception.InvalidException;
 import com.festival.domain.bambooforest.dto.BamBooForestReq;
 import com.festival.domain.booth.controller.dto.BoothReq;
-import com.festival.domain.guide.dto.GuideReq;
+import com.festival.domain.guide.notice.dto.NoticeReq;
 import com.festival.domain.program.dto.ProgramReq;
 import com.festival.domain.timetable.dto.TimeTableReq;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class ValidationUtils {
     private static final String DATE_PATTERN =
             "^([0-9]{4})-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]$";
 
-    public void isGuideValid(GuideReq guide) {
+    public void isGuideValid(NoticeReq guide) {
         checkStrLength(guide.getContent(), 1, 500);
         String[] typeList = {"NOTICE"};
     }
