@@ -1,6 +1,6 @@
-package com.festival.domain.guide.dto;
+package com.festival.domain.guide.notice.dto;
 
-import com.festival.domain.guide.model.Guide;
+import com.festival.domain.guide.notice.model.Notice;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,26 +11,26 @@ import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
-public class GuidePageRes {
+public class NoticePageRes {
 
-    private List<GuideRes> guideResList;
+    private List<NoticeRes> noticeResList;
     private long totalCount;
     private int totalPage;
     private int pageNumber;
     private int pageSize;
 
     @Builder
-    private GuidePageRes(List<GuideRes> guideResList, long totalCount, int totalPage, int pageNumber, int pageSize) {
-        this.guideResList = guideResList;
+    private NoticePageRes(List<NoticeRes> noticeResList, long totalCount, int totalPage, int pageNumber, int pageSize) {
+        this.noticeResList = noticeResList;
         this.totalCount = totalCount;
         this.totalPage = totalPage;
         this.pageNumber = pageNumber;
         this.pageSize = pageSize;
     }
 
-    public static GuidePageRes of(Page<Guide> page){
-        return GuidePageRes.builder()
-                .guideResList(page.getContent().stream().map(GuideRes::of).collect(Collectors.toList()))
+    public static NoticePageRes of(Page<Notice> page){
+        return NoticePageRes.builder()
+                .noticeResList(page.getContent().stream().map(NoticeRes::of).collect(Collectors.toList()))
                 .totalPage(page.getTotalPages())
                 .totalCount(page.getTotalElements())
                 .pageNumber(page.getNumber())

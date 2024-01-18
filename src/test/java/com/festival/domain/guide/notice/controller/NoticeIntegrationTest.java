@@ -1,10 +1,10 @@
-package com.festival.domain.guide.controller;
+package com.festival.domain.guide.notice.controller;
 
-import com.festival.domain.guide.dto.GuidePageRes;
-import com.festival.domain.guide.dto.GuideReq;
-import com.festival.domain.guide.dto.GuideRes;
-import com.festival.domain.guide.model.Guide;
-import com.festival.domain.guide.repository.GuideRepository;
+import com.festival.domain.guide.notice.dto.NoticePageRes;
+import com.festival.domain.guide.notice.dto.NoticeReq;
+import com.festival.domain.guide.notice.dto.NoticeRes;
+import com.festival.domain.guide.notice.model.Notice;
+import com.festival.domain.guide.notice.repository.NoticeRepository;
 import com.festival.domain.member.model.Member;
 import com.festival.domain.util.ControllerTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,10 +28,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class GuideIntegrationTest extends ControllerTestSupport {
+class NoticeIntegrationTest extends ControllerTestSupport {
 
     @Autowired
-    private GuideRepository guideRepository;
+    private NoticeRepository noticeRepository;
 
     private Member member;
 
@@ -57,14 +57,14 @@ class GuideIntegrationTest extends ControllerTestSupport {
     @Test
     void createGuide() throws Exception {
         //given
-        GuideReq guideReq = GuideReq.builder()
+        NoticeReq noticeReq = NoticeReq.builder()
                 .content("content")
                 .build();
 
         //when
         MvcResult mvcResult = mockMvc.perform(
                         post("/api/v2/guide")
-                                .param("content", guideReq.getContent())
+                                .param("content", noticeReq.getContent())
                                 .contentType(MULTIPART_FORM_DATA)
                 )
                 .andDo(print())
@@ -74,9 +74,9 @@ class GuideIntegrationTest extends ControllerTestSupport {
         //then
         String content = mvcResult.getResponse().getContentAsString();
         Long id = objectMapper.readValue(content, Long.class);
-        Guide findGuide = guideRepository.findById(id).get();
-        assertThat(findGuide).isNotNull();
-        assertThat(findGuide.getContent()).isEqualTo(guideReq.getContent());
+        Notice findNotice = noticeRepository.findById(id).get();
+        assertThat(findNotice).isNotNull();
+        assertThat(findNotice.getContent()).isEqualTo(noticeReq.getContent());
     }
 
     @WithMockUser(username = "testUser", roles = "ADMIN")
@@ -84,28 +84,28 @@ class GuideIntegrationTest extends ControllerTestSupport {
     @Test
     void updateGuide() throws Exception {
         //given
-        GuideReq guideReq = GuideReq.builder()
+        NoticeReq noticeReq = NoticeReq.builder()
                 .content("content")
                 .build();
-        Guide guide = Guide.of(guideReq);
-        guide.connectMember(member);
-        Guide savedGuide = guideRepository.saveAndFlush(guide);
+        Notice notice = Notice.of(noticeReq);
+        notice.connectMember(member);
+        Notice savedNotice = noticeRepository.saveAndFlush(notice);
 
         //when
         String updateContent = "updateContent";
         mockMvc.perform(
-                put("/api/v2/guide/" + savedGuide.getId())
+                put("/api/v2/guide/" + savedNotice.getId())
                         .param("content", updateContent)
                         .contentType(MULTIPART_FORM_DATA)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(savedGuide.getId().toString()));
+                .andExpect(content().string(savedNotice.getId().toString()));
 
         //then
-        Guide findGuide = guideRepository.findById(savedGuide.getId()).get();
-        assertThat(findGuide).isNotNull();
-        assertThat(findGuide.getContent()).isEqualTo(updateContent);
+        Notice findNotice = noticeRepository.findById(savedNotice.getId()).get();
+        assertThat(findNotice).isNotNull();
+        assertThat(findNotice.getContent()).isEqualTo(updateContent);
     }
 
     @WithMockUser(username = "testUser", roles = "ADMIN")
@@ -127,13 +127,13 @@ class GuideIntegrationTest extends ControllerTestSupport {
     @Test
     void updateGuideNotMine() throws Exception {
         //given
-        Guide guide = createGuideEntity("content");
-        guide.connectMember(member);
-        Guide savedGuide = guideRepository.saveAndFlush(guide);
+        Notice notice = createGuideEntity("content");
+        notice.connectMember(member);
+        Notice savedNotice = noticeRepository.saveAndFlush(notice);
 
         //when //then
         mockMvc.perform(
-                put("/api/v2/guide/" + savedGuide.getId())
+                put("/api/v2/guide/" + savedNotice.getId())
                         .param("content", "updateContent")
                         .contentType(MULTIPART_FORM_DATA)
                 )
@@ -146,19 +146,19 @@ class GuideIntegrationTest extends ControllerTestSupport {
     @Test
     void deleteGuide() throws Exception {
         //given
-        Guide guide = createGuideEntity("content");
-        guide.connectMember(member);
-        Guide savedGuide = guideRepository.saveAndFlush(guide);
+        Notice notice = createGuideEntity("content");
+        notice.connectMember(member);
+        Notice savedNotice = noticeRepository.saveAndFlush(notice);
 
         //when
         mockMvc.perform(
-                        delete("/api/v2/guide/" + savedGuide.getId())
+                        delete("/api/v2/guide/" + savedNotice.getId())
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
 
         //then
-        Guide findGuide = guideRepository.findById(savedGuide.getId()).get();
+        Notice findNotice = noticeRepository.findById(savedNotice.getId()).get();
         /**
          *   deleted로 판단해야함
          */
@@ -184,13 +184,13 @@ class GuideIntegrationTest extends ControllerTestSupport {
     @Test
     void NotDeleteDifferentUser() throws Exception {
         //given
-        Guide guide = createGuideEntity("content");
-        guide.connectMember(member);
-        Guide savedGuide = guideRepository.saveAndFlush(guide);
+        Notice notice = createGuideEntity("content");
+        notice.connectMember(member);
+        Notice savedNotice = noticeRepository.saveAndFlush(notice);
 
         //when //then
         mockMvc.perform(
-                        delete("/api/v2/guide/" + savedGuide.getId())
+                        delete("/api/v2/guide/" + savedNotice.getId())
                 )
                 .andDo(print())
                 .andExpect(status().isForbidden());
@@ -211,13 +211,13 @@ class GuideIntegrationTest extends ControllerTestSupport {
     @Test
     void getGuide() throws Exception {
         //given
-        Guide guide = createGuideEntity("content");
-        guide.connectMember(member);
-        Guide savedGuide = guideRepository.saveAndFlush(guide);
+        Notice notice = createGuideEntity("content");
+        notice.connectMember(member);
+        Notice savedNotice = noticeRepository.saveAndFlush(notice);
 
         //when
         MvcResult mvcResult = mockMvc.perform(
-                        get("/api/v2/guide/" + savedGuide.getId())
+                        get("/api/v2/guide/" + savedNotice.getId())
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -226,9 +226,9 @@ class GuideIntegrationTest extends ControllerTestSupport {
 
         //then
         String content = mvcResult.getResponse().getContentAsString();
-        GuideRes guideRes = objectMapper.readValue(content, GuideRes.class);
-        assertThat(guideRes).isNotNull();
-        assertThat(guideRes.getContent()).isEqualTo(savedGuide.getContent());
+        NoticeRes noticeRes = objectMapper.readValue(content, NoticeRes.class);
+        assertThat(noticeRes).isNotNull();
+        assertThat(noticeRes.getContent()).isEqualTo(savedNotice.getContent());
     }
 
     @DisplayName("안내사항 목록을 가져온다. 목록은 페이징으로 10개씩 처리된다.")
@@ -238,21 +238,21 @@ class GuideIntegrationTest extends ControllerTestSupport {
         String status = "OPERATE";
         Pageable pageable = PageRequest.of(0, 10);
 
-        Guide guide1 = createGuideEntity("content1");
-        Guide guide2 = createGuideEntity("content2");
-        Guide guide3 = createGuideEntity("content3");
-        Guide guide4 = createGuideEntity("content4");
-        Guide guide5 = createGuideEntity("content5");
-        Guide guide6 = createGuideEntity("content6");
-        Guide guide7 = createGuideEntity("content7");
-        Guide guide8 = createGuideEntity("content8");
-        Guide guide9 = createGuideEntity("content9");
-        Guide guide10 = createGuideEntity("content10");
-        Guide guide11 = createGuideEntity("content11");
+        Notice notice1 = createGuideEntity("content1");
+        Notice notice2 = createGuideEntity("content2");
+        Notice notice3 = createGuideEntity("content3");
+        Notice notice4 = createGuideEntity("content4");
+        Notice notice5 = createGuideEntity("content5");
+        Notice notice6 = createGuideEntity("content6");
+        Notice notice7 = createGuideEntity("content7");
+        Notice notice8 = createGuideEntity("content8");
+        Notice notice9 = createGuideEntity("content9");
+        Notice notice10 = createGuideEntity("content10");
+        Notice notice11 = createGuideEntity("content11");
 
-        List<Guide> guides = guideRepository.saveAllAndFlush(List.of(
-                guide1, guide2, guide3, guide4, guide5, guide6, guide7, guide8,
-                guide9, guide10, guide11));
+        List<Notice> notices = noticeRepository.saveAllAndFlush(List.of(
+                notice1, notice2, notice3, notice4, notice5, notice6, notice7, notice8,
+                notice9, notice10, notice11));
 
         //when
         MvcResult mvcResult = mockMvc.perform(
@@ -265,24 +265,24 @@ class GuideIntegrationTest extends ControllerTestSupport {
                 .andReturn();
 
         //then
-        GuidePageRes guidePageRes = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), GuidePageRes.class);
-        assertThat(guidePageRes.getGuideResList()).hasSize(10)
+        NoticePageRes noticePageRes = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), NoticePageRes.class);
+        assertThat(noticePageRes.getNoticeResList()).hasSize(10)
                 .extracting("content")
                 .containsExactlyInAnyOrder(
                         "content11", "content10", "content9", "content8", "content7",
                         "content6", "content5", "content4", "content3", "content2"
                 );
-        assertThat(guidePageRes).isNotNull()
+        assertThat(noticePageRes).isNotNull()
              .extracting("totalCount", "totalPage", "pageNumber", "pageSize")
              .contains(11L, 2, 0, 10);
     }
 
-    private Guide createGuideEntity(String content ) {
-        GuideReq guideReq = GuideReq.builder()
+    private Notice createGuideEntity(String content ) {
+        NoticeReq noticeReq = NoticeReq.builder()
                 .content(content)
                 .build();
-        Guide guide = Guide.of(guideReq);
-        guide.connectMember(member);
-        return guide;
+        Notice notice = Notice.of(noticeReq);
+        notice.connectMember(member);
+        return notice;
     }
 }

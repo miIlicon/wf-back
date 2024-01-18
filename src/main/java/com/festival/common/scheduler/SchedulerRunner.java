@@ -1,7 +1,7 @@
 package com.festival.common.scheduler;
 
 import com.festival.domain.booth.service.BoothService;
-import com.festival.domain.guide.service.GuideService;
+import com.festival.domain.guide.notice.service.NoticeService;
 import com.festival.domain.program.service.ProgramService;
 import com.festival.domain.viewcount.service.HomeService;
 import com.festival.domain.viewcount.util.ViewCountUtil;
@@ -20,7 +20,7 @@ public class SchedulerRunner {
 
     private final ViewCountUtil viewCountUtil;
 
-    private final GuideService guideService;
+    private final NoticeService noticeService;
     private final BoothService boothService;
     private final ProgramService programService;
     private final HomeService homeService;
@@ -41,7 +41,7 @@ public class SchedulerRunner {
                     viewCountUtil.deleteData(key);
                 }
                 case "Guide" -> {
-                    guideService.increaseGuideViewCount(Long.parseLong(splitKey[2]), viewCountUtil.getViewCount(key));
+                    noticeService.increaseGuideViewCount(Long.parseLong(splitKey[2]), viewCountUtil.getViewCount(key));
                     viewCountUtil.deleteData(key);
                 }
                 case "Program" -> {
