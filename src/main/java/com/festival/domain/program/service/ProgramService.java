@@ -57,7 +57,7 @@ public class ProgramService {
             throw new ForbiddenException(FORBIDDEN_UPDATE);
         }
 
-        imageService.deleteImage(program.getThumbnailImage(), program.getImages());
+        imageService.deleteThumbnailAndImages(program.getThumbnailImage(), program.getImages());
 
         Image thumbnailImage = imageService.uploadImage(programReq.getMainFile(), programReq.getType());
         List<Image> images = programReq.getSubFiles().stream().map(filePath -> imageService.uploadImage(filePath, programReq.getType())).toList();

@@ -10,20 +10,26 @@ import java.util.List;
 public class SecurityUtils {
 
     public static boolean checkingRole(Member owner, Member accessMember) {
-        if(SecurityUtils.checkingAdminRole(accessMember.getMemberRoles())) {
-            return true;
-        }
-        if (SecurityUtils.checkingManagerRole(accessMember.getMemberRoles()) && owner.getUsername().equals(accessMember.getUsername())) {
+        if(SecurityUtils.checkingAdminRole(accessMember.getRole()) ||
+                SecurityUtils.checkingManagerRole(accessMember.getRole()) && owner.getUsername().equals(accessMember.getUsername())) {
             return true;
         }
         return false;
     }
 
-    public static boolean checkingManagerRole(List<MemberRole> accessorRoles) {
+    public static boolean checkingManagerRole(MemberRole accessorRole) {
+        return accessorRole.equals(MemberRole.MANAGER);
+    }
+
+    public static boolean checkingAdminRole(MemberRole memberRole) {
+        return memberRole.equals(MemberRole.ADMIN);
+    }
+
+    public static boolean checkingManagerRoles(List<MemberRole> accessorRoles) {
         return accessorRoles.contains(MemberRole.MANAGER);
     }
 
-    public static boolean checkingAdminRole(List<MemberRole> memberRoles) {
+    public static boolean checkingAdminRoles(List<MemberRole> memberRoles) {
         return memberRoles.contains(MemberRole.ADMIN);
     }
 

@@ -40,7 +40,7 @@ public class BamBooForestService {
         BamBooForest findBamBooForest = checkingDeletedStatus(bamBooForestRepository.findById(id));
 
         Member accessUser = memberService.getAuthenticationMember();
-        if (!checkingAdminRole(accessUser.getMemberRoles())) {
+        if (!checkingAdminRole(accessUser.getRole())) {
             throw new ForbiddenException(FORBIDDEN_DELETE);
         }
 
