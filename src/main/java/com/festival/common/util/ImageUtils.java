@@ -62,13 +62,18 @@ public class ImageUtils {
         return kind + "_" + UUID.randomUUID() + ext;
     }
 
-    public void deleteFiles(List<Image> images){
+    public void deleteImage(Image image){
         DeleteObjectRequest deleteObjectRequest;
+        if (image != null) {
+            deleteObjectRequest = new DeleteObjectRequest(bucketName, image.getFilePath());
+            amazonS3.deleteObject(deleteObjectRequest);
+        }
+    }
 
+    public void deleteImages(List<Image> images){
         if (images != null) {
             for (Image subFile : images) {
-                deleteObjectRequest = new DeleteObjectRequest(bucketName, subFile.getFilePath());
-                amazonS3.deleteObject(deleteObjectRequest);
+                deleteImage(subFile);
             }
         }
     }

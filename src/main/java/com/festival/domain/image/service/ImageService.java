@@ -74,8 +74,16 @@ public class ImageService {
     }
     */
 
-    public void deleteImage(Image thumbnailImage, List<Image> images) {
-        images.add(thumbnailImage);
-        imageUtils.deleteFiles(images);
+    public void deleteImage(Image image) {
+        imageUtils.deleteImage(image);
+    }
+
+    public void deleteImages(List<Image> images) {
+        imageUtils.deleteImages(images);
+    }
+
+    public void deleteThumbnailAndImages(Image image, List<Image> images) {
+        imageUtils.deleteImage(image);
+        imageUtils.deleteImages(images);
     }
 }
